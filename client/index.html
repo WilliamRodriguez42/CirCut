@@ -5,9 +5,9 @@
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
 	<title>AutoLevel</title>
-	<link rel="stylesheet" type="text/css" href="client/split.css">
-	<link rel="stylesheet" type="text/css" href="client/simple-console.css">
-	<link rel="stylesheet" type="text/css" href="client/app.css">
+	<link rel="stylesheet" type="text/css" href="style/split.css">
+	<link rel="stylesheet" type="text/css" href="style/simple-console.css">
+	<link rel="stylesheet" type="text/css" href="style/app.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 </head>
@@ -21,7 +21,7 @@
 						<div class="panel-container" style="height:100%;">
 							<div class="panel-left" style="width:70%;" id="left_panel2">
 									<div id="main" style="position: relative;">
-											<iframe src="test.svg" width="100%" height="100%"></iframe>
+											<iframe src="resources/test.svg" width="100%" height="100%"></iframe>
 									</div>
 							</div>
 
@@ -66,9 +66,9 @@
 							<div id="viewer-div" class="panel-right" onmouseover = "enable_three();" onmouseleave = "disable_three();">
 
 
-								<script src="./gv_files/three.js"></script>
-								<script src="./gv_files/OrbitControls.js"></script>
-								<script src="./gv_files/GCodeLoader.js"></script>
+								<script src="gv_files/three.js"></script>
+								<script src="gv_files/OrbitControls.js"></script>
+								<script src="gv_files/GCodeLoader.js"></script>
 
 								<script>
 
@@ -173,7 +173,7 @@
 
 		<div class="panel-right" id="right_panel1" style="margin: 20px">
 
-			<script src="client/control_panel.js"></script>
+			<script src="js/control_panel.js"></script>
 			<table style="width:100%; color:#eee;">
 				<tr>
 					<th></th>
@@ -234,7 +234,7 @@
 	</div>
 
 
-	<script src="/client/jquery-resizable.js"></script>
+	<script src="/js/jquery-resizable.js"></script>
 	<script>
 		$(".panel-top").resizable({
 				handleSelector: ".splitter-horizontal",
@@ -252,8 +252,8 @@
  		 });
 	</script>
 
-	<script src="client/js/draw_svg.js"></script>
-	<script src="client/simple-console.js"></script>
-	<script src="client/console.js"></script>
+	<script src="js/draw_svg.js"></script>
+	<script src="js/simple-console.js"></script>
+	<script src="js/console.js"></script>
 
 </body></html>
