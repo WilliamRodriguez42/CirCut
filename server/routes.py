@@ -6,15 +6,25 @@ import threading
 app = Flask(__name__)
 
 @app.route('/<path:path>')
-def send_js(path):
-	html = open('../' + path, 'r')
+def send_whatever(path):
 	print(path)
-	if path[-3:] == 'css':
-		return Response(html.read(), mimetype="text/css")
-	content = html.read()
-	html.close()
+	if path[-3:] == 'ico':
+		ico = open('../client/' + path, 'rb')
+		content = ico.read()
+		ico.close()
+		return Response(content)
 
-	return Response(content)
+	if path[-3:] == 'css':
+		css = open('../client/' + path, 'r')
+		content = css.read()
+		css.close()
+		return Response(content, mimetype="text/css")
+
+	else:
+		html = open('../client/' + path, 'r')
+		content = html.read()
+		html.close()
+		return Response(content)
 
 @app.route('/')
 def send_home():
