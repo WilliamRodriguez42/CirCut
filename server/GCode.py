@@ -66,8 +66,6 @@ class GCodeFile:
 		self.rangey = maxy - miny
 
 		self.all_gcodes = all_gcodes
-
-		print(all_gcodes)
 		self.out_gcodes = copy.copy(all_gcodes)
 
 	def get_content(self, f):
