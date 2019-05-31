@@ -8,8 +8,11 @@
 	<link rel="stylesheet" type="text/css" href="style/split.css">
 	<link rel="stylesheet" type="text/css" href="style/simple-console.css">
 	<link rel="stylesheet" type="text/css" href="style/app.css">
+	<link rel="stylesheet" type="text/css" href="style/dropzone.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
+	<script src="js/svg-pan-zoom.js"></script>
+	<script src="js/dropzone.js"></script>
+	<script src="js/index_functions.js"></script>
 </head>
 <body style="background:#222">
 	<div class="panel-container" style="height:100%;">
@@ -20,145 +23,100 @@
 					<div class="panel-top" id="top_panel" style="height:80%">
 						<div class="panel-container" style="height:100%;">
 							<div class="panel-left" style="width:70%;" id="left_panel2">
-									<div id="main" style="position: relative;">
-											<iframe src="resources/test.svg" width="100%" height="100%"></iframe>
+								<div id="main" style="position: relative;">
+									<div id="side-panel" style="background:#222; width: 250px; height:100%; float:right; overflow:scroll">
+										<table style="margin:10px; width:240px; color:#eee">
+											<tr>
+												<td>Gerber File:</td>
+											</tr>
+										</table>
+										<form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
+
+										<table style="margin:10px; width:240px; color:#eee">
+											<tr>
+												<td>Excellon File:</td>
+											</tr>
+										</table>
+										<form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
+
+										<form action="/convert" method="POST" target='dummyframe'>
+											<table style="margin:10px; width:240px; color:#eee">
+												<tr>
+													<td>Rapid Feedrate:</td>
+													<td><input id="rapid_feedrate_value" class="sizeInput" value="500"></input> mm/min</td>
+												</tr>
+
+												<tr>
+													<td>Pass Feedrate:</td>
+													<td><input id="pass_feedrate_value" class="sizeInput" value="100"></input> mm/min</td>
+												</tr>
+
+												<tr>
+													<td>Plunge Feedrate:</td>
+													<td><input id="plunge_feedrate_value" class="sizeInput" value="20"></input> mm/min</td>
+												</tr>
+
+												<tr>
+													<td>Plunge Depth:</td>
+													<td><input id="plunge_depth_value" class="sizeInput" value="-2.5"></input> mm</td>
+												</tr>
+
+												<tr>
+													<td>Safe Height:</td>
+													<td><input id="safe_height_value" class="sizeInput" value="1.00"></input> mm</td>
+												</tr>
+
+												<tr>
+													<td>Contour Spindle:</td>
+													<td><input id="contour_spindle_value" class="sizeInput" value="255"></input></td>
+												</tr>
+
+												<tr>
+													<td>Drill Spindle:</td>
+													<td><input id="drill_spindle_value" class="sizeInput" value="255"></input></td>
+												</tr>
+
+											</table>
+
+											<button class="my_button" type="submit">Convert</button>
+
+										</form>
+										<iframe width="0" height="0" border="0" name='dummyframe' id='dummyframe'></iframe>
 									</div>
+									<object id="svg-viewer" type="image/svg+xml" data="resources/test.svg" style="width: calc(100% - 250px); height: 100%; ">Your browser does not support SVG</object>
+
+								</div>
 							</div>
+
+
+
+
 
 							<div class="splitter" id="v_splitter2">
 							</div>
 
-							<script>
-								var mouseDown = 0;
-								var mouseOver = 0;
-								document.body.onmousedown = function() {
-									++mouseDown;
-									if (!mouseOver) {
-										controls.enabled = false;
-									}
-								}
-								document.body.onmouseup = function() {
-									--mouseDown;
-									if (!mouseOver) {
-										controls.enabled = false;
-									}
-								}
 
-								document.body.onmousemove = function() {
-									if (!mouseDown && !mouseOver) {
-										controls.enabled = false;
-									}
-								}
 
-								function enable_three() {
-									controls.enabled = true;
-									mouseOver = 1;
-								}
 
-								function disable_three() {
-									if (!mouseDown) {
-										controls.enabled = false;
-									}
-									mouseOver = 0;
-								}
-							</script>
 
-							<div id="viewer-div" class="panel-right" onmouseover = "enable_three();" onmouseleave = "disable_three();">
-
+							<div id="viewer-div" class="panel-right" onmouseover = "enable_controls();" onmouseleave = "disable_controls();">
 
 								<script src="gv_files/three.js"></script>
 								<script src="gv_files/OrbitControls.js"></script>
 								<script src="gv_files/GCodeLoader.js"></script>
 
-								<script>
-
-									var container;
-									var camera, scene, renderer, loader, g_object, d_object;
-									var controls;
-
-									init();
-									animate();
-
-									function load_contour(gcode) {
-										scene.remove(g_object);
-										g_object = loader.parse(gcode);
-										scene.add(g_object);
-
-										animate();
-									}
-
-									function load_drill(gcode) {
-										scene.remove(d_object);
-										d_object = loader.parse(gcode);
-										scene.add(d_object);
-
-										animate();
-									}
-
-									function animate() {
-
-										renderer.render( scene, camera );
-
-										requestAnimationFrame( animate );
-
-									}
-
-									function load_gcodes() {
-										var contours = $.ajax({type: "GET", url: "contours", async: false});
-										load_contour(contours.responseText);
-
-										var drills = $.ajax({type: "GET", url: "drills", async: false});
-										load_drill(drills.responseText);
-									}
-
-									function init() {
-
-										container = document.createElement( 'div' );
-										document.getElementById("viewer-div").appendChild( container );
-
-										camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
-										camera.position.set( 0, 100, 0 );
-
-										controls = new THREE.OrbitControls( camera );
-										controls.enabled = false;
-
-										scene = new THREE.Scene();
-										loader = new THREE.GCodeLoader();
-
-
-
-										renderer = new THREE.WebGLRenderer();
-										renderer.setPixelRatio( window.devicePixelRatio );
-										renderer.setSize( window.innerWidth, window.innerHeight );
-										container.appendChild( renderer.domElement );
-
-										window.addEventListener( 'resize', resize, false );
-
-										load_gcodes();
-									}
-
-									function resize(width, height) {
-										var height = $('#top_panel').height();
-										var width = $("#left_panel1").width() - $('#left_panel2').width();
-
-										camera.aspect = width / height;
-										camera.updateProjectionMatrix();
-
-										renderer.setSize( width, height );
-									}
-
-								</script>
 							</div>
+
 						</div>
-							</div>
-
-							<div class="splitter-horizontal">
-							</div>
-
-							<div id="console-window" class="panel-bottom">
-
-							</div>
 					</div>
+
+					<div class="splitter-horizontal">
+					</div>
+
+					<div id="console-window" class="panel-bottom">
+
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -168,8 +126,22 @@
 
 
 
+
+
+
+
 		<div class="splitter" id="v_splitter1">
 		</div>
+
+
+
+
+
+
+
+
+
+
 
 		<div class="panel-right" id="right_panel1" style="margin: 20px">
 
@@ -187,35 +159,29 @@
 			<table style="width:100%; color:#eee;">
 				<tr>
 					<td></td>
-					<td><button class="my_button"
-								onmousedown="move_Zp()">Z+</button></td>
+					<td><button class="my_button" onmousedown="move_Zp()">Z+</button></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="my_button"
-								onmousedown="move_Zn()">Z-</button></td>
+					<td><button class="my_button" onmousedown="move_Zn()">Z-</button></td>
 					<td></td>
 				</tr>
 				<tr style="height:100px">
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="my_button"
-								onmousedown="move_Yp()">Y+</button></td>
+					<td><button class="my_button" onmousedown="move_Yp()">Y+</button></td>
 					<td></td>
 				</tr>
 				<tr>
-					<td><button class="my_button"
-								onmousedown="move_Xn()">X-</button></td>
+					<td><button class="my_button" onmousedown="move_Xn()">X-</button></td>
 					<td></td>
-					<td><button class="my_button"
-								onmousedown="move_Xp()">X+</button></td>
+					<td><button class="my_button" onmousedown="move_Xp()">X+</button></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="my_button"
-								onmousedown="move_Yn()">Y-</button></td>
+					<td><button class="my_button" onmousedown="move_Yn()">Y-</button></td>
 					<td></td>
 				</tr>
 
@@ -234,26 +200,11 @@
 	</div>
 
 
-	<script src="/js/jquery-resizable.js"></script>
-	<script>
-		$(".panel-top").resizable({
-				handleSelector: ".splitter-horizontal",
-				resizeWidth: false
-		});
-
-		$("#left_panel1").resizable({
-			 handleSelector: "#v_splitter1",
-			 resizeHeight: false
-		 });
-
-		 $("#left_panel2").resizable({
- 			 handleSelector: "#v_splitter2",
- 			 resizeHeight: false
- 		 });
-	</script>
-
+	<script src="js/jquery-resizable.js"></script>
+	<script src="js/index_load.js"></script>
 	<script src="js/draw_svg.js"></script>
 	<script src="js/simple-console.js"></script>
 	<script src="js/console.js"></script>
 
-</body></html>
+</body>
+</html>

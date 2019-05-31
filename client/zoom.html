@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<script src="js/svg-pan-zoom.js"></script>
+</head>
+
+<body>
+	<object id="demo-tiger" type="image/svg+xml" data="resources/test.svg" style="width: 500px; height: 500px; border:1px solid black; ">Your browser does not support SVG</object>
+
+	<script>
+	// Don't use window.onLoad like this in production, because it can only listen to one function.
+	window.onload = function() {
+		svgPanZoom('#demo-tiger', {
+			zoomEnabled: true,
+			controlIconsEnabled: true
+		});
+	};
+	</script>
+
+</body>
+
+</html>

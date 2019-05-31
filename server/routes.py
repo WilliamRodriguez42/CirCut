@@ -1,6 +1,7 @@
 from flask import Flask, Response, request
 from helper_functions import *
 import threading
+from gerber_to_gcode.gtg import GTG
 
 # set the project root directory as the static folder
 app = Flask(__name__)
@@ -14,11 +15,17 @@ def send_whatever(path):
 		ico.close()
 		return Response(content)
 
-	if path[-3:] == 'css':
+	elif path[-3:] == 'css':
 		css = open('../client/' + path, 'r')
 		content = css.read()
 		css.close()
 		return Response(content, mimetype="text/css")
+
+	elif path[-3:] == 'svg':
+		svg = open('../client/' + path, 'r')
+		content = svg.read()
+		svg.close()
+		return Response(content, mimetype="image/svg+xml")
 
 	else:
 		html = open('../client/' + path, 'r')
@@ -34,19 +41,13 @@ def send_home():
 
 	return Response(content)
 
-@app.route('/contours', methods=['POST', 'GET'])
+@app.route('/contours', methods=['GET'])
 def receive_contours():
-	if request.method == 'POST':
-		write_contours()
+	return Response(gf_contours.content)
 
-	return Response(gf_contours.get_content(f))
-
-@app.route('/drills', methods=['POST', 'GET'])
+@app.route('/drills', methods=['GET'])
 def receive_drills():
-	if request.method == 'POST':
-		write_drills()
-
-	return Response(gf_drills.get_content(f))
+	return Response(gf_drills.content)
 
 @app.route('/command', methods=['POST'])
 def receive_command():
@@ -70,5 +71,24 @@ def receive_command():
 	commands.append(text)
 	return Response("Ok")
 
+@app.route('/file-upload', methods=['POST'])
+def file_upload():
+	file = request.files['file']
+	if file.filename[-3:] == 'gbr':
+		file.save('resources/gerber.gbr')
+	elif file.filename[-3:] == 'drl':
+		file.save('resources/excellon.drl')
+	return Response("OK")
+
+@app.route('/convert', methods=['POST'])
+def convert():
+	gtg = GTG()
+	gtg.load_gerber("resources/gerber.gbr", contour_distance=0.099, contour_count=2, contour_step=0.15)
+	gtg.load_excellon("resources/excellon.drl")
+	gtg.update_translation()
+	gtg.write_svg("../client/resources/test.svg")
+	gtg.write_gcode("resources/contours.gcode", "../resources/drills.gcode")
+	return Response("OK")
+	
 commands = []
 terminate = False

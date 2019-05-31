@@ -74,7 +74,7 @@ Licensed under MIT License
             }
 
             $el.data('resizable', opt);
-			
+
             // get the drag handle
 
             $handle = getHandle(opt.handleSelector, $el);
