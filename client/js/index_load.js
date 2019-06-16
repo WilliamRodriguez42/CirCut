@@ -48,7 +48,7 @@ function load_svg() {
 
 			var svg_element = elem.getElementsByTagName('svg')[0]
 			svg_element.id = "svg_element"
-			svg_element.style = "width: 100%; height: 100%"
+			svg_element.style = "width: 100%; height: 100%; will-change: transform;"
 
 			window.svg_controller = svgPanZoom('#svg_element', {
 	          zoomEnabled: true,

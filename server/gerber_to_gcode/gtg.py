@@ -321,13 +321,13 @@ class GTG():
 		self.translated_exc_poly = Polygon()
 		self.translated_gbr_paths = []
 
-	def load_gerber(self, filename, contour_distance=0.2, contour_count=1, contour_step=0.2, buffer_resolution=5):
+	def load_gerber(self, filename, contour_distance=0.2, contour_count=1, contour_step=0.2, buffer_resolution=5, resolution=16):
 		file = open(filename, "r")
 		gbr_data = file.read()
 		file.close()
 
 		# Get polygon from the gerber files
-		self.gbr_poly = gerber_to_poly(gbr_data, 50)
+		self.gbr_poly = gerber_to_poly(gbr_data, resolution=resolution)
 
 		# Translate and modify those polygons before futher interpretation
 		self.gbr_poly = scale(self.gbr_poly, -1, 1, origin = (0, 0))
@@ -339,13 +339,13 @@ class GTG():
 					contour_step=contour_step,
 					buffer_resolution=buffer_resolution)
 
-	def load_excellon(self, filename):
+	def load_excellon(self, filename, resolution=16):
 		file = open(filename, "r")
 		exc_data = file.read()
 		file.close()
 
 		# Get polygon from the excellon files
-		self.exc_poly, self.exc_coords = excellon_to_poly_coords(exc_data)
+		self.exc_poly, self.exc_coords = excellon_to_poly_coords(exc_data, resolution=resolution)
 
 		# Translate and modify those polygons before futher interpretation
 		self.exc_poly = scale(self.exc_poly, -25.4, 25.4, origin = (0, 0))
@@ -393,7 +393,7 @@ class GTG():
 	def gcode(self, rapid_feedrate=500, pass_feedrate=100, plunge_feedrate=20, plunge_depth=-2.5, safe_height=1, contour_spindle_speed=255, drill_spindle_speed=255):
 		return (
 			paths_to_gcode(self.translated_gbr_paths, rapid_feedrate=rapid_feedrate, pass_feedrate=pass_feedrate, safe_height=safe_height, spindle_speed=contour_spindle_speed),
-			drills_to_gcode(self.translated_exc_coords, rapid_feedrate=rapid_feedrate, plunge_feedrate=plunge_feedrate, safe_height=safe_height, spindle_speed=drill_spindle_speed)
+			drills_to_gcode(self.translated_exc_coords, rapid_feedrate=rapid_feedrate, plunge_feedrate=plunge_feedrate, plunge_depth=plunge_depth, safe_height=safe_height, spindle_speed=drill_spindle_speed)
 		)
 
 	def write_svg(self, filename):
@@ -413,7 +413,7 @@ class GTG():
 
 if __name__ == '__main__':
 	gtg = GTG()
-	gtg.load_gerber("../resources/CNC_CALIBRATION_TEST-F.Cu.gbr", contour_distance=0.099, contour_count=2, contour_step=0.15)
+	gtg.load_gerber("../resources/CNC_CALIBRATION_TEST-F.Cu.gbr", contour_distance=0.099, contour_count=2, contour_step=0.15, buffer_resolution=2, resolution=2)
 	gtg.load_excellon("../resources/CNC_CALIBRATION_TEST-PTH.drl")
 	gtg.update_translation()
 	gtg.write_svg("index.html")

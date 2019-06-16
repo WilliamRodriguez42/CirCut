@@ -114,14 +114,21 @@ Dropzone.options.excellonDropzone = {
 function convert() {
 	// Send form to server
 	convert_info = {
-		rapid_feedrate: $('#rapid_feedrate_value').value,
-		pass_feedrate: $('#pass_feedrate_value').value,
-		plunge_feedrate: $('#plunge_feedrate_value').value,
-		plunge_depth: $('#plunge_depth_value').value,
-		safe_height: $('#safe_height_value').value,
-		contour_spindle: $('#contour_spindle_value').value,
-		drill_spindle: $('#drill_spindle_value').value
+		rapid_feedrate: $('#rapid_feedrate_value').val(),
+		pass_feedrate: $('#pass_feedrate_value').val(),
+		plunge_feedrate: $('#plunge_feedrate_value').val(),
+		plunge_depth: $('#plunge_depth_value').val(),
+		safe_height: $('#safe_height_value').val(),
+		contour_spindle: $('#contour_spindle_value').val(),
+		drill_spindle: $('#drill_spindle_value').val(),
+		contour_distance: $('#contour_distance_value').val(),
+		contour_count: $('#contour_count_value').val(),
+		contour_step: $('#contour_step_value').val(),
+		resolution: $("#resolution_value").val(),
+		buffer_resolution: $("#buffer_resolution_value").val()
 	};
+
+	console.log(convert_info);
 
 	var contours = $.ajax({
 		type: "POST",
@@ -154,7 +161,7 @@ function convert() {
 					prev_text = curr_text;
 
 					if (data.load_svg && !svg_loaded) {
-						load_svg();						
+						load_svg();
 						svg_loaded = true;
 					}
 				}

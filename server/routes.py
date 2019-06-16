@@ -91,12 +91,20 @@ def convert():
 	progress_text = "Loading GCode file..."
 	progress_step += 1
 	print(progress_text)
-	gtg.load_gerber("resources/gerber.gbr", contour_distance=0.099, contour_count=2, contour_step=0.15)
+	gtg.load_gerber(
+		"resources/gerber.gbr",
+		contour_distance=float(request.form['contour_distance']),
+		contour_count=int(request.form['contour_count']),
+		contour_step=float(request.form['contour_step']),
+		buffer_resolution=int(request.form['buffer_resolution']),
+		resolution=int(request.form['resolution']))
 
 	progress_text = "Loading Excellon file..."
 	progress_step += 1
 	print(progress_text)
-	gtg.load_excellon("resources/excellon.drl")
+	gtg.load_excellon(
+		"resources/excellon.drl",
+		resolution=int(request.form['resolution']))
 
 	progress_text = "Combining GCode and Excellon files..."
 	progress_step += 1
@@ -113,7 +121,16 @@ def convert():
 	progress_text = "Writing result to GCode format..."
 	progress_step += 1
 	print(progress_text)
-	gtg.write_gcode("resources/contours.gcode", "resources/drills.gcode")
+	gtg.write_gcode(
+		"resources/contours.gcode",
+		"resources/drills.gcode",
+		rapid_feedrate=float(request.form['rapid_feedrate']),
+		pass_feedrate=float(request.form['pass_feedrate']),
+		plunge_feedrate=float(request.form['plunge_feedrate']),
+		plunge_depth=float(request.form['plunge_depth']),
+		safe_height=float(request.form['safe_height']),
+		contour_spindle_speed=int(request.form['contour_spindle']),
+		drill_spindle_speed=int(request.form['drill_spindle']))
 
 	progress_text = "Switching to new GCode files..."
 	progress_step += 1
