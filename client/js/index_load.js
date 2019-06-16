@@ -44,7 +44,7 @@ function load_svg() {
 		url: 'svg',
 		success: function(data) {
 			elem = document.getElementById('svg-viewer');
-			elem.innerHTML = elem.innerHTML + data;
+			elem.innerHTML = data;
 
 			var svg_element = elem.getElementsByTagName('svg')[0]
 			svg_element.id = "svg_element"

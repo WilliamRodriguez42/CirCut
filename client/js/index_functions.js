@@ -154,7 +154,7 @@ function convert() {
 					prev_text = curr_text;
 
 					if (data.load_svg && !svg_loaded) {
-						load_svg();
+						load_svg();						
 						svg_loaded = true;
 					}
 				}
