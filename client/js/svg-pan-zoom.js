@@ -1066,8 +1066,13 @@
     SvgPanZoom.prototype.resize = function() {
         // Get dimensions
         var boundingClientRectNormalized = SvgUtils.getBoundingClientRectNormalized(this.svg)
-        this.width = boundingClientRectNormalized.width
-        this.height = boundingClientRectNormalized.height
+		var pan_x = (boundingClientRectNormalized.width - this.width) / 2
+		var pan_y = (boundingClientRectNormalized.height - this.height) / 2
+		this.width = boundingClientRectNormalized.width
+		this.height = boundingClientRectNormalized.height
+
+		// Pan the image by half of the resize amount
+		this.panBy({x: pan_x, y: pan_y})
 
         // Recalculate original state
         var viewport = this.viewport

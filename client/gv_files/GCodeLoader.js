@@ -170,7 +170,7 @@ THREE.GCodeLoader.prototype.parse = function ( data ) {
 
 		} else {
 
-			console.warn( 'THREE.GCodeLoader: Command not supported:' + cmd );
+			//console.warn( 'THREE.GCodeLoader: Command not supported:' + cmd );
 
 		}
 

@@ -169,3 +169,18 @@ function convert() {
 		})
 	}
 }
+
+function svg_viewer_control_tab_resize() {
+	var parent = $("#svg-viewer");
+	var tab = $("#svg_viewer_control_tab");
+	var x_pos = (parent.width() - tab.width()) / 2;
+
+	tab = document.getElementById("svg_viewer_control_tab");
+	tab.style.left = x_pos + "px";
+	tab.style.visibility = "visible";
+}
+
+function custom_resize() {
+	svg_controller.resize();
+	svg_viewer_control_tab_resize();
+}

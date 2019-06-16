@@ -29,8 +29,9 @@ table {
 }
 
 ::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
+    width: 0px;
+	height: 0px;
+    background: transparent;
 }
 
 #main {
@@ -100,7 +101,7 @@ select {
 	font-family: roboto
 }
 .my_button, #nextPageButton, #prevPageButton {
-	background-color: #ccc; /* Green */
+	background-color: #ccc;
 	border: none;
 	padding: 15px 32px;
 	text-align: center;
@@ -138,4 +139,16 @@ button:focus {outline:0;}
 	margin: 10px;
 	display: table-cell;
 	vertical-align: middle;
+}
+
+.bottom_tab {
+	background-color: #222;
+	height: 40px;
+	width: calc(100% - 250px);
+	max-width: 200px;
+	border-radius: 20px 20px 0px 0px;
+	position: absolute;
+	bottom: 0px;
+	margin: 0 auto;
+	z-index: 1;
 }

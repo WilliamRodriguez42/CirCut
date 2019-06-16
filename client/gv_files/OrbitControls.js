@@ -26,8 +26,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.target = new THREE.Vector3();
 
 	// How far you can dolly in and out ( PerspectiveCamera only )
-	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	this.minDistance = 1;
+	this.maxDistance = 1000;
 
 	// How far you can zoom in and out ( OrthographicCamera only )
 	this.minZoom = 0;
@@ -51,7 +51,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
 	// Set to false to disable zooming
 	this.enableZoom = true;
-	this.zoomSpeed = 3.0;
+	this.zoomSpeed = 1.0;
 
 	// Set to false to disable rotating
 	this.enableRotate = true;
@@ -675,7 +675,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseDown( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		// Prevent the browser from scrolling.
 
@@ -745,7 +748,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseMove( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		event.preventDefault();
 
@@ -781,7 +787,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseUp( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		handleMouseUp( event );
 
@@ -796,8 +805,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseWheel( event ) {
 
-		if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) return;
-
+		if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) {
+			state = STATE.NONE;
+			return;
+		}
+		
 		event.preventDefault();
 		event.stopPropagation();
 
@@ -811,7 +823,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onKeyDown( event ) {
 
-		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
+		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		handleKeyDown( event );
 
@@ -819,7 +834,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onTouchStart( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		event.preventDefault();
 
@@ -861,7 +879,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onTouchMove( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -896,7 +917,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onTouchEnd( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		handleTouchEnd( event );
 
@@ -908,7 +932,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onContextMenu( event ) {
 
-		if ( scope.enabled === false ) return;
+		if ( scope.enabled === false ) {
+			state = STATE.NONE;
+			return;
+		}
 
 		event.preventDefault();
 

@@ -146,6 +146,7 @@ Licensed under MIT License
                 }
 
 				resize();
+				custom_resize();
             }
 
             function stopDragging(e) {

@@ -24,7 +24,7 @@
 						<div class="panel-container" style="height:100%;">
 							<div class="panel-left" style="width:70%;" id="left_panel2">
 								<div id="main" style="position: relative;">
-									<div id="side-panel" style="background:#222; width: 250px; height:100%; float:right; overflow:scroll">
+									<div id="side-panel" style="background:#222; width: 250px; height: 100%; float:right; overflow:scroll">
 										<table style="margin:10px; width:240px; color:#eee">
 											<tr>
 												<td>Gerber File:</td>
@@ -93,10 +93,24 @@
 										</div>
 
 									</div>
-									<div id="svg-viewer" style="width: calc(100% - 250px); height: 100%;">
-										Your browser does not support SVG
-									</div>
 
+									<div id="svg_viewer_control_tab" class="bottom_tab" style="visibility: hidden; overflow: scroll">
+										<table style="margin: 5px;">
+											<tr>
+												<td>
+													<button class="my_button" style="padding: 5px 15px; width: 92.5px" onclick="svg_controller.center()">
+														Center
+													</button>
+												</td>
+												<td>
+													<button class="my_button" style="padding: 5px 15px; width: 92.5px" onclick="svg_controller.center().fit()">
+														Fit
+													</button>
+												</td>
+											</tr>
+										</table>
+									</div>
+									<div id="svg-viewer" style="width: calc(100% - 250px); height: 100%;"></div>
 								</div>
 							</div>
 
