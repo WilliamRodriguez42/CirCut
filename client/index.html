@@ -7,8 +7,8 @@
 	<title>AutoLevel</title>
 	<link rel="stylesheet" type="text/css" href="style/split.css">
 	<link rel="stylesheet" type="text/css" href="style/simple-console.css">
-	<link rel="stylesheet" type="text/css" href="style/app.css">
 	<link rel="stylesheet" type="text/css" href="style/dropzone.css">
+	<link rel="stylesheet" type="text/css" href="style/app.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="js/svg-pan-zoom.js"></script>
 	<script src="js/dropzone.js"></script>
@@ -39,7 +39,7 @@
 										</table>
 										<form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
 
-										<form action="/convert" method="POST" target='dummyframe'>
+										<div id="convert_info">
 											<table style="margin:10px; width:240px; color:#eee">
 												<tr>
 													<td>Rapid Feedrate:</td>
@@ -78,12 +78,24 @@
 
 											</table>
 
-											<button class="my_button" type="submit">Convert</button>
+											<button class="my_button" onclick="convert()" style="border-radius: 5px">Convert</button>
 
-										</form>
-										<iframe width="0" height="0" border="0" name='dummyframe' id='dummyframe'></iframe>
+										</div>
+
+										<table style="margin:10px; width:240px; color:#eee">
+											<tr>
+												<td id="convert_progress_text">Progress:</td>
+											</tr>
+										</table>
+										<div id="convert_progress">
+											<div id="convert_progress_bar">
+											</div>
+										</div>
+
 									</div>
-									<object id="svg-viewer" type="image/svg+xml" data="resources/test.svg" style="width: calc(100% - 250px); height: 100%; ">Your browser does not support SVG</object>
+									<div id="svg-viewer" style="width: calc(100% - 250px); height: 100%;">
+										Your browser does not support SVG
+									</div>
 
 								</div>
 							</div>
@@ -202,7 +214,6 @@
 
 	<script src="js/jquery-resizable.js"></script>
 	<script src="js/index_load.js"></script>
-	<script src="js/draw_svg.js"></script>
 	<script src="js/simple-console.js"></script>
 	<script src="js/console.js"></script>
 

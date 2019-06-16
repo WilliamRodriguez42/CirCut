@@ -134,21 +134,27 @@ def up_arg_error():
 def down_arg_error():
 	print("There is one optional argument for the DOWN / D command: \n\t-Y offest increment in mm")
 
+def load_gcodes():
+	global gf_contours, gf_drills
+
+	temp_file = open('resources/contours.gcode', 'r')
+	gf_contours.load(temp_file.read(), f)
+	temp_file.close()
+	#gf_contours.bisect_codes()
+
+	temp_file = open('resources/drills.gcode', 'r')
+	gf_drills.load(temp_file.read(), f)
+	temp_file.close()
+	#gf_drills.bisect_codes()
+
+	gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
+
+gf_contours = GCodeFile()
+gf_drills = GCodeFile()
+
 y_points = np.loadtxt('level/y_points')
 x_points = np.loadtxt('level/x_points')
 z_points = np.loadtxt('level/z_points')
 f = interp2d(x_points, y_points, z_points)
 
-gf_contours = GCodeFile()
-temp_file = open('../resources/contours.gcode', 'r')
-gf_contours.load(temp_file.read(), f)
-temp_file.close()
-#gf_contours.bisect_codes()
-
-gf_drills = GCodeFile()
-temp_file = open('../resources/drills.gcode', 'r')
-gf_drills.load(temp_file.read(), f)
-temp_file.close()
-#gf_drills.bisect_codes()
-
-gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
+load_gcodes()

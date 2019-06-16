@@ -9,7 +9,7 @@ def make_word(name, value):
 	return Word(name+str(value))
 
 class GCodeFile:
-	def __init__(self):
+	def load(self, content, f):
 		self.minx = 10000000
 		self.maxx = -1
 		self.miny = 10000000
@@ -20,10 +20,6 @@ class GCodeFile:
 		self.all_gcodes = None
 		self.z_offset = 0.1
 		self.y_offset = 0
-		self.loaded = False
-
-	def load(self, content, f):
-		self.loaded = True
 
 		lines = content.split('\n')
 
@@ -77,7 +73,7 @@ class GCodeFile:
 		for gcode in self.all_gcodes:
 			gcode = copy.copy(gcode)
 			gcode.params = copy.copy(gcode.params)
-			
+
 			if type(gcode) in supported_moves:
 				x = gcode.params['X'].value
 				y = gcode.params['Y'].value + self.y_offset

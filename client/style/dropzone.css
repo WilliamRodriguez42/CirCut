@@ -175,7 +175,7 @@
 
 .dropzone {
   min-height: 150px;
-  border: 2px solid rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
   background: white;
   padding: 20px 20px; }
   .dropzone.dz-clickable {
@@ -197,7 +197,6 @@
     position: relative;
     display: inline-block;
     vertical-align: top;
-    margin: 16px;
     min-height: 100px; }
     .dropzone .dz-preview:hover {
       z-index: 1000; }
@@ -268,7 +267,7 @@
     .dropzone .dz-preview .dz-image {
       border-radius: 20px;
       overflow: hidden;
-      width: 120px;
+      width: 208px;
       height: 120px;
       position: relative;
       display: block;

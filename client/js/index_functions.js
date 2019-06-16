@@ -6,7 +6,6 @@ function load_contour(gcode) {
 	scene.remove(g_object);
 	g_object = loader.parse(gcode);
 	scene.add(g_object);
-
 	animate();
 }
 
@@ -14,7 +13,6 @@ function load_drill(gcode) {
 	scene.remove(d_object);
 	d_object = loader.parse(gcode);
 	scene.add(d_object);
-
 	animate();
 }
 
@@ -25,11 +23,21 @@ function animate() {
 }
 
 function load_gcodes() {
-	var contours = $.ajax({type: "GET", url: "contours", async: false});
-	load_contour(contours.responseText);
+	var contours = $.ajax({
+		type: "GET",
+		url: "contours",
+		success: function() {
+			load_contour(contours.responseText);
+		}
+	});
 
-	var drills = $.ajax({type: "GET", url: "drills", async: false});
-	load_drill(drills.responseText);
+	var drills = $.ajax({
+		type: "GET",
+		url: "drills",
+		success: function() {
+			load_drill(drills.responseText);
+		}
+	});
 }
 
 function init() {
@@ -100,5 +108,64 @@ Dropzone.options.excellonDropzone = {
 			this.removeFile(this.files[0])
 		}
 		done();
+	}
+}
+
+function convert() {
+	// Send form to server
+	convert_info = {
+		rapid_feedrate: $('#rapid_feedrate_value').value,
+		pass_feedrate: $('#pass_feedrate_value').value,
+		plunge_feedrate: $('#plunge_feedrate_value').value,
+		plunge_depth: $('#plunge_depth_value').value,
+		safe_height: $('#safe_height_value').value,
+		contour_spindle: $('#contour_spindle_value').value,
+		drill_spindle: $('#drill_spindle_value').value
+	};
+
+	var contours = $.ajax({
+		type: "POST",
+		url: "convert",
+		data: convert_info,
+		complete: function(res) {
+			if (res.status == 200) {
+				load_gcodes();
+			}
+		}
+	});
+
+	var id = setInterval(frame, 500);
+	var prev = 0;
+	var curr = 0;
+	var prev_text = ""
+	var curr_text = ""
+	var svg_loaded = false
+	function frame() {
+		$.ajax({
+			type: "GET",
+			url: "convert_progress",
+			success: function(data) {
+				curr_text = data.text;
+				if (prev_text != curr_text) {
+					curr = 100 / data.of * data.step;
+					move(prev, curr, curr_text);
+					prev = curr;
+
+					prev_text = curr_text;
+
+					if (data.load_svg && !svg_loaded) {
+						load_svg();
+						svg_loaded = true;
+					}
+				}
+
+				if (curr >= 100) {
+					clearInterval(id);
+				}
+			},
+			error: function() {
+				clearInterval(id);
+			}
+		})
 	}
 }

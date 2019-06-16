@@ -54,12 +54,6 @@ table {
 }
 .unit {
 }
-.dropZone {
-	min-height: 30px;
-	border: 5px dotted #b0b0b0;
-	margin: 5px 0;
-	padding: 5px;
-}
 .outputFiles {
 	border: 1px solid #d0d0d0;
 	margin: 5px 0;
@@ -125,4 +119,23 @@ button:focus {outline:0;}
 
 #signalUploadFile, #drillUploadFile {
 	display: none;
+}
+
+#convert_progress {
+	background-color: grey;
+	border-radius: 5px;
+}
+
+#convert_progress_bar {
+	width: 0%;
+	height: 30px;
+	background-color: #3EAEDF;
+	border-radius: 5px;
+}
+
+#convert_progress_bar_text {
+	height: 30px;
+	margin: 10px;
+	display: table-cell;
+	vertical-align: middle;
 }
