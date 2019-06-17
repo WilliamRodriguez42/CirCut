@@ -7,13 +7,13 @@ $(".panel-top").resizable({
 	resizeWidth: false
 });
 
-$("#left_panel1").resizable({
-	handleSelector: "#v_splitter1",
+$("#main_panel").resizable({
+	handleSelector: "#main_vertical_splitter",
 	resizeHeight: false
 });
 
-$("#left_panel2").resizable({
-	handleSelector: "#v_splitter2",
+$("#svg_viewer_panel").resizable({
+	handleSelector: "#view_panels_splitter",
 	resizeHeight: false
 });
 
@@ -43,7 +43,7 @@ function load_svg() {
 		type: 'GET',
 		url: 'svg',
 		success: function(data) {
-			elem = document.getElementById('svg-viewer');
+			elem = document.getElementById('svg_viewer_div');
 			elem.innerHTML = data;
 
 			var svg_element = elem.getElementsByTagName('svg')[0]

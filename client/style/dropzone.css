@@ -205,7 +205,7 @@
     .dropzone .dz-preview.dz-file-preview .dz-image {
       border-radius: 20px;
       background: #999;
-      background: linear-gradient(to bottom, #eee, #ddd); }
+      background: linear-gradient(to bottom, var(--swatch-d), #ddd); }
     .dropzone .dz-preview.dz-file-preview .dz-details {
       opacity: 1; }
     .dropzone .dz-preview.dz-image-preview {

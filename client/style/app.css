@@ -1,3 +1,12 @@
+:root {
+    --swatch-a: #ccc;
+	--swatch-b: #888;
+	--swatch-c: #333;
+	--swatch-d: #eee;
+
+	--upload-settings-width: 250px;
+}
+
 html, body {
 	width: 100%;
 	height: 100%;
@@ -7,27 +16,6 @@ html, body {
 	font-size: 10pt;
 	overflow: hidden;
 }
-h3 {
-	margin-bottom: 2px;
-}
-h4 {
-	margin-bottom: 5px;
-	margin-top: 20px;
-}
-h5 {
-	margin-top: 0;
-	margin-bottom: 40px;
-	font-size: 10pt;
-}
-input {
-	margin: 0;
-	padding: 0;
-}
-table {
-	border-spacing: 0;
-	border-collapse: collapse;
-}
-
 ::-webkit-scrollbar {
     width: 0px;
 	height: 0px;
@@ -40,68 +28,21 @@ table {
 	padding: 0;
 	border: 0;
 	overflow: hidden;
-	background-color: #EEE;
+	background-color: var(--swatch-d);
 }
 #canvas {
 	border: 0;
 	cursor: pointer;
 }
-.icon {
-	float: left;
-	border: 0;
-}
-.page {
-	display: none;
-}
-.unit {
-}
-.outputFiles {
-	border: 1px solid #d0d0d0;
-	margin: 5px 0;
-	padding: 5px;
-	background-color: White;
-	min-height: 20px;
-}
-.outputFile {
-	display: none;
-	height: 35px;
-}
-.outputFile span {
-	margin: 10px;
-	padding: 10px;
-	display: block;
-}
-.sizeInput {
+.size-input {
 	width: 50px;
-	background-color: #ccc;
+	background-color: var(--swatch-a);
 	border: 0px;
 	border-radius: 5px;
 	text-align: center;
 }
-a {
-	color: #888;
-	text-decoration: underline;
-}
-a:active {
-	text-decoration: none;
-}
-
-a:hover {
-	text-decoration: underline;
-}
-select {
-	background-color: #ccc;
-	border-radius: 5px;
-}
-.branding{
-	position: fixed;
-	right: 20px;
-	bottom: 10px;
-	font-size: 20px;
-	font-family: roboto
-}
-.my_button, #nextPageButton, #prevPageButton {
-	background-color: #ccc;
+.button-base, #nextPageButton, #prevPageButton {
+	background-color: var(--swatch-a);
 	border: none;
 	padding: 15px 32px;
 	text-align: center;
@@ -110,20 +51,18 @@ select {
 	font-size: 16px;
 	border-radius: 50px;
 }
-.my_button {
+.button-base {
 	width: 100%;
 }
-.my_button:active, #nextPageButton:active, #prevPageButton:active {
-	background-color: #888;
+.button-base:active, #nextPageButton:active, #prevPageButton:active {
+	background-color: var(--swatch-b);
 }
-button:focus {outline:0;}
-
-#signalUploadFile, #drillUploadFile {
-	display: none;
+.button-base:focus {
+	outline:0;
 }
 
 #convert_progress {
-	background-color: grey;
+	background-color: var(--swatch-b);
 	border-radius: 5px;
 }
 
@@ -141,13 +80,24 @@ button:focus {outline:0;}
 	vertical-align: middle;
 }
 
-.bottom_tab {
-	background-color: #222;
+.bottom-tab {
+	background-color: var(--swatch-c);
 	height: 40px;
-	width: calc(100% - 250px);
+	width: calc(100% - var(--upload-settings-width));
 	max-width: 200px;
 	border-radius: 20px 20px 0px 0px;
 	position: absolute;
 	bottom: 0px;
 	z-index: 1;
+}
+
+.button-bottom-tab {
+	padding: 5px 15px;
+	width: 90px;
+}
+
+.upload-settings-table {
+	margin: 10px;
+	width: var(--upload-settings-width) - 10px;
+	color: var(--swatch-d);
 }

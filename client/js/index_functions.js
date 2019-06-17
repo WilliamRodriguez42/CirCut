@@ -43,7 +43,7 @@ function load_gcodes() {
 function init() {
 
 	container = document.createElement( 'div' );
-	document.getElementById("viewer-div").appendChild( container );
+	document.getElementById("threejs_viewer_panel").appendChild( container );
 
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 10000 );
 	camera.position.set( 0, 100, 0 );
@@ -67,8 +67,8 @@ function init() {
 }
 
 function resize(width, height) {
-	var height = $('#top_panel').height();
-	var width = $("#left_panel1").width() - $('#left_panel2').width();
+	var height = $('#viewers_panel').height();
+	var width = $("#main_panel").width() - $('#svg_viewer_panel').width();
 
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
@@ -178,7 +178,7 @@ function convert() {
 }
 
 function svg_viewer_control_tab_resize() {
-	var parent = $("#svg-viewer");
+	var parent = $("#svg_viewer_div");
 	var tab = $("#svg_viewer_control_tab");
 	var x_pos = (parent.width() - tab.width()) / 2;
 
