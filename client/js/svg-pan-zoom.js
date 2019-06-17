@@ -988,10 +988,13 @@
     * Does not center image
     */
     SvgPanZoom.prototype.fit = function() {
+        var bottom_tab_height = $("#svg_viewer_control_tab").height();
+
         var viewBox = this.viewport.getViewBox()
-        , newScale = Math.min(this.width/viewBox.width, this.height/viewBox.height)
+        , newScale = Math.min(this.width/viewBox.width, (this.height - bottom_tab_height)/viewBox.height)
 
         this.zoom(newScale, true)
+        this.panBy({x: 0, y: -bottom_tab_height/2})
     }
 
     /**
@@ -1066,13 +1069,13 @@
     SvgPanZoom.prototype.resize = function() {
         // Get dimensions
         var boundingClientRectNormalized = SvgUtils.getBoundingClientRectNormalized(this.svg)
-		var pan_x = (boundingClientRectNormalized.width - this.width) / 2
-		var pan_y = (boundingClientRectNormalized.height - this.height) / 2
-		this.width = boundingClientRectNormalized.width
-		this.height = boundingClientRectNormalized.height
+    var pan_x = (boundingClientRectNormalized.width - this.width) / 2
+    var pan_y = (boundingClientRectNormalized.height - this.height) / 2
+    this.width = boundingClientRectNormalized.width
+    this.height = boundingClientRectNormalized.height
 
-		// Pan the image by half of the resize amount
-		this.panBy({x: pan_x, y: pan_y})
+    // Pan the image by half of the resize amount
+    this.panBy({x: pan_x, y: pan_y})
 
         // Recalculate original state
         var viewport = this.viewport
