@@ -55,6 +55,7 @@ function load_svg() {
 			  panEnabled: true,
 			  controlIconsEnabled: false,
       });
+			window.svg_controller.center();
 			window.svg_controller.fit();
 
 			custom_resize();
