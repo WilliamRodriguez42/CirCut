@@ -74,7 +74,7 @@ Licensed under MIT License
             }
 
             $el.data('resizable', opt);
-			
+
             // get the drag handle
 
             $handle = getHandle(opt.handleSelector, $el);
@@ -146,6 +146,7 @@ Licensed under MIT License
                 }
 
 				resize();
+				custom_resize();
             }
 
             function stopDragging(e) {
