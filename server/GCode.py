@@ -9,7 +9,7 @@ def make_word(name, value):
 	return Word(name+str(value))
 
 class GCodeFile:
-	def __init__(self):
+	def load(self, content, f):
 		self.minx = 10000000
 		self.maxx = -1
 		self.miny = 10000000
@@ -18,13 +18,8 @@ class GCodeFile:
 		self.rangey = 0
 
 		self.all_gcodes = None
-		self.out_gcodes = None
 		self.z_offset = 0.1
 		self.y_offset = 0
-		self.loaded = False
-
-	def load(self, content):
-		self.loaded = True
 
 		lines = content.split('\n')
 
@@ -65,20 +60,20 @@ class GCodeFile:
 		self.rangex = maxx - minx
 		self.rangey = maxy - miny
 
-		self.all_gcodes = all_gcodes
-		self.out_gcodes = copy.copy(all_gcodes)
+		self.all_gcodes = all_gcodes # Should never write to all_gcodes
+		self.content = ''
+		self.update_content(f)
 
-	def get_content(self, f):
-		content = ''
+	def update_content(self, f):
+		self.content = ''
 		for gcode in self.enumerate_gcodes(f):
-			content += gcode + '\n'
-
-		return content
+			self.content += gcode + '\n'
 
 	def enumerate_gcodes(self, f):
-		self.out_gcodes = copy.copy(self.all_gcodes)
+		for gcode in self.all_gcodes:
+			gcode = copy.copy(gcode)
+			gcode.params = copy.copy(gcode.params)
 
-		for gcode in self.out_gcodes:
 			if type(gcode) in supported_moves:
 				x = gcode.params['X'].value
 				y = gcode.params['Y'].value + self.y_offset
@@ -135,4 +130,6 @@ class GCodeFile:
 				all_gcodes.append(gcode)
 
 		self.all_gcodes = all_gcodes
+
+
 		print("Bisected GCode file")
