@@ -1,6 +1,7 @@
 init();
 animate();
 load_svg();
+check_for_conversion_on_start();
 
 $(".panel-top").resizable({
 	handleSelector: ".splitter-horizontal",
@@ -60,4 +61,13 @@ function load_svg() {
 			custom_resize();
 		}
 	});
+}
+
+function check_for_conversion_on_start() {
+	convert_prev_state = 0;
+	convert_curr_state = 0;
+	convert_prev_state_text = ""
+	convert_curr_state_text = ""
+	svg_loaded = false
+	convert_progress_id = setInterval(get_convert_progress_frame, 500);
 }

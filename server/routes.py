@@ -141,7 +141,7 @@ def convert():
 	print(progress_text)
 	load_gcodes()
 
-	progress_text = "Complete"
+	progress_text = "Ready to convert"
 	progress_step += 1
 	print(progress_text)
 
@@ -167,7 +167,8 @@ def get_svg():
 commands = []
 terminate = False
 
-progress_text = ""
-progress_step = 0
+# Start in the ready state
 progress_total_steps = 7
+progress_step = progress_total_steps
+progress_text = "Ready to convert"
 progress_load_svg = False
