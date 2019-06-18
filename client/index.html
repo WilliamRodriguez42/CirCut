@@ -27,17 +27,23 @@
 									<div id="upload_settings_panel" style="background:var(--swatch-c); width: var(--upload-settings-width); height: 100%; float:right; overflow:scroll">
 										<table class="upload-settings-table">
 											<tr>
-												<td>Gerber File:</td>
+												<td><h3>Gerber File:<h3></td>
 											</tr>
 										</table>
 										<form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
 
 										<table class="upload-settings-table">
 											<tr>
-												<td>Excellon File:</td>
+												<td><h3>Excellon File:<h3></td>
 											</tr>
 										</table>
 										<form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
+
+										<table class="upload-settings-table">
+											<tr>
+												<td><h3>Upload Settings:</h3></td>
+											</tr>
+										</table>
 
 										<div id="convert_info">
 											<table class="upload-settings-table">
@@ -109,7 +115,10 @@
 
 										<table class="upload-settings-table">
 											<tr>
-												<td id="convert_progress_text">Progress:</td>
+												<td><h3>Progress:</h3></td>
+											</tr>
+											<tr>
+												<td id="convert_progress_text" style="font-size: 9pt; vertical-align: bottom;"><td>
 											</tr>
 										</table>
 										<div id="convert_progress">

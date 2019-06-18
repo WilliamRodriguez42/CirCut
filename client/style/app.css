@@ -9,6 +9,10 @@
 	--font-size: 11pt;
 }
 
+h3 {
+	margin: 0px;
+}
+
 html, body {
 	width: 100%;
 	height: 100%;
@@ -73,8 +77,9 @@ html, body {
 #convert_progress_bar {
 	width: 0%;
 	height: 30px;
-	background-color: #3EAEDF;
+	background-image: linear-gradient(to bottom, #45BEF2, #46A6C8);
 	border-radius: 5px;
+	margin: 10px 0px;
 }
 
 #convert_progress_bar_text {
@@ -82,6 +87,7 @@ html, body {
 	margin: 10px;
 	display: table-cell;
 	vertical-align: middle;
+	margin: 10px 0px;
 }
 
 .bottom-tab {
@@ -102,6 +108,7 @@ html, body {
 
 .upload-settings-table {
 	margin: 10px;
-	width: var(--upload-settings-width) - 10px;
+	width: calc(var(--upload-settings-width) - 20px);
 	color: var(--swatch-d);
+	border-spacing: 0px 7px;
 }

@@ -29,12 +29,11 @@ function move(start, stop, status) {
 	function frame() {
 		if (width >= stop) {
 			clearInterval(id);
-			text_elem.innerHTML = "Progress: " + status
 		} else {
 			width += (width - start) * (stop - width) / Math.pow((stop - start) / 2, 2) * 2 + 0.1;
 			elem.style.width = width + '%';
-			text_elem.innerHTML = "Progress: " + status
 		}
+		text_elem.innerHTML = status
 	}
 }
 
