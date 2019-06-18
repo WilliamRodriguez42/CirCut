@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, abort
 from helper_functions import *
 import threading
 from gerber_to_gcode.gtg import GTG
@@ -83,6 +83,10 @@ def file_upload():
 @app.route('/convert', methods=['POST'])
 def convert():
 	global progress_text, progress_step, progress_load_svg
+
+	if progress_step != 0 and progress_step != progress_total_steps:
+		abort(409); # Conflict
+		return;
 
 	gtg = GTG()
 	progress_step = 0

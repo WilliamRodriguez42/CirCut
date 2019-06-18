@@ -35,7 +35,7 @@
   flex: 1 1 auto;
   /* resizable */
   width: 100%;
-  background: #222;
+  background: var(--swatch-c);
 }
 
 
@@ -53,7 +53,7 @@
   /* only manually resize */
   width: 100%;
   max-height: calc(100% - 20px);
-  background: #222;
+  background: var(--swatch-c);
 }
 
 .splitter-horizontal {
@@ -66,6 +66,6 @@
 .panel-bottom {
   flex: 1 1 auto;
   /* resizable */
-  background: #222;
+  background: var(--swatch-c);
   overflow: auto;
 }

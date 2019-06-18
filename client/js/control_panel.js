@@ -1,5 +1,5 @@
 function distance_pre_check() {
-	var amount = parseFloat($('#distance_value').val());
+	var amount = parseFloat($('#move_distance').val());
 	if (isNaN(amount) || amount <= 0) {
 		con.error("Distance not valid");
 		scroll_to_bottom();

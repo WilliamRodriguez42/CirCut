@@ -5,7 +5,7 @@ var con = new SimpleConsole({
 	storageID: "simple-console gcode"
 });
 
-document.getElementById("console-window").appendChild(con.element);
+document.getElementById("console_window_panel").appendChild(con.element);
 
 con.logHTML(
 	"<h1>AutoLevel</h1>" +
@@ -13,9 +13,11 @@ con.logHTML(
 );
 
 function scroll_to_bottom() {
-	setTimeout(function() {
-		document.getElementById("console-window").scrollTop = document.getElementById("console-window").scrollHeight;
-	},100);
+	setTimeout(
+		function() {
+			document.getElementById("console_window_panel").scrollTop = document.getElementById("console_window_panel").scrollHeight;
+		},
+		100);
 }
 
 function error_message() {
@@ -23,19 +25,25 @@ function error_message() {
 }
 
 function handle_command(command){
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
+	$.ajax({
+		type: "POST",
+		url:"/command",
+		data: {
+			command: command
+		},
+		success: function() {
+				con.log(res.responseText);
 
-			if (command.startsWith('level')) {
-				load_gcodes();
-			}
+				if (command.startsWith('level')) {
+					load_gcodes();
+				}
 
-			scroll_to_bottom();
-		} else {
+				scroll_to_bottom();
+		},
+		error: function() {
 			error_message();
 		}
-	}});
+	});
 
 	scroll_to_bottom();
 };
