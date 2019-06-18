@@ -267,13 +267,13 @@
     .dropzone .dz-preview .dz-image {
       border-radius: 20px;
       overflow: hidden;
-      width: 208px;
+			width: calc(var(--upload-settings-width) - 40px);
       height: 120px;
       position: relative;
       display: block;
       z-index: 10; }
-      .dropzone .dz-preview .dz-image img {
-        display: block; }
+    .dropzone .dz-preview .dz-image img {
+      display: block; }
     .dropzone .dz-preview.dz-success .dz-success-mark {
       -webkit-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
       -moz-animation: passing-through 3s cubic-bezier(0.77, 0, 0.175, 1);
