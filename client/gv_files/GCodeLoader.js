@@ -182,14 +182,28 @@ THREE.GCodeLoader.prototype.parse = function ( data ) {
 		geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertex, 3 ) );
 
 		var colors = new Uint8Array(vertex.length);
+		var bounding_box = { min_x: Infinity, min_y: Infinity, min_z: Infinity, max_x: -Infinity, max_y: -Infinity, max_z: -Infinity };
 
-		for (var i = 0; i < vertex.length - 2; i ++) {
+		for (var i = 0; i < vertex.length; i ++) {
 			if (i % 3 == 0) {
 				var new_color = (vertex[i+2]) * 1000 + 127;
 				if (new_color > 255) new_color = 255;
 				if (new_color < 0) new_color = 0;
 
 				colors[i] = new_color;
+
+				if (vertex[i + 0] < bounding_box.min_x) {
+					bounding_box.min_x = vertex[i + 0];
+				}
+				if (vertex[i + 0] > bounding_box.max_x) {
+					bounding_box.max_x = vertex[i + 0];
+				}
+				if (-vertex[i + 1] < bounding_box.min_z) {
+					bounding_box.min_z = -vertex[i + 1];
+				}
+				if (-vertex[i + 1] > bounding_box.max_z) {
+					bounding_box.max_z = -vertex[i + 1];
+				}
 			} else {
 				colors[i] = 127;
 			}
@@ -201,7 +215,30 @@ THREE.GCodeLoader.prototype.parse = function ( data ) {
 		var segments = new THREE.LineSegments( geometry, material );
 		segments.name = 'layer' + i;
 		object.add( segments );
+		object.bounding_box = bounding_box;
 
+		var center = new THREE.Vector3();
+		center.x = (bounding_box.min_x + bounding_box.max_x) / 2,
+		center.z = (bounding_box.min_z + bounding_box.max_z) / 2;
+		center.y = 0;
+
+		var range_x = bounding_box.max_x - bounding_box.min_x;
+		var range_z = bounding_box.max_z - bounding_box.min_z;
+
+		var scaling_factor = 1;
+
+		if (range_x > range_z) {
+			scaling_factor = 1 / range_x;
+		} else {
+			scaling_factor = 1 / range_z;
+		}
+		scaling_factor = scaling_factor * 50;
+		center.x = center.x * scaling_factor;
+		center.y = center.y * scaling_factor;
+		center.z = center.z * scaling_factor;
+
+		object.scaling_factor = scaling_factor;
+		object.center = center;
 	}
 
 	var object = new THREE.Group();
@@ -213,7 +250,7 @@ THREE.GCodeLoader.prototype.parse = function ( data ) {
 
 			var layer = layers[ i ];
 			addObject( layer.vertex, true );
-			addObject( layer.pathVertex, false );
+			//addObject( layer.pathVertex, false );
 
 		}
 
@@ -231,7 +268,7 @@ THREE.GCodeLoader.prototype.parse = function ( data ) {
 		}
 
 		addObject( vertex, true );
-		addObject( pathVertex, false );
+		//addObject( pathVertex, false );
 
 	}
 

@@ -129,7 +129,7 @@
 
 									</div>
 
-									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; overflow: scroll">
+									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; overflow: scroll; width: calc(100% - var(--upload-settings-width))">
 										<table style="margin: 5px;">
 											<tr>
 												<td>
@@ -145,7 +145,7 @@
 											</tr>
 										</table>
 									</div>
-									<div id="svg_viewer_div" style="width: calc(100% - var(--upload-settings-width)); height: 100%;"></div>
+									<div id="svg_viewer_div" style="width: calc(100% - var(--upload-settings-width)); height: 100%; min-width: 10px"></div>
 								</div>
 							</div>
 
@@ -160,11 +160,28 @@
 
 
 
-							<div id="threejs_viewer_panel" class="panel-right" onmouseover = "enable_controls();" onmouseleave = "disable_controls();">
+							<div id="threejs_viewer_panel" class="panel-right" style="position: relative">
 
 								<script src="gv_files/three.js"></script>
-								<script src="gv_files/OrbitControls.js"></script>
 								<script src="gv_files/GCodeLoader.js"></script>
+								<script src="gv_files/OrbitControls.js"></script>
+
+								<div id="threejs_viewer_control_tab" class="bottom-tab" style="visibility: hidden; overflow: scroll;">
+									<table style="margin: 5px;">
+										<tr>
+											<td>
+												<button class="button-base button-bottom-tab" onclick="controls.recenter()">
+													Focus
+												</button>
+											</td>
+											<td>
+												<button class="button-base button-bottom-tab" onclick="controls.reset()">
+													Reset
+												</button>
+											</td>
+										</tr>
+									</table>
+								</div>
 
 							</div>
 

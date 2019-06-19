@@ -5,6 +5,15 @@ var convert_prev_state_text = "";
 var convert_curr_state_text = "";
 var svg_loaded = false;
 
+function check_for_conversion_on_start() {
+	convert_prev_state = 0;
+	convert_curr_state = 0;
+	convert_prev_state_text = ""
+	convert_curr_state_text = ""
+	svg_loaded = false
+	convert_progress_id = setInterval(get_convert_progress_frame, 500);
+}
+
 function get_convert_progress_frame() {
 	$.ajax({
 		type: "GET",
@@ -32,6 +41,14 @@ function get_convert_progress_frame() {
 			clearInterval(convert_progress_id);
 		}
 	})
+}
+
+function invalid(elem_id) {
+	$("#" + elem_id).css('background', 'var(--invalid-color)');
+}
+
+function valid(elem_id) {
+	$("#" + elem_id).css('background', '');
 }
 
 function convert() {
@@ -153,4 +170,20 @@ function convert() {
 			}
 		}
 	});
+}
+
+function move(start, stop, status) {
+	var elem = document.getElementById("convert_progress_bar");
+	var text_elem = document.getElementById("convert_progress_text");
+	var width = start;
+	var id = setInterval(frame, 10);
+	function frame() {
+		if (width >= stop) {
+			clearInterval(id);
+		} else {
+			width += (width - start) * (stop - width) / Math.pow((stop - start) / 2, 2) * 2 + 0.1;
+			elem.style.width = width + '%';
+		}
+		text_elem.innerHTML = status
+	}
 }
