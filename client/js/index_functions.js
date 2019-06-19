@@ -100,6 +100,8 @@ function init() {
 	controls.enabled = false;
 
 	scene = new THREE.Scene();
+	scene.background = new THREE.Color( 0xeeeeee );
+
 	loader = new THREE.GCodeLoader();
 
 	renderer = new THREE.WebGLRenderer();
@@ -162,7 +164,6 @@ function threejs_viewer_control_tab_resize() {
 
 	tab = document.getElementById("threejs_viewer_control_tab");
 	tab.style.left = x_pos + "px";
-	tab.style.width = parent.width() + "px";
 	tab.style.visibility = "visible";
 }
 
@@ -173,15 +174,16 @@ function threejs_resize() {
 	camera.aspect = width / height;
 	camera.updateProjectionMatrix();
 
-	renderer.setSize( width-20, height );
+	renderer.setSize( width-18, height );
 }
 
 function custom_resize() {
 	svg_controller.resize();
+	threejs_resize();
+
 	svg_viewer_control_tab_resize();
 	threejs_viewer_control_tab_resize();
 
-	threejs_resize();
 }
 
 function load_svg() {
