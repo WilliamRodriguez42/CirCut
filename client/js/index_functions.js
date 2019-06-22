@@ -3,6 +3,14 @@ var camera, scene, renderer, loader, g_object, d_object;
 var controls;
 var svg_controller;
 
+function invalid(elem_id) {
+	$("#" + elem_id).css('background', 'var(--invalid-color)');
+}
+
+function valid(elem_id) {
+	$("#" + elem_id).css('background', '');
+}
+
 function load_contour(gcode) {
 	scene.remove(g_object);
 	g_object = loader.parse(gcode);
