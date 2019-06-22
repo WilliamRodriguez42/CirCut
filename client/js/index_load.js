@@ -1,7 +1,7 @@
 init();
 animate();
 load_svg();
-check_for_conversion_on_start();
+start_server_polling();
 
 $(".panel-top").resizable({
 	handleSelector: ".splitter-horizontal",

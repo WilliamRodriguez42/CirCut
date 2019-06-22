@@ -3,44 +3,14 @@ var convert_prev_state = 0;
 var convert_curr_state = 0;
 var convert_prev_state_text = "";
 var convert_curr_state_text = "";
-var svg_loaded = false;
+var convert_svg_loaded = false;
 
-function check_for_conversion_on_start() {
+function reset_conversion_state_values() {
 	convert_prev_state = 0;
 	convert_curr_state = 0;
-	convert_prev_state_text = ""
-	convert_curr_state_text = ""
-	svg_loaded = false
-	convert_progress_id = setInterval(get_convert_progress_frame, 500);
-}
-
-function get_convert_progress_frame() {
-	$.ajax({
-		type: "GET",
-		url: "convert_progress",
-		success: function(data) {
-			convert_curr_state_text = data.text;
-			if (convert_prev_state_text != convert_curr_state_text) {
-				convert_curr_state = 100 / data.of * data.step;
-				move(convert_prev_state, convert_curr_state, convert_curr_state_text);
-				convert_prev_state = convert_curr_state;
-
-				convert_prev_state_text = convert_curr_state_text;
-
-				if (data.load_svg && !svg_loaded) {
-					load_svg();
-					svg_loaded = true;
-				}
-			}
-
-			if (convert_curr_state >= 100) {
-				clearInterval(convert_progress_id);
-			}
-		},
-		error: function() {
-			clearInterval(convert_progress_id);
-		}
-	})
+	convert_prev_state_text = "";
+	convert_curr_state_text = "";
+	convert_svg_loaded = false;
 }
 
 function invalid(elem_id) {
@@ -149,13 +119,6 @@ function convert() {
 		return;
 	}
 
-	convert_prev_state = 0;
-	convert_curr_state = 0;
-	convert_prev_state_text = ""
-	convert_curr_state_text = ""
-	svg_loaded = false
-	convert_progress_id = setInterval(get_convert_progress_frame, 500);
-
 	var contours = $.ajax({
 		type: "POST",
 		url: "convert",
@@ -164,7 +127,6 @@ function convert() {
 			load_gcodes();
 		},
 		error: function(err) {
-			clearInterval(convert_progress_id);
 			if (err.status === 409) {
 				alert("Conversion already in progress");
 			}
@@ -172,18 +134,23 @@ function convert() {
 	});
 }
 
-function move(start, stop, status) {
-	var elem = document.getElementById("convert_progress_bar");
-	var text_elem = document.getElementById("convert_progress_text");
-	var width = start;
-	var id = setInterval(frame, 10);
-	function frame() {
-		if (width >= stop) {
-			clearInterval(id);
-		} else {
-			width += (width - start) * (stop - width) / Math.pow((stop - start) / 2, 2) * 2 + 0.1;
-			elem.style.width = width + '%';
-		}
-		text_elem.innerHTML = status
-	}
+function progress_move_frame() {
+	var progress_fill_elem = document.getElementById("convert_progress_bar");
+
+	progress_bar_pos += (progress_stop_pos - progress_bar_pos) / 10;
+	progress_fill_elem.style.width = progress_bar_pos + '%';
 }
+
+function progress_move(start, stop, status) {
+	if (progress_move_id !== null) clearInterval(progress_move_id);
+
+	progress_stop_pos = stop;
+	progress_move_id = setInterval(progress_move_frame, 10);
+
+	var progress_text_elem = document.getElementById("convert_progress_text");
+	progress_text_elem.textContent = status;
+}
+
+var progress_stop_pos = 0;
+var progress_move_id = null;
+var progress_bar_pos = 0;
