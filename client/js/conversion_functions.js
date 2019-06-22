@@ -116,6 +116,8 @@ function convert() {
 		return;
 	}
 
+	reset_conversion_state_values();
+
 	var contours = $.ajax({
 		type: "POST",
 		url: "convert",
