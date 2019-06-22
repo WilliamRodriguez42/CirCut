@@ -1,6 +1,7 @@
 init();
 animate();
 load_svg();
+start_server_polling();
 
 $(".panel-top").resizable({
 	handleSelector: ".splitter-horizontal",
@@ -20,44 +21,3 @@ $("#svg_viewer_panel").resizable({
 $(window).resize(function() {
 	custom_resize();
 });
-
-function move(start, stop, status) {
-	var elem = document.getElementById("convert_progress_bar");
-	var text_elem = document.getElementById("convert_progress_text");
-	var width = start;
-	var id = setInterval(frame, 10);
-	function frame() {
-		if (width >= stop) {
-			clearInterval(id);
-		} else {
-			width += (width - start) * (stop - width) / Math.pow((stop - start) / 2, 2) * 2 + 0.1;
-			elem.style.width = width + '%';
-		}
-		text_elem.innerHTML = status
-	}
-}
-
-function load_svg() {
-	$.ajax({
-		type: 'GET',
-		url: 'svg',
-		success: function(data) {
-			elem = document.getElementById('svg_viewer_div');
-			elem.innerHTML = data;
-
-			var svg_element = elem.getElementsByTagName('svg')[0]
-			svg_element.id = "svg_element"
-			svg_element.style = "width: 100%; height: 100%; will-change: transform;"
-
-			window.svg_controller = svgPanZoom('#svg_element', {
-        zoomEnabled: true,
-			  panEnabled: true,
-			  controlIconsEnabled: false,
-      });
-			window.svg_controller.center();
-			window.svg_controller.fit();
-
-			custom_resize();
-		}
-	});
-}

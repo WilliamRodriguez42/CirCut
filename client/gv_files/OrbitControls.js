@@ -121,6 +121,20 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	};
 
+	this.recenter = function () {
+
+		scope.target.copy( scope.target0 );
+		scope.object.zoom = scope.zoom0;
+
+		scope.object.updateProjectionMatrix();
+		scope.dispatchEvent( changeEvent );
+
+		scope.update();
+
+		state = STATE.NONE;
+
+	};
+
 	// this method is exposed, but perhaps it would be better if we can make it private...
 	this.update = function () {
 
@@ -809,7 +823,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 			state = STATE.NONE;
 			return;
 		}
-		
+
 		event.preventDefault();
 		event.stopPropagation();
 

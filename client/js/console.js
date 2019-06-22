@@ -20,8 +20,18 @@ function scroll_to_bottom() {
 		100);
 }
 
-function error_message() {
-	con.error("Could not reach server");
+function console_display_message(m) {
+	if (m.type === "error") {
+		con.error("ERROR: " + m.message);
+	} else if (m.type === "warning") {
+		con.warn("WARNING: " + m.message)
+	} else if (m.type === "info") {
+		con.log(m.message)
+	} else if (m.type === "input") {
+		con.log("> " + m.message)
+	}
+
+	scroll_to_bottom();
 }
 
 function handle_command(command){
@@ -31,9 +41,7 @@ function handle_command(command){
 		data: {
 			command: command
 		},
-		success: function() {
-				con.log(res.responseText);
-
+		success: function(responseText) {
 				if (command.startsWith('level')) {
 					load_gcodes();
 				}
@@ -41,7 +49,10 @@ function handle_command(command){
 				scroll_to_bottom();
 		},
 		error: function() {
-			error_message();
+			console_display_message({
+				type: "error",
+				message: "Could not connect to server"
+			});
 		}
 	});
 

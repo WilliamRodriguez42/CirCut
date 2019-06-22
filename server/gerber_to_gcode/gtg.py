@@ -4,6 +4,10 @@ import numpy as np
 import gerber_to_gcode.gerber as gerber
 import gerber_to_gcode.christofides as christofides
 
+import sys
+sys.path.append("..")
+from status import *
+
 def get_view_box(poly_bounds):
 	margin = 1
 	bounds = [
@@ -94,6 +98,7 @@ primitive_map = {
 	gerber.primitives.Obround : make_obround_gbr,
 	gerber.primitives.Circle : make_circle_gbr,
 }
+
 def gerber_to_poly(data, resolution):
 	gbr = gerber.rs274x.loads(data)
 	gbr.to_metric()
@@ -142,10 +147,11 @@ def gerber_poly_to_paths(poly, contour_distance=0.25, contour_count=1, contour_s
 			paths.append(contour.exterior)
 
 			if i == 0 and num_geoms != 0:
-				print("Contour distance too large")
+				add_warning_message(STATUS.CONTOUR_DISTANCE_TOO_LARGE)
 		else:
 			if i == 0 and len(contour.geoms) != num_geoms:
-				print("Contour distance too large")
+				add_warning_message(STATUS.CONTOUR_DISTANCE_TOO_LARGE)
+
 			for geom in contour.geoms:
 				paths.extend(geom.interiors)
 				paths.append(geom.exterior)

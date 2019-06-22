@@ -1,37 +1,32 @@
 from flask import Flask, Response, request, jsonify, abort
 from helper_functions import *
 import threading
-from gerber_to_gcode.gtg import GTG
+from gerber_to_gcode.gtg import GTG, STATUS
+from status import *
 
 # set the project root directory as the static folder
 app = Flask(__name__)
 
 @app.route('/<path:path>')
 def send_whatever(path):
-	print(path)
-	if path[-3:] == 'ico':
-		ico = open('../client/' + path, 'rb')
-		content = ico.read()
-		ico.close()
-		return Response(content)
+	ext = path[path.rfind('.')+1:]
+	file = open('../client/' + path, 'rb')
+	content = file.read()
+	file.close()
 
-	elif path[-3:] == 'css':
-		css = open('../client/' + path, 'r')
-		content = css.read()
-		css.close()
-		return Response(content, mimetype="text/css")
+	if ext == 'ico':
+		response = Response(content)
 
-	elif path[-3:] == 'svg':
-		svg = open('../client/' + path, 'r')
-		content = svg.read()
-		svg.close()
-		return Response(content, mimetype="image/svg+xml")
+	elif ext == 'css':
+		response = Response(content, mimetype="text/css")
+
+	elif ext == 'svg':
+		response = Response(content, mimetype="image/svg+xml")
 
 	else:
-		html = open('../client/' + path, 'r')
-		content = html.read()
-		html.close()
-		return Response(content)
+		response = Response(content)
+
+	return response
 
 @app.route('/')
 def send_home():
@@ -52,7 +47,15 @@ def receive_drills():
 @app.route('/command', methods=['POST'])
 def receive_command():
 	global commands, terminate
-	text = request.form['command'].lower().strip()
+
+	text = request.form['command'].strip()
+	add_input_message(text)
+
+	if not cnc_machine_connected:
+		add_error_message(STATUS.CNC_MACHINE_NOT_CONNECTED)
+		return Response("Ok")
+
+	text = text.lower()
 	if (text == 's' or text == 'stop'):
 		commands = []
 		terminate = True
@@ -82,9 +85,9 @@ def file_upload():
 
 @app.route('/convert', methods=['POST'])
 def convert():
-	global progress_text, progress_step, progress_load_svg
+	global progress_text, progress_step, progress_load_svg, gtg_status
 
-	if progress_step != 0 and progress_step != progress_total_steps:
+	if progress_step != PROGRESS_TOTAL_STEPS:
 		abort(409); # Conflict
 		return;
 
@@ -141,19 +144,20 @@ def convert():
 	print(progress_text)
 	load_gcodes()
 
-	progress_text = "Complete"
+	progress_text = "Ready to convert"
 	progress_step += 1
 	print(progress_text)
 
 	return Response("OK")
 
-@app.route('/convert_progress', methods=['GET'])
+@app.route('/status', methods=['GET'])
 def convert_progress():
 	return jsonify({
 		'step': progress_step,
-		'of': progress_total_steps,
+		'of': PROGRESS_TOTAL_STEPS,
 		'text': progress_text,
-		'load_svg': progress_load_svg
+		'load_svg': progress_load_svg,
+		'status_messages': status_messages
 	})
 
 @app.route('/svg', methods=['GET'])
@@ -164,10 +168,17 @@ def get_svg():
 
 	return Response(content)
 
+@app.route('/svg', methods=['POST'])
+def pop_warning():
+	status_messages.pop()
+
+	return Response("Ok")
+
 commands = []
 terminate = False
 
-progress_text = ""
-progress_step = 0
-progress_total_steps = 7
+# Start in the ready state
+PROGRESS_TOTAL_STEPS = 7
+progress_step = PROGRESS_TOTAL_STEPS
+progress_text = "Ready to convert"
 progress_load_svg = False

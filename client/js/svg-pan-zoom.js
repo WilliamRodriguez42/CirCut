@@ -735,11 +735,12 @@
 
 		delta = -0.3 < delta && delta < 0.3 ? delta : (delta > 0 ? 1 : -1) * Math.log(Math.abs(delta) + 10) / divider
 
-		var inversedScreenCTM = this.svg.getScreenCTM().inverse()
-		, relativeMousePoint = SvgUtils.getEventPoint(evt, this.svg).matrixTransform(inversedScreenCTM)
+		var relativeMousePoint = SvgUtils.getEventPoint(evt, this.svg)
 		, zoom = Math.pow(1 + this.options.zoomScaleSensitivity, (-1) * delta); // multiplying by neg. 1 so as to make zoom in/out behavior match Google maps behavior
 
-		this.zoomAtPoint(zoom, relativeMousePoint)
+		relativeMousePoint.x = this.width / 2;
+		relativeMousePoint.y = this.height / 2;
+		this.zoomAtPoint(zoom, relativeMousePoint);
 	}
 
 	/**
