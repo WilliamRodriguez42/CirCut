@@ -92,8 +92,8 @@ function convert() {
 	} else {
 		valid('contour_step');
 	}
-	if (!(convert_info.resolution > 0 && convert_info.resolution <= 60 && Number.isInteger(convert_info.resolution))) {
-		error_messages += "Invalid resolution: must be an integer greater than 0 and less than or equal to 60\n";
+	if (!(convert_info.resolution >= 3 && convert_info.resolution <= 60 && Number.isInteger(convert_info.resolution))) {
+		error_messages += "Invalid resolution: must be an integer greater than or equal to 3 and less than or equal to 60\n";
 		invalid('resolution');
 	} else {
 		valid('resolution');
