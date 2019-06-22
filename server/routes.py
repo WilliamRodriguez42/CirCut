@@ -168,9 +168,12 @@ def get_svg():
 
 	return Response(content)
 
-@app.route('/svg', methods=['POST'])
-def pop_warning():
-	status_messages.pop()
+@app.route('/archive-message', methods=['POST'])
+def archive_message():
+	type = request.form['type'].lower().strip()
+	message = request.form['message']
+
+	add_message(type, message)
 
 	return Response("Ok")
 

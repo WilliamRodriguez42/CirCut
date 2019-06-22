@@ -13,14 +13,6 @@ function reset_conversion_state_values() {
 	convert_svg_loaded = false;
 }
 
-function invalid(elem_id) {
-	$("#" + elem_id).css('background', 'var(--invalid-color)');
-}
-
-function valid(elem_id) {
-	$("#" + elem_id).css('background', '');
-}
-
 function convert() {
 	// Send form to server
 	convert_info = {
@@ -39,7 +31,7 @@ function convert() {
 	};
 
 	// Validate inputs (All values are good for contour_distance)
-	error_messages = "";
+	error_messages = "\n";
 	if (!(convert_info.rapid_feedrate > 0)) {
 		error_messages += "Invalid rapid feedrate: must be a value greater than 0\n";
 		invalid('rapid_feedrate');
@@ -100,22 +92,27 @@ function convert() {
 	} else {
 		valid('contour_step');
 	}
-	if (!(convert_info.resolution > 0 && Number.isInteger(convert_info.resolution))) {
-		error_messages += "Invalid resolution: must be an integer greater than 0\n";
+	if (!(convert_info.resolution > 0 && convert_info.resolution <= 60 && Number.isInteger(convert_info.resolution))) {
+		error_messages += "Invalid resolution: must be an integer greater than 0 and less than or equal to 60\n";
 		invalid('resolution');
 	} else {
 		valid('resolution');
 	}
-	if (!(convert_info.buffer_resolution > 0 && Number.isInteger(convert_info.buffer_resolution))) {
-		error_messages += "Invalid buffer resolution: must be an integer greater than 0\n";
+	if (!(convert_info.buffer_resolution > 0 && convert_info.buffer_resolution <= 20 && Number.isInteger(convert_info.buffer_resolution))) {
+		error_messages += "Invalid buffer resolution: must be an integer greater than 0 and less than or equal to 20\n";
 		invalid('buffer_resolution');
 	} else {
 		valid('buffer_resolution');
 	}
 
 	// Warn the user if there were any errors
-	if (error_messages !== "") {
-		alert(error_messages.substring(0, error_messages.length-1)); // Truncate the last \n
+	if (error_messages !== "\n") {
+		error_messages = error_messages.substring(0, error_messages.length-1); // Truncate the last \n
+		console_display_message({
+			type: "error",
+			message: error_messages
+		});
+
 		return;
 	}
 

@@ -133,7 +133,7 @@
 }
 .error {
 	color: #A00;
-	background: #FFF5F5;
+	background: var(--swatch-d);
 }
 .dark .error {
 	color: #A00;

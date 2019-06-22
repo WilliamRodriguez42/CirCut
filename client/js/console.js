@@ -21,7 +21,16 @@ function scroll_to_bottom() {
 }
 
 function console_display_message(m) {
-	if (m.type === "error") {
+
+	if (m.id === undefined) { // If this message was user generated, upload it to the server to archive it, we will display it when we read it back from the server
+		$.ajax({
+			type: "POST",
+			url: "/archive-message",
+			data: m
+		});
+		return;
+
+	} else if (m.type === "error") {
 		con.error("ERROR: " + m.message);
 	} else if (m.type === "warning") {
 		con.warn("WARNING: " + m.message)
