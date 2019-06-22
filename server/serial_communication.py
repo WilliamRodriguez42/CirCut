@@ -1,5 +1,6 @@
 from serial import Serial, SerialException
 import time
+import status
 
 RX_BUFFER_SIZE = 64
 
@@ -20,6 +21,8 @@ def constant_read():
 		except SerialException:
 			print("No CNC machine found on COM9, please plug in or turn on machine.")
 			time.sleep(5)
+
+	status.cnc_machine_connected = True
 
 	while True:
 		to_read = ser.inWaiting()
@@ -76,4 +79,3 @@ def poll_ok():
 	global receive_ready
 	while not receive_ready or len(last_sent) > 0:
 		time.sleep(0.01)
-		

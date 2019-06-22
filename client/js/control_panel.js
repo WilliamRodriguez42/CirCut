@@ -1,11 +1,26 @@
 function distance_pre_check() {
 	var amount = parseFloat($('#move_distance').val());
-	if (isNaN(amount) || amount <= 0) {
-		con.error("Distance not valid");
-		scroll_to_bottom();
+	if (!(amount > 0)) {
+		invalid('move_distance');
+		console_display_message({
+			type: "error",
+			message: "Move distance must be a value greater than 0"
+		});
 		return -1;
 	}
 	return amount;
+}
+
+function control_panel_send_command(command) {
+	$.ajax({
+		type: "POST",
+		url:"/command",
+		data: {
+			command: command
+		}
+	});
+	con.log("> " + command);
+	scroll_to_bottom();
 }
 
 function move_Zp() {
@@ -14,109 +29,53 @@ function move_Zp() {
 		return;
 	}
 	var command = "$J=G21G91 Z" + amount + " F500";
-	con.log(command);
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
-			scroll_to_bottom();
-		} else {
-			error_message();
-		}
-	}});
-	scroll_to_bottom();
+	control_panel_send_command(command);
 }
 
 function move_Zn() {
 	var amount = distance_pre_check();
-	if (amount < 0) {
-		return;
-	}
+	if (amount < 0) return;
+
 	if (amount > 1) {
-		con.error("It is not recommended to move more than 1 mm at at time in the Z- axis");
-		scroll_to_bottom();
+		console_display_message({
+			type: "error",
+			message: "It is not recommended to move more than 1 mm at at time in the Z- axis"
+		});
 		return;
 	}
 	var command = "$J=G21G91 Z-" + amount + " F500";
-	con.log(command);
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
-			scroll_to_bottom();
-		} else {
-			error_message();
-		}
-	}});
-	scroll_to_bottom();
+	control_panel_send_command(command);
 }
 
 function move_Yp() {
 	var amount = distance_pre_check();
-	if (amount < 0) {
-		return;
-	}
+	if (amount < 0) return;
+
 	var command = "$J=G21G91 Y" + amount + " F500";
-	con.log(command);
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
-			scroll_to_bottom();
-		} else {
-			error_message();
-		}
-	}});
-	scroll_to_bottom();
+	control_panel_send_command(command);
 }
 
 function move_Yn() {
 	var amount = distance_pre_check();
-	if (amount < 0) {
-		return;
-	}
+	if (amount < 0) return;
+
 	var command = "$J=G21G91 Y-" + amount + " F500";
-	con.log(command);
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
-			scroll_to_bottom();
-		} else {
-			error_message();
-		}
-	}});
-	scroll_to_bottom();
+	control_panel_send_command(command);
 }
 
 function move_Xp() {
 	var amount = distance_pre_check();
-	if (amount < 0) {
-		return;
-	}
+	if (amount < 0) return;
+
 	var command = "$J=G21G91 X" + amount + " F500";
-	con.log(command);
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
-			scroll_to_bottom();
-		} else {
-			error_message();
-		}
-	}});
-	scroll_to_bottom();
+	control_panel_send_command(command);
 }
 
 function move_Xn() {
 	var amount = distance_pre_check();
-	if (amount < 0) {
-		return;
-	}
+	if (amount < 0) return;
+
 	var command = "$J=G21G91 X-" + amount + " F500";
 	con.log(command);
-	$.ajax({type: "POST", url:"/command", data: { command: command }, async: true, complete: function(res) {
-		if (res.status == 200) {
-			con.log(res.responseText);
-			scroll_to_bottom();
-		} else {
-			error_message();
-		}
-	}});
-	scroll_to_bottom();
+	control_panel_send_command(command);
 }

@@ -10,13 +10,15 @@
 	<link rel="stylesheet" type="text/css" href="style/simple-console.css">
 	<link rel="stylesheet" type="text/css" href="style/dropzone.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="js/server_status_functions.js"></script>
 	<script src="js/svg-pan-zoom.js"></script>
 	<script src="js/dropzone.js"></script>
 	<script src="js/index_functions.js"></script>
+	<script src="js/conversion_functions.js"></script>
 </head>
 <body style="background:var(--swatch-c)">
 	<div class="panel-container" style="height:100%;">
-		<div class="panel-left" style="width:calc(100% - 300px);" id="main_panel">
+		<div class="panel-left" style="width:calc(100% - var(--upload-settings-width));" id="main_panel">
 
 			<div class="page-container">
 				<div class="panel-container-vertical">
@@ -27,17 +29,23 @@
 									<div id="upload_settings_panel" style="background:var(--swatch-c); width: var(--upload-settings-width); height: 100%; float:right; overflow:scroll">
 										<table class="upload-settings-table">
 											<tr>
-												<td>Gerber File:</td>
+												<td><h3>Gerber File:<h3></td>
 											</tr>
 										</table>
 										<form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
 
 										<table class="upload-settings-table">
 											<tr>
-												<td>Excellon File:</td>
+												<td><h3>Excellon File:<h3></td>
 											</tr>
 										</table>
 										<form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
+
+										<table class="upload-settings-table">
+											<tr>
+												<td><h3>Upload Settings:</h3></td>
+											</tr>
+										</table>
 
 										<div id="convert_info">
 											<table class="upload-settings-table">
@@ -109,7 +117,10 @@
 
 										<table class="upload-settings-table">
 											<tr>
-												<td id="convert_progress_text">Progress:</td>
+												<td><h3>Conversion Status:</h3></td>
+											</tr>
+											<tr>
+												<td id="convert_progress_text" style="font-size: 9pt; vertical-align: bottom;"><td>
 											</tr>
 										</table>
 										<div id="convert_progress">
@@ -119,7 +130,7 @@
 
 									</div>
 
-									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; overflow: scroll">
+									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: calc(100% - var(--upload-settings-width))">
 										<table style="margin: 5px;">
 											<tr>
 												<td>
@@ -135,7 +146,7 @@
 											</tr>
 										</table>
 									</div>
-									<div id="svg_viewer_div" style="width: calc(100% - var(--upload-settings-width)); height: 100%;"></div>
+									<div id="svg_viewer_div" style="width: calc(100% - var(--upload-settings-width)); height: 100%; min-width: 10px"></div>
 								</div>
 							</div>
 
@@ -150,11 +161,28 @@
 
 
 
-							<div id="threejs_viewer_panel" class="panel-right" onmouseover = "enable_controls();" onmouseleave = "disable_controls();">
+							<div id="threejs_viewer_panel" class="panel-right" style="position: relative">
 
 								<script src="gv_files/three.js"></script>
-								<script src="gv_files/OrbitControls.js"></script>
 								<script src="gv_files/GCodeLoader.js"></script>
+								<script src="gv_files/OrbitControls.js"></script>
+
+								<div id="threejs_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: calc(100%);">
+									<table style="margin: 5px;">
+										<tr>
+											<td>
+												<button class="button-base button-bottom-tab" onclick="controls.recenter()">
+													Focus
+												</button>
+											</td>
+											<td>
+												<button class="button-base button-bottom-tab" onclick="controls.reset()">
+													Reset
+												</button>
+											</td>
+										</tr>
+									</table>
+								</div>
 
 							</div>
 
@@ -243,7 +271,7 @@
 			<table style="width:200px; color:var(--swatch-d)">
 				<tr>
 					<td>Distance:</td>
-					<td><input id="move_distance" class="size-input" value="1.00"></input> mm</td>
+					<td><input id="move_distance" class="size-input" value="1.00" type="number"></input> mm</td>
 				</tr>
 			</table>
 

@@ -9,6 +9,10 @@
 	--font-size: 11pt;
 }
 
+h3 {
+	margin: 0px;
+}
+
 html, body {
 	width: 100%;
 	height: 100%;
@@ -19,9 +23,9 @@ html, body {
 	overflow: hidden;
 }
 ::-webkit-scrollbar {
-    width: 0px;
+	width: 0px;
 	height: 0px;
-    background: transparent;
+	background: transparent;
 }
 
 #main {
@@ -73,8 +77,9 @@ html, body {
 #convert_progress_bar {
 	width: 0%;
 	height: 30px;
-	background-color: #3EAEDF;
+	background-image: linear-gradient(to bottom, #45BEF2, #46A6C8);
 	border-radius: 5px;
+	margin: 10px 0px;
 }
 
 #convert_progress_bar_text {
@@ -82,26 +87,29 @@ html, body {
 	margin: 10px;
 	display: table-cell;
 	vertical-align: middle;
+	margin: 10px 0px;
 }
 
 .bottom-tab {
 	background-color: var(--swatch-c);
-	height: 40px;
-	width: calc(100% - var(--upload-settings-width));
+	height: 44px;
 	max-width: 200px;
 	border-radius: 20px 20px 0px 0px;
 	position: absolute;
 	bottom: 0px;
 	z-index: 1;
+	overflow: scroll;
 }
 
 .button-bottom-tab {
 	padding: 5px 15px;
 	width: 90px;
+	height: 100%;
 }
 
 .upload-settings-table {
 	margin: 10px;
-	width: var(--upload-settings-width) - 10px;
+	width: calc(var(--upload-settings-width) - 20px);
 	color: var(--swatch-d);
+	border-spacing: 0px 7px;
 }
