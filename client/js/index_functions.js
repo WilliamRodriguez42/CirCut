@@ -3,12 +3,25 @@ var camera, scene, renderer, loader, g_object, d_object;
 var controls;
 var svg_controller;
 
+function sanitize_string(str){
+    str = str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"");
+    return str.trim();
+}
+
 function invalid(elem_id) {
 	$("#" + elem_id).css('background', 'var(--invalid-color)');
 }
 
 function valid(elem_id) {
 	$("#" + elem_id).css('background', '');
+}
+
+function disable_convert_button() {
+	document.getElementById("convert_button").disabled = true;
+}
+
+function enable_convert_button() {
+	document.getElementById("convert_button").disabled = false;
 }
 
 function load_contour(gcode) {

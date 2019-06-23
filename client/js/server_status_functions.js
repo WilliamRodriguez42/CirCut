@@ -27,11 +27,13 @@ function get_server_status() {
 			if (status_first_load === true) {
 				status_first_load = false;
 
-				status_latest_id = data.status_messages[0].id;
+				if (data.status_messages.length) status_latest_id = data.status_messages[0].id;
 
 				for (var i = data.status_messages.length-1; i >= 0 ; i --) {
 					console_display_message(data.status_messages[i]);
 				}
+
+				con.log("^^^^^^^^^^^^^^^^ END OF LOG ^^^^^^^^^^^^^^^^");
 			} else {
 				if (data.status_messages.length !== 0 && data.status_messages[0].id !== status_latest_id) {
 					status_latest_id = data.status_messages[0].id;

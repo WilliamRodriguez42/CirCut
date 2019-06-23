@@ -3,11 +3,17 @@ from helper_functions import *
 import threading
 from gerber_to_gcode.gtg import GTG, STATUS
 from status import *
+import bleach
+from pathvalidate import sanitize_filename
+import os
+import json
+import re
+import glob
 
 # set the project root directory as the static folder
 app = Flask(__name__)
 
-@app.route('/<path:path>')
+@app.route('/<path:path>', methods=['GET'])
 def send_whatever(path):
 	ext = path[path.rfind('.')+1:]
 	file = open('../client/' + path, 'rb')
@@ -15,7 +21,8 @@ def send_whatever(path):
 	file.close()
 
 	if ext == 'ico':
-		response = Response(content)
+		response = Response(content, mimetype='image/vnd.microsoft.icon')
+		print("HI")
 
 	elif ext == 'css':
 		response = Response(content, mimetype="text/css")
@@ -121,7 +128,7 @@ def convert():
 	progress_text = "Writing result to SVG format..."
 	progress_step += 1
 	print(progress_text)
-	gtg.write_svg("resources/test.svg")
+	gtg.write_svg("resources/preview.svg")
 
 	progress_load_svg = True
 
@@ -162,7 +169,7 @@ def convert_progress():
 
 @app.route('/svg', methods=['GET'])
 def get_svg():
-	svg = open('resources/test.svg', 'r')
+	svg = open('resources/preview.svg', 'r')
 	content = svg.read()
 	svg.close()
 
@@ -176,6 +183,45 @@ def archive_message():
 	add_message(type, message)
 
 	return Response("Ok")
+
+@app.route('/save-settings-profile', methods=['POST'])
+def save_settings_profile():
+	form = json.loads(request.data)
+
+	settings_profile_name = form['name']
+	settings_profile_name = sanitize_filename(settings_profile_name)
+	if not settings_profile_name: return
+	form['name'] = settings_profile_name
+
+	profile_path = os.path.join("settings_profiles", settings_profile_name);
+	content = json.dumps(form, sort_keys=True, indent=4)
+	content = re.sub('\n +', lambda match: '\n' + '\t' * (len(match.group().strip('\n')) // 3), content) # snake-case, hard-tabs, keep it together!
+
+	profile = open(profile_path, 'w+')
+	profile.write(content)
+	profile.close()
+
+	return Response("Ok")
+
+@app.route('/get-settings-profile-names', methods=['GET'])
+def get_settings_profile_names():
+	settings_profile_names = glob.glob('settings_profiles/*.cnc_profile')
+	result = [s[len("settings_profiles/"):] for s in settings_profile_names]
+	return Response(json.dumps(result))
+
+@app.route('/load-settings-profile/<path:path>', methods=['GET'])
+def load_settings_profile(path):
+	path = os.path.join('settings_profiles', path)
+
+	if not glob.glob(path):
+		return Response("File does not exist")
+
+	file = open(path, 'r')
+	content = file.read()
+	file.close()
+
+	return Response(content)
+
 
 commands = []
 terminate = False

@@ -14,11 +14,12 @@
 	<script src="js/svg-pan-zoom.js"></script>
 	<script src="js/dropzone.js"></script>
 	<script src="js/index_functions.js"></script>
+	<script src="js/save_load_settings_profile.js"></script>
 	<script src="js/conversion_functions.js"></script>
 </head>
 <body style="background:var(--swatch-c)">
 	<div class="panel-container" style="height:100%;">
-		<div class="panel-left" style="width:calc(100% - var(--upload-settings-width));" id="main_panel">
+		<div class="panel-left" style="width:calc(100% - var(--convert-settings-width));" id="main_panel">
 
 			<div class="page-container">
 				<div class="panel-container-vertical">
@@ -26,96 +27,117 @@
 						<div class="panel-container" style="height:100%;">
 							<div class="panel-left" style="width:70%;" id="svg_viewer_panel">
 								<div id="main" style="position: relative;">
-									<div id="upload_settings_panel" style="background:var(--swatch-c); width: var(--upload-settings-width); height: 100%; float:right; overflow:scroll">
-										<table class="upload-settings-table">
+									<div style="background:var(--swatch-c); width: var(--convert-settings-width); height: 100%; float:right; overflow:scroll;">
+										<table class="convert-settings-table">
 											<tr>
 												<td><h3>Gerber File:<h3></td>
 											</tr>
 										</table>
 										<form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
 
-										<table class="upload-settings-table">
+										<table class="convert-settings-table">
 											<tr>
 												<td><h3>Excellon File:<h3></td>
 											</tr>
 										</table>
 										<form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
 
-										<table class="upload-settings-table">
+										<table class="convert-settings-table">
 											<tr>
-												<td><h3>Upload Settings:</h3></td>
+												<td><h3>Conversion Settings:</h3></td>
 											</tr>
 										</table>
 
 										<div id="convert_info">
-											<table class="upload-settings-table">
+											<table class="convert-settings-table">
 												<tr>
 													<td>Rapid Feedrate:</td>
-													<td><input id="rapid_feedrate" class="size-input" value="500" type="number"></input> mm/min</td>
+													<td><input id="rapid_feedrate" class="base-input settings-input" value="500" type="number"></input> mm/min</td>
 												</tr>
 
 												<tr>
 													<td>Pass Feedrate:</td>
-													<td><input id="pass_feedrate" class="size-input" value="100" type="number"></input> mm/min</td>
+													<td><input id="pass_feedrate" class="base-input settings-input" value="100" type="number"></input> mm/min</td>
 												</tr>
 
 												<tr>
 													<td>Plunge Feedrate:</td>
-													<td><input id="plunge_feedrate" class="size-input" value="20" type="number"></input> mm/min</td>
+													<td><input id="plunge_feedrate" class="base-input settings-input" value="20" type="number"></input> mm/min</td>
 												</tr>
 
 												<tr>
 													<td>Plunge Depth:</td>
-													<td><input id="plunge_depth" class="size-input" value="-2.5" type="number"></input> mm</td>
+													<td><input id="plunge_depth" class="base-input settings-input" value="-2.5" type="number"></input> mm</td>
 												</tr>
 
 												<tr>
 													<td>Safe Height:</td>
-													<td><input id="safe_height" class="size-input" value="1.00" type="number"></input> mm</td>
+													<td><input id="safe_height" class="base-input settings-input" value="1" type="number"></input> mm</td>
 												</tr>
 
 												<tr>
 													<td>Contour Spindle:</td>
-													<td><input id="contour_spindle" class="size-input" value="255" type="number"></input></td>
+													<td><input id="contour_spindle" class="base-input settings-input" value="255" type="number"></input></td>
 												</tr>
 
 												<tr>
 													<td>Drill Spindle:</td>
-													<td><input id="drill_spindle" class="size-input" value="255" type="number"></input></td>
+													<td><input id="drill_spindle" class="base-input settings-input" value="255" type="number"></input></td>
 												</tr>
 
 												<tr>
 													<td>Contour Distance:</td>
-													<td><input id="contour_distance" class="size-input" value="0.099" type="number"></input> mm</td>
+													<td><input id="contour_distance" class="base-input settings-input" value="0.099" type="number"></input> mm</td>
 												</tr>
 
 												<tr>
 													<td>Contour Count:</td>
-													<td><input id="contour_count" class="size-input" value="2" type="number"></input></td>
+													<td><input id="contour_count" class="base-input settings-input" value="2" type="number"></input></td>
 												</tr>
 
 												<tr>
 													<td>Contour Step:</td>
-													<td><input id="contour_step" class="size-input" value="0.15" type="number"></input> mm</td>
+													<td><input id="contour_step" class="base-input settings-input" value="0.15" type="number"></input> mm</td>
 												</tr>
 
 												<tr>
 													<td>Resolution:</td>
-													<td><input id="resolution" class="size-input" value="32" type="number"></input></td>
+													<td><input id="resolution" class="base-input settings-input" value="32" type="number"></input></td>
 												</tr>
 
 												<tr>
 													<td>Buffer Resolution:</td>
-													<td><input id="buffer_resolution" class="size-input" value="5" type="number"></input></td>
+													<td><input id="buffer_resolution" class="base-input settings-input" value="5" type="number"></input></td>
 												</tr>
 
 											</table>
 
-											<button class="button-base" onclick="convert()" style="border-radius: 5px">Convert</button>
+											<button id="convert_button" class="base-button settings-panel-button" onclick="convert()">Convert</button>
 
 										</div>
 
-										<table class="upload-settings-table">
+										<table class="convert-settings-table">
+											<tr>
+												<td><h3>Conversion Profile:</h3></td>
+											</tr>
+										</table>
+
+										<table class="convert-settings-table">
+											<tr>
+												<td>Profile name: </td>
+												<td style="position: relative;">
+													<input id="settings_profile_name" class="base-input drop-input" style="width: 100%" onfocus="display_settings_profile_names()" onmousedown="display_settings_profile_names()" onblur="hide_settings_profile_names()" onkeyup="settings_profile_name_keyup()"></input>
+													<div id="existing_settings_profile_names">
+													</div>
+												</td>
+											</tr>
+										</table>
+
+										<button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()" disabled>Load Profile</button>
+										<br></br>
+										<button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()" disabled>Save Profile</button>
+
+										<table class="convert-settings-table">
 											<tr>
 												<td><h3>Conversion Status:</h3></td>
 											</tr>
@@ -130,23 +152,23 @@
 
 									</div>
 
-									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: calc(100% - var(--upload-settings-width))">
+									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: calc(100% - var(--convert-settings-width))">
 										<table style="margin: 5px;">
 											<tr>
 												<td>
-													<button class="button-base button-bottom-tab" onclick="svg_controller.center()">
+													<button class="base-button button-bottom-tab" onclick="svg_controller.center()">
 														Center
 													</button>
 												</td>
 												<td>
-													<button class="button-base button-bottom-tab" onclick="svg_controller.fit().center()">
+													<button class="base-button button-bottom-tab" onclick="svg_controller.fit().center()">
 														Fit
 													</button>
 												</td>
 											</tr>
 										</table>
 									</div>
-									<div id="svg_viewer_div" style="width: calc(100% - var(--upload-settings-width)); height: 100%; min-width: 10px"></div>
+									<div id="svg_viewer_div" style="width: calc(100% - var(--convert-settings-width)); height: 100%; min-width: 10px"></div>
 								</div>
 							</div>
 
@@ -154,8 +176,7 @@
 
 
 
-							<div class="splitter" id="view_panels_splitter">
-							</div>
+							<div class="splitter" id="view_panels_splitter"></div>
 
 
 
@@ -171,12 +192,12 @@
 									<table style="margin: 5px;">
 										<tr>
 											<td>
-												<button class="button-base button-bottom-tab" onclick="controls.recenter()">
+												<button class="base-button button-bottom-tab" onclick="controls.recenter()">
 													Focus
 												</button>
 											</td>
 											<td>
-												<button class="button-base button-bottom-tab" onclick="controls.reset()">
+												<button class="base-button button-bottom-tab" onclick="controls.reset()">
 													Reset
 												</button>
 											</td>
@@ -238,29 +259,29 @@
 			<table style="width:100%; color:var(--swatch-d);">
 				<tr>
 					<td></td>
-					<td><button class="button-base" onmousedown="move_Zp()">Z+</button></td>
+					<td><button class="base-button" onmousedown="move_Zp()">Z+</button></td>
 					<td></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="button-base" onmousedown="move_Zn()">Z-</button></td>
+					<td><button class="base-button" onmousedown="move_Zn()">Z-</button></td>
 					<td></td>
 				</tr>
 				<tr style="height:100px">
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="button-base" onmousedown="move_Yp()">Y+</button></td>
+					<td><button class="base-button" onmousedown="move_Yp()">Y+</button></td>
 					<td></td>
 				</tr>
 				<tr>
-					<td><button class="button-base" onmousedown="move_Xn()">X-</button></td>
+					<td><button class="base-button" onmousedown="move_Xn()">X-</button></td>
 					<td></td>
-					<td><button class="button-base" onmousedown="move_Xp()">X+</button></td>
+					<td><button class="base-button" onmousedown="move_Xp()">X+</button></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td><button class="button-base" onmousedown="move_Yn()">Y-</button></td>
+					<td><button class="base-button" onmousedown="move_Yn()">Y-</button></td>
 					<td></td>
 				</tr>
 
@@ -271,7 +292,7 @@
 			<table style="width:200px; color:var(--swatch-d)">
 				<tr>
 					<td>Distance:</td>
-					<td><input id="move_distance" class="size-input" value="1.00" type="number"></input> mm</td>
+					<td><input id="move_distance" class="base-input settings-input" value="1.00" type="number"></input> mm</td>
 				</tr>
 			</table>
 
