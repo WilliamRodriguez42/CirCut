@@ -4,6 +4,19 @@ from scipy.interpolate import interp2d
 from GCode import GCodeFile
 import re
 
+def sanitize_filename(filename):
+	prev_filename = filename
+	attempts = 0
+	while True: # Sanitize until we know the name is clean
+		filename = bleach.clean(filename)
+		filename = sanitize_filename(filename)
+		if prev_filename == filename:
+			return filename
+		prev_filename = filename
+
+		attempts += 1
+		if (attempts > 2): return False
+
 def probez():
 	poll_ok()
 	write('G38.3 Z-100 F50')	 # Probe for contact

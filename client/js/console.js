@@ -33,11 +33,11 @@ function console_display_message(m) {
 	} else if (m.type === "error") {
 		con.error("ERROR: " + m.message);
 	} else if (m.type === "warning") {
-		con.warn("WARNING: " + m.message)
+		con.warn("WARNING: " + m.message);
 	} else if (m.type === "info") {
-		con.log(m.message)
+		con.log("INFO: " + m.message);
 	} else if (m.type === "input") {
-		con.log("> " + m.message)
+		con.log("> " + m.message);
 	}
 
 	scroll_to_bottom();

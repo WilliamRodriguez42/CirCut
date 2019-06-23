@@ -4,9 +4,15 @@
 	--swatch-c: #222;
 	--swatch-d: #eee;
 
-	--upload-settings-width: 300px;
+	--convert-settings-width: 300px;
 	--invalid-color: #F7614D;
 	--font-size: 11pt;
+
+	--light-blue: #45BEF2;
+	--dark-blue: #46A6C8;
+
+	--light-red: #E8654E;
+	--dark-red: #C83C24;
 }
 
 h3 {
@@ -40,15 +46,18 @@ html, body {
 	border: 0;
 	cursor: pointer;
 }
-.size-input {
+.base-input {
 	width: 70px;
-	background-color: var(--swatch-a);
+	background-color: var(--swatch-d);
 	border: 0px;
 	font-size: var(--font-size);
 	border-radius: 5px;
 	text-align: center;
 }
-.button-base, #nextPageButton, #prevPageButton {
+.settings-input {
+
+}
+.base-button {
 	background: linear-gradient(to bottom, var(--swatch-d), var(--swatch-a));
 	border: none;
 	padding: 15px 32px;
@@ -57,16 +66,21 @@ html, body {
 	display: inline-block;
 	font-size: 16px;
 	border-radius: 50px;
-}
-.button-base {
 	width: 100%;
 	cursor: pointer;
 }
-.button-base:active, #nextPageButton:active, #prevPageButton:active {
+.base-button:disabled {
+	background: linear-gradient(to bottom, var(--swatch-a), var(--swatch-a));
+	cursor: default;
+}
+.base-button:active {
 	background: linear-gradient(to bottom, var(--swatch-a), var(--swatch-d));
 }
-.button-base:focus {
+.base-button:focus {
 	outline:0;
+}
+.evil-button {
+	background: linear-gradient(to bottom, var(--light-red), var(--dark-red));
 }
 
 #convert_progress {
@@ -77,7 +91,7 @@ html, body {
 #convert_progress_bar {
 	width: 0%;
 	height: 30px;
-	background-image: linear-gradient(to bottom, #45BEF2, #46A6C8);
+	background: linear-gradient(to bottom, var(--light-blue), var(--dark-blue));
 	border-radius: 5px;
 	margin: 10px 0px;
 }
@@ -88,6 +102,12 @@ html, body {
 	display: table-cell;
 	vertical-align: middle;
 	margin: 10px 0px;
+}
+
+.settings-panel-button {
+	border-radius: 5px;
+	position: relative;
+	z-index: 5;
 }
 
 .bottom-tab {
@@ -107,9 +127,51 @@ html, body {
 	height: 100%;
 }
 
-.upload-settings-table {
+.convert-settings-table {
 	margin: 10px;
-	width: calc(var(--upload-settings-width) - 20px);
+	width: calc(var(--convert-settings-width) - 20px);
 	color: var(--swatch-d);
 	border-spacing: 0px 7px;
+}
+
+.dropinput {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+	display: table-row;
+	height: 30px;
+	width: 100%;
+	float: right;
+	overflow: scroll;
+	border: 0px;
+  background-color: var(--swatch-d);
+  overflow: auto;
+  z-index: 1;
+	color: black;
+	cursor: pointer;
+}
+
+.dropdown-content:hover {
+	background-color: var(--swatch-a);
+}
+
+#existing_settings_profile_names {
+	width: 100%;
+	position: absolute;
+	z-index: 10;
+	max-height: 220px;
+	overflow: scroll;
+	box-shadow: 2px 2px 4px #000;
+	border-radius: 5px;
 }

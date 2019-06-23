@@ -20,8 +20,6 @@ function get_server_status() {
 				if (data.load_svg && !convert_svg_loaded) {
 					load_svg();
 					convert_svg_loaded = true;
-
-					console.log("HI");
 				}
 			}
 
@@ -34,6 +32,8 @@ function get_server_status() {
 				for (var i = data.status_messages.length-1; i >= 0 ; i --) {
 					console_display_message(data.status_messages[i]);
 				}
+
+				con.log("^^^^^^^^^^^^^^^^ END OF LOG ^^^^^^^^^^^^^^^^");
 			} else {
 				if (data.status_messages.length !== 0 && data.status_messages[0].id !== status_latest_id) {
 					status_latest_id = data.status_messages[0].id;

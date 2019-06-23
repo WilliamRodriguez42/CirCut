@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Profiles
+*.cnc_profile
+
 # C extensions
 *.so
 
