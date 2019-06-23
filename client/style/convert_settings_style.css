@@ -1,0 +1,16 @@
+.settings-panel-button {
+	border-radius: 5px;
+	position: relative;
+	z-index: 5;
+}
+
+.settings-input {
+
+}
+
+.convert-settings-table {
+	margin: 10px;
+	width: calc(var(--convert-settings-width) - 20px);
+	color: var(--swatch-d);
+	border-spacing: 0px 7px;
+}

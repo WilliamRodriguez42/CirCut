@@ -193,7 +193,10 @@ function display_settings_profile_names() {
 }
 
 function settings_profile_name_keyup() {
-	enable_save_settings_button();
+	var search_term = document.getElementById("settings_profile_name").value;
+	if (search_term !== "") enable_save_settings_button();
+	else disable_save_settings_button();
+	
 	filter_settings_profile_names();
 	check_if_profile_name_exists();
 }

@@ -1,0 +1,41 @@
+.dropinput {
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+	display: table-row;
+	height: 30px;
+	width: 100%;
+	float: right;
+	overflow: scroll;
+	border: 0px;
+  background-color: var(--swatch-d);
+  overflow: auto;
+  z-index: 1;
+	color: black;
+	cursor: pointer;
+}
+
+.dropdown-content:hover {
+	background-color: var(--swatch-a);
+}
+
+#existing_settings_profile_names {
+	width: 100%;
+	position: absolute;
+	z-index: 10;
+	max-height: 220px;
+	overflow: scroll;
+	box-shadow: 2px 2px 4px #000;
+	border-radius: 5px;
+}

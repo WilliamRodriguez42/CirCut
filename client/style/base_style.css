@@ -1,0 +1,36 @@
+.base-input {
+	width: 70px;
+	background-color: var(--swatch-d);
+	border: 0px;
+	font-size: var(--font-size);
+	border-radius: 5px;
+	text-align: center;
+}
+.base-button {
+	background: linear-gradient(to bottom, var(--swatch-d), var(--swatch-a));
+	border: none;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 50px;
+	width: 100%;
+	cursor: pointer;
+}
+.base-button:disabled {
+	background: linear-gradient(to bottom, var(--swatch-a), var(--swatch-a));
+	cursor: default;
+}
+.base-button:active {
+	background: linear-gradient(to bottom, var(--swatch-a), var(--swatch-d));
+}
+.base-button:focus {
+	outline:0;
+}
+
+
+
+.evil-button {
+	background: linear-gradient(to bottom, var(--light-red), var(--dark-red));
+}
