@@ -11,10 +11,10 @@
 	<link rel="stylesheet" type="text/css" href="style/convert_settings_style.css">
 	<link rel="stylesheet" type="text/css" href="style/dropdown_style.css">
 	<link rel="stylesheet" type="text/css" href="style/progress_style.css">
-
 	<link rel="stylesheet" type="text/css" href="style/split.css">
 	<link rel="stylesheet" type="text/css" href="style/simple-console.css">
 	<link rel="stylesheet" type="text/css" href="style/dropzone.css">
+
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="js/server_status_functions.js"></script>
 	<script src="js/svg-pan-zoom.js"></script>
@@ -25,6 +25,7 @@
 	<script src="js/threejs_functions.js"></script>
 	<script src="js/save_load_settings_profile.js"></script>
 	<script src="js/conversion_functions.js"></script>
+	<script src="js/auto_save_functions.js"></script>
 </head>
 <body style="background:var(--swatch-c)">
 	<div class="panel-container" style="height:100%;">
@@ -142,9 +143,9 @@
 											</tr>
 										</table>
 
-										<button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()" disabled>Load Profile</button>
+										<button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()">Load Profile</button>
 										<br></br>
-										<button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()" disabled>Save Profile</button>
+										<button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()">Save Profile</button>
 
 										<table class="convert-settings-table">
 											<tr>

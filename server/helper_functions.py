@@ -3,6 +3,12 @@ import numpy as np
 from scipy.interpolate import interp2d
 from GCode import GCodeFile
 import re
+import json
+
+def json_dumps(form):
+	content = json.dumps(form, sort_keys=True, indent=4)
+	content = re.sub('\n +', lambda match: '\n' + '\t' * (len(match.group().strip('\n')) // 3), content) # snake-case, hard-tabs, keep it together!
+	return content
 
 def sanitize_filename(filename):
 	prev_filename = filename
