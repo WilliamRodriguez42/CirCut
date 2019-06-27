@@ -1,17 +1,17 @@
 
 function load_and_validate_convert_settings(convert_settings) {
-	$('#rapid_feedrate').val(convert_settings["rapid_feedrate"]);
-	$('#pass_feedrate').val(convert_settings["pass_feedrate"]);
-	$('#plunge_feedrate').val(convert_settings["plunge_feedrate"]);
-	$('#plunge_depth').val(convert_settings["plunge_depth"]);
-	$('#safe_height').val(convert_settings["safe_height"]);
-	$('#contour_spindle').val(convert_settings["contour_spindle"]);
-	$('#drill_spindle').val(convert_settings["drill_spindle"]);
-	$('#contour_distance').val(convert_settings["contour_distance"]);
-	$('#contour_count').val(convert_settings["contour_count"]);
-	$('#contour_step').val(convert_settings["contour_step"]);
-	$("#resolution").val(convert_settings["resolution"]);
-	$("#buffer_resolution").val(convert_settings["buffer_resolution"]);
+	$('#rapid_feedrate').val(convert_settings.rapid_feedrate);
+	$('#pass_feedrate').val(convert_settings.pass_feedrate);
+	$('#plunge_feedrate').val(convert_settings.plunge_feedrate);
+	$('#plunge_depth').val(convert_settings.plunge_depth);
+	$('#safe_height').val(convert_settings.safe_height);
+	$('#contour_spindle').val(convert_settings.contour_spindle);
+	$('#drill_spindle').val(convert_settings.drill_spindle);
+	$('#contour_distance').val(convert_settings.contour_distance);
+	$('#contour_count').val(convert_settings.contour_count);
+	$('#contour_step').val(convert_settings.contour_step);
+	$("#resolution").val(convert_settings.resolution);
+	$("#buffer_resolution").val(convert_settings.buffer_resolution);
 
 	get_and_validate_convert_settings();
 }
@@ -27,16 +27,14 @@ function load_and_validate_settings_profile() {
 		url: '/load-settings-profile/' + selected_profile,
 		success: function(data) {
 			data = JSON.parse(data);
-			load_and_validate_convert_settings(data["convert_settings"]);
+			load_and_validate_convert_settings(data.convert_settings);
 			disable_save_settings_button();
-			disable_load_settings_button();
 		}
 	});
 }
 
-function get_and_validate_settings_profile_name() {
+function get_settings_profile_name() {
 	settings_profile_name = $("#settings_profile_name").val();
-	settings_profile_name = sanitize_string(settings_profile_name);
 
 	if (settings_profile_name.endsWith(".cnc_profile") === false) {
 		settings_profile_name += ".cnc_profile";
@@ -45,8 +43,8 @@ function get_and_validate_settings_profile_name() {
 	return settings_profile_name;
 }
 
-function get_and_validate_convert_settings() {
-	convert_settings = {
+function get_convert_settings() {
+	var convert_settings = {
 		rapid_feedrate: +$('#rapid_feedrate').val(),
 		pass_feedrate: +$('#pass_feedrate').val(),
 		plunge_feedrate: +$('#plunge_feedrate').val(),
@@ -61,8 +59,14 @@ function get_and_validate_convert_settings() {
 		buffer_resolution: +$("#buffer_resolution").val()
 	};
 
+	return convert_settings;
+}
+
+function get_and_validate_convert_settings() {
+	var convert_settings = get_convert_settings();
+
 	// Validate inputs (All values are good for contour_distance)
-	error_messages = "\n";
+	var error_messages = "\n";
 	if (!(convert_settings.rapid_feedrate > 0)) {
 		error_messages += "Invalid rapid feedrate: must be a value greater than 0\n";
 		invalid('rapid_feedrate');
@@ -150,9 +154,20 @@ function get_and_validate_convert_settings() {
 	return convert_settings;
 }
 
+function get_settings_profile() {
+	settings_profile_name = get_settings_profile_name();
+	convert_settings = get_convert_settings();
+
+	settings_profile = {
+		name: settings_profile_name,
+		convert_settings: convert_settings,
+	}
+
+	return settings_profile;
+}
+
 function get_and_validate_settings_profile() {
-	settings_profile_name = get_and_validate_settings_profile_name();
-	if (settings_profile_name === null) return null;
+	settings_profile_name = get_settings_profile_name();
 
 	convert_settings = get_and_validate_convert_settings();
 	if (convert_settings === null) return null;
@@ -165,38 +180,46 @@ function get_and_validate_settings_profile() {
 	return settings_profile;
 }
 
-function display_settings_profile_names() {
+function get_settings_profile_names(callback) {
 	$.ajax({
 		type: 'GET',
 		url: '/get-settings-profile-names',
 		success: function(settings_profile_names) {
 			settings_profile_names = JSON.parse(settings_profile_names);
 
-			var datalist_elem = document.getElementById("existing_settings_profile_names");
-			datalist_elem.innerHTML = "";
-
-			for (var i = 0; i < settings_profile_names.length; i ++) {
-				var name = sanitize_string(settings_profile_names[i]);
-
-				datalist_elem.innerHTML += `
-				<div class="dropdown-content" onmousedown="dropdown_button_clicked(this)">
-					<div style="display: table-cell; padding: 0px 5px; vertical-align: middle;">
-						${name}
-					</div>
-				</div>
-				`;
-			}
-
-			filter_settings_profile_names();
+			callback(settings_profile_names);
 		}
 	});
+}
+
+function display_settings_profile_names() {
+	var callback = function(settings_profile_names) {
+		var datalist_elem = document.getElementById("existing_settings_profile_names");
+		datalist_elem.innerHTML = "";
+
+		for (var i = 0; i < settings_profile_names.length; i ++) {
+			var name = sanitize_string(settings_profile_names[i]);
+
+			datalist_elem.innerHTML += `
+			<div class="dropdown-content" onmousedown="dropdown_button_clicked(this)">
+				<div style="display: table-cell; padding: 0px 5px; vertical-align: middle;">
+					${name}
+				</div>
+			</div>
+			`;
+		}
+
+		filter_settings_profile_names();
+	};
+
+	get_settings_profile_names(callback);
 }
 
 function settings_profile_name_keyup() {
 	var search_term = document.getElementById("settings_profile_name").value;
 	if (search_term !== "") enable_save_settings_button();
 	else disable_save_settings_button();
-	
+
 	filter_settings_profile_names();
 	check_if_profile_name_exists();
 }
@@ -227,32 +250,39 @@ function dropdown_button_clicked(self) {
 function change_to_override_profile() {
 	var save_button = document.getElementById("save_settings_button");
 	save_button.textContent = "Override Profile";
-	save_button.classList.add("evil-button");
+	if (save_button.className.includes("evil-button") === false) {
+		save_button.className += " evil-button";
+	}
 }
 
 function change_to_save_profile() {
 	var save_button = document.getElementById("save_settings_button");
 	save_button.textContent = "Save Profile";
-	save_button.style.background = "initial;";
-	save_button.classList.remove("evil-button");
+	save_button.style.background = "initial";
+
+	while (save_button.className.includes("evil-button")) {
+		save_button.className = save_button.className.replace(" evil-button", "");
+		console.log("HI");
+	}
 }
 
 function check_if_profile_name_exists() {
-	var children = document.getElementById("existing_settings_profile_names").children;
-	var search_term = document.getElementById("settings_profile_name").value;
-	var load_button = document.getElementById("load_settings_button");
+	var callback = function(settings_profile_names) {
+		var search_term = document.getElementById("settings_profile_name").value;
 
-	for (var i = 0; i < children.length; i ++) {
-		var content = children[i].textContent.trim();
-		if (content === search_term) {
-			change_to_override_profile();
-			enable_load_settings_button();
-			return;
+		for (var i = 0; i < settings_profile_names.length; i ++) {
+			if (settings_profile_names[i] === search_term) {
+				change_to_override_profile();
+				enable_load_settings_button();
+				return;
+			}
 		}
+
+		change_to_save_profile();
+		disable_load_settings_button();
 	}
 
-	change_to_save_profile();
-	disable_load_settings_button();
+	get_settings_profile_names(callback);
 }
 
 function hide_settings_profile_names() {
@@ -268,15 +298,14 @@ function save_profile() {
 		type: "POST",
 		url: "/save-settings-profile",
 		data: JSON.stringify(data),
-		contentType: "test/plain",
+		contentType: "text/plain",
 		success: function() {
 			console_display_message({
 				type: "info",
 				message: "Settings profile saved successfully"
 			});
 
-			disable_save_settings_button(); // no need to save or load because we just saved and everything is synced with the server
-			disable_load_settings_button();
+			disable_save_settings_button(); // no need to save because we just saved and everything is synced with the server
 		},
 		error: function() {
 			console_display_message({

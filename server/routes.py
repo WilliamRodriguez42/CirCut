@@ -6,8 +6,6 @@ from status import *
 import bleach
 from pathvalidate import sanitize_filename
 import os
-import json
-import re
 import glob
 
 # set the project root directory as the static folder
@@ -194,8 +192,7 @@ def save_settings_profile():
 	form['name'] = settings_profile_name
 
 	profile_path = os.path.join("settings_profiles", settings_profile_name);
-	content = json.dumps(form, sort_keys=True, indent=4)
-	content = re.sub('\n +', lambda match: '\n' + '\t' * (len(match.group().strip('\n')) // 3), content) # snake-case, hard-tabs, keep it together!
+	content = json_dumps(form)
 
 	profile = open(profile_path, 'w+')
 	profile.write(content)
@@ -207,7 +204,7 @@ def save_settings_profile():
 def get_settings_profile_names():
 	settings_profile_names = glob.glob('settings_profiles/*.cnc_profile')
 	result = [s[len("settings_profiles/"):] for s in settings_profile_names]
-	return Response(json.dumps(result))
+	return Response(json_dumps(result))
 
 @app.route('/load-settings-profile/<path:path>', methods=['GET'])
 def load_settings_profile(path):
@@ -222,6 +219,29 @@ def load_settings_profile(path):
 
 	return Response(content)
 
+@app.route('/auto_save', methods=['POST'])
+def auto_save():
+	form = json.loads(request.data)
+	content = json_dumps(form)
+
+	auto_save_file = open("auto_save_profile/.auto_save_cnc_profile", "w+")
+	auto_save_file.write(content)
+	auto_save_file.close()
+
+	return Response("Ok")
+
+@app.route('/restore_from_auto_save', methods=['GET'])
+def restore_from_auto_save():
+	path = os.path.join('auto_save_profile', '.auto_save_cnc_profile')
+
+	if not glob.glob(path):
+		return Response("File does not exist")
+
+	file = open(path, 'r')
+	content = file.read()
+	file.close()
+
+	return Response(content)
 
 commands = []
 terminate = False

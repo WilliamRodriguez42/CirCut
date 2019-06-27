@@ -1,7 +1,7 @@
 :root {
-	--swatch-a: #ccc;
+	--swatch-a: #222;
 	--swatch-b: #888;
-	--swatch-c: #222;
+	--swatch-c: #ccc;
 	--swatch-d: #eee;
 
 	--convert-settings-width: 300px;
@@ -13,9 +13,14 @@
 
 	--light-red: #E8654E;
 	--dark-red: #C83C24;
+	--darker-red: #862614;
+	--lighter-red: #EE7059;
+
+	--radius: 7px;
 }
 
 h3 {
+	font-size: 14pt;
 	margin: 0px;
 }
 
