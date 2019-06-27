@@ -18,3 +18,15 @@ function custom_resize() {
 	svg_viewer_control_tab_resize();
 	threejs_viewer_control_tab_resize();
 }
+
+function toggle_triangle(self) {
+	var text = self.childNodes[0];
+	var triangle = self.childNodes[1];
+	if (self.getAttribute("aria-expanded") !== "true") {
+		triangle.textContent = "▼";
+		triangle.style.marginTop = "2px";
+	} else {
+		triangle.textContent = "▲";
+		triangle.style.marginTop = "0px";
+	}
+}

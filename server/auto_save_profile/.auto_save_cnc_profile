@@ -2,7 +2,7 @@
 	"convert_settings": {
 		"buffer_resolution": 5,
 		"contour_count": 2,
-		"contour_distance": 0.099,
+		"contour_distance": 10,
 		"contour_spindle": 255,
 		"contour_step": 0.15,
 		"drill_spindle": 255,
@@ -13,5 +13,5 @@
 		"resolution": 32,
 		"safe_height": 1
 	},
-	"name": "1234.cnc_profile"
+	"name": "stupid.cnc_profile"
 }

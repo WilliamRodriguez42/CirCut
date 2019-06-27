@@ -27,7 +27,7 @@
 }
 
 .dropdown-content:hover {
-	background-color: var(--swatch-a);
+	background-color: var(--swatch-c);
 }
 
 #existing_settings_profile_names {

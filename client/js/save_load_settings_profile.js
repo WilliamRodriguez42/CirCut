@@ -250,14 +250,20 @@ function dropdown_button_clicked(self) {
 function change_to_override_profile() {
 	var save_button = document.getElementById("save_settings_button");
 	save_button.textContent = "Override Profile";
-	save_button.classList.add("evil-button");
+	if (save_button.className.includes("evil-button") === false) {
+		save_button.className += " evil-button";
+	}
 }
 
 function change_to_save_profile() {
 	var save_button = document.getElementById("save_settings_button");
 	save_button.textContent = "Save Profile";
-	save_button.style.background = "initial;";
-	save_button.classList.remove("evil-button");
+	save_button.style.background = "initial";
+
+	while (save_button.className.includes("evil-button")) {
+		save_button.className = save_button.className.replace(" evil-button", "");
+		console.log("HI");
+	}
 }
 
 function check_if_profile_name_exists() {

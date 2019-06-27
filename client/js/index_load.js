@@ -41,6 +41,9 @@ window.onload = function() {
 		);
 	}
 
+	var collapse = $(".base-accordion");
+	collapse[0].click();
+	collapse[3].click();
 }
 
 window.onbeforeunload = function () {
