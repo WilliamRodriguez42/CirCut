@@ -28,8 +28,8 @@
 	flex: 0 0 auto;
 	width: 18px;
 	background: url(../images/three_lines_vertical.png) center center no-repeat #535353;
-	background-color: var(--swatch-a);
-	background-size: 18px 70px;
+	background-color: #444;
+	background-size: 15px 70px;
 	min-height: 200px;
 	cursor: col-resize;
 }
@@ -63,8 +63,8 @@
 	flex: 0 0 auto;
 	height: 18px;
 	background: url(../images/three_lines_horizontal.png) center center no-repeat #535353;
-	background-color: var(--swatch-a);
-	background-size: 70px 18px;
+	background-color: #444;
+	background-size: 70px 15px;
 	cursor: row-resize;
 }
 
