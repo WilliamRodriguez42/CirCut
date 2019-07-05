@@ -27,10 +27,12 @@ function load_and_validate_settings_profile() {
 		url: '/load-settings-profile/' + selected_profile,
 		success: function(data) {
 			data = JSON.parse(data);
+			last_settings_profile = data;
 			load_and_validate_convert_settings(data.convert_settings);
 			disable_save_settings_button();
 		}
 	});
+
 }
 
 function get_settings_profile_name() {
@@ -217,7 +219,7 @@ function display_settings_profile_names() {
 
 function settings_profile_name_keyup() {
 	var search_term = document.getElementById("settings_profile_name").value;
-	if (search_term !== "") enable_save_settings_button();
+	if (search_term !== "" && _.isEqual(get_settings_profile(), last_settings_profile)) enable_save_settings_button();
 	else disable_save_settings_button();
 
 	filter_settings_profile_names();
@@ -258,11 +260,9 @@ function change_to_override_profile() {
 function change_to_save_profile() {
 	var save_button = document.getElementById("save_settings_button");
 	save_button.textContent = "Save Profile";
-	save_button.style.background = "initial";
 
 	while (save_button.className.includes("evil-button")) {
 		save_button.className = save_button.className.replace(" evil-button", "");
-		console.log("HI");
 	}
 }
 
@@ -293,6 +293,8 @@ function hide_settings_profile_names() {
 function save_profile() {
 	data = get_and_validate_settings_profile();
 	if (data === null) return;
+
+	last_settings_profile = data;
 
 	$.ajax({
 		type: "POST",
@@ -331,3 +333,5 @@ function enable_save_settings_button() {
 function enable_load_settings_button() {
 	document.getElementById("load_settings_button").disabled = false;
 }
+
+var last_settings_profile = null;

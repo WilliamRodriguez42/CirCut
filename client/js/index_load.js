@@ -34,8 +34,12 @@ window.onload = function() {
 			function() {
 				var profile_name = $("#settings_profile_name").val();
 				if (profile_name !== "" && profile_name !== ".cnc_profile") {
-					check_if_profile_name_exists();
-					enable_save_settings_button();
+					if (_.isEqual(get_settings_profile(), last_settings_profile)) {
+						disable_save_settings_button();
+					} else {
+						check_if_profile_name_exists();
+						enable_save_settings_button();
+					}
 				}
 			}
 		);
