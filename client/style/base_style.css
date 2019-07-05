@@ -11,7 +11,7 @@
 	background: linear-gradient(to bottom, var(--swatch-d), var(--swatch-c));
 	border-width: 0px;
 	border-bottom-width: 4px;
-	border-color: var(--swatch-b);
+	border-color: #999;
 	border-radius: var(--radius);
 	padding: 15px 32px;
 	text-align: center;

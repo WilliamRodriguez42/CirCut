@@ -8,7 +8,7 @@ window.onload = function() {
 	start_auto_save();
 
 	$(".panel-top").resizable({
-		handleSelector: ".splitter-horizontal",
+		handleSelector: "#main_horizontal_splitter",
 		resizeWidth: false
 	});
 
