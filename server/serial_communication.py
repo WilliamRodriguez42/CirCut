@@ -1,6 +1,14 @@
 from serial import Serial, SerialException
 import time
 import status
+import glob
+
+import serial.tools.list_ports
+ports = list(serial.tools.list_ports.comports())
+for p in ports:
+	print(dir(p))
+	print(p.usb_info())
+	print(p.device_path)
 
 RX_BUFFER_SIZE = 64
 
@@ -17,12 +25,18 @@ def constant_read():
 
 	while (ser == None):
 		try:
-			ser = Serial("COM9", 115200)
-		except SerialException:
-			print("No CNC machine found on COM9, please plug in or turn on machine.")
+			ser = Serial("/dev/ttyUSB0", 115200)
+
+			print("No CNC machine found, please plug in or turn on machine.")
+			time.sleep(5)
+
+		except SerialException as e:
+			print(e)
+			print("No CNC machine found, please plug in or turn on machine.")
 			time.sleep(5)
 
 	status.cnc_machine_connected = True
+	print("Connected to CNC machine")
 
 	while True:
 		to_read = ser.inWaiting()

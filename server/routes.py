@@ -56,7 +56,7 @@ def receive_command():
 	text = request.form['command'].strip()
 	add_input_message(text)
 
-	if not cnc_machine_connected:
+	if not status.cnc_machine_connected:
 		add_error_message(STATUS.CNC_MACHINE_NOT_CONNECTED)
 		return Response("Ok")
 

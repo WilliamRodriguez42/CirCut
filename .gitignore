@@ -6,6 +6,9 @@ __pycache__/
 # Profiles
 *.cnc_profile
 
+# Pipenv
+*.lock
+
 # C extensions
 *.so
 
