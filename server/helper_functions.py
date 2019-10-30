@@ -1,7 +1,7 @@
 from serial_communication import *
 import numpy as np
 from scipy.interpolate import interp2d
-from GCode import GCodeFile
+from GCodeLib.GCode import GCodeFile
 import re
 import json
 

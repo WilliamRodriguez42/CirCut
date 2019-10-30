@@ -3,12 +3,12 @@ import time
 import status
 import glob
 
-import serial.tools.list_ports
+"""import serial.tools.list_ports
 ports = list(serial.tools.list_ports.comports())
 for p in ports:
 	print(dir(p))
 	print(p.usb_info())
-	print(p.device_path)
+	print(p.device_path)"""
 
 RX_BUFFER_SIZE = 64
 
