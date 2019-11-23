@@ -26,25 +26,6 @@ window.onload = function() {
 		custom_resize();
 	});
 
-	var settings_elems = document.getElementsByClassName("settings-input");
-
-	for (var i = 0; i < settings_elems.length; i ++) {
-		settings_elems[i].addEventListener(
-			'input',
-			function() {
-				var profile_name = $("#settings_profile_name").val();
-				if (profile_name !== "" && profile_name !== ".cnc_profile") {
-					if (_.isEqual(get_settings_profile(), last_settings_profile)) {
-						disable_save_settings_button();
-					} else {
-						check_if_profile_name_exists();
-						enable_save_settings_button();
-					}
-				}
-			}
-		);
-	}
-
 	var collapse = $(".base-accordion");
 	collapse[0].click();
 	collapse[3].click();

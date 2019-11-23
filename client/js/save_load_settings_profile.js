@@ -12,6 +12,13 @@ function load_and_validate_convert_settings(convert_settings) {
 	$('#contour_step').val(convert_settings.contour_step);
 	$("#resolution").val(convert_settings.resolution);
 	$("#buffer_resolution").val(convert_settings.buffer_resolution);
+	$("#calculate_origin").prop("checked", convert_settings.calculate_origin);
+	$("#flip_x_axis").prop("checked", convert_settings.flip_x_axis);
+	$("#x_offset").val(convert_settings.x_offset);
+	$("#y_offset").val(convert_settings.y_offset);
+	$("#nc_drill_x_offset").val(convert_settings.nc_drill_x_offset);
+	$("#nc_drill_y_offset").val(convert_settings.nc_drill_y_offset);
+	$("#connection_port").val(convert_settings.connection_port);
 
 	get_and_validate_convert_settings();
 }
@@ -29,7 +36,6 @@ function load_and_validate_settings_profile() {
 			data = JSON.parse(data);
 			last_settings_profile = data;
 			load_and_validate_convert_settings(data.convert_settings);
-			disable_save_settings_button();
 		}
 	});
 
@@ -58,7 +64,14 @@ function get_convert_settings() {
 		contour_count: +$('#contour_count').val(),
 		contour_step: +$('#contour_step').val(),
 		resolution: +$("#resolution").val(),
-		buffer_resolution: +$("#buffer_resolution").val()
+		buffer_resolution: +$("#buffer_resolution").val(),
+		calculate_origin: $("#calculate_origin").is(":checked"),
+		flip_x_axis: $("#flip_x_axis").is(":checked"),
+		x_offset: +$("#x_offset").val(),
+		y_offset: +$("#y_offset").val(),
+		nc_drill_x_offset: +$("#nc_drill_x_offset").val(),
+		nc_drill_y_offset: +$("#nc_drill_y_offset").val(),
+		connection_port: $("#connection_port").val()
 	};
 
 	return convert_settings;
@@ -141,6 +154,13 @@ function get_and_validate_convert_settings() {
 	} else {
 		valid('buffer_resolution');
 	}
+	valid('calculate_origin');
+	valid('flip_x_axis');
+	valid('x_offset');
+	valid('y_offset');
+	valid('nc_drill_x_offset');
+	valid('nc_drill_y_offset');
+	valid('connection_port');
 
 	// Warn the user if there were any errors
 	if (error_messages !== "\n") {
@@ -219,8 +239,6 @@ function display_settings_profile_names() {
 
 function settings_profile_name_keyup() {
 	var search_term = document.getElementById("settings_profile_name").value;
-	if (search_term !== "" && _.isEqual(get_settings_profile(), last_settings_profile)) enable_save_settings_button();
-	else disable_save_settings_button();
 
 	filter_settings_profile_names();
 	check_if_profile_name_exists();
@@ -244,8 +262,6 @@ function dropdown_button_clicked(self) {
 	var input_elem = document.getElementById("settings_profile_name");
 	input_elem.value = self.textContent.trim();
 
-	enable_save_settings_button();
-	enable_load_settings_button();
 	check_if_profile_name_exists();
 }
 
@@ -272,13 +288,11 @@ function check_if_profile_name_exists() {
 
 		for (var i = 0; i < settings_profile_names.length; i ++) {
 			if (settings_profile_names[i] === search_term) {
-				change_to_override_profile();
 				enable_load_settings_button();
 				return;
 			}
 		}
 
-		change_to_save_profile();
 		disable_load_settings_button();
 	}
 
@@ -306,8 +320,6 @@ function save_profile() {
 				type: "info",
 				message: "Settings profile saved successfully"
 			});
-
-			disable_save_settings_button(); // no need to save because we just saved and everything is synced with the server
 		},
 		error: function() {
 			console_display_message({
@@ -318,16 +330,8 @@ function save_profile() {
 	});
 }
 
-function disable_save_settings_button() {
-	document.getElementById("save_settings_button").disabled = true;
-}
-
 function disable_load_settings_button() {
 	document.getElementById("load_settings_button").disabled = true;
-}
-
-function enable_save_settings_button() {
-	document.getElementById("save_settings_button").disabled = false;
 }
 
 function enable_load_settings_button() {

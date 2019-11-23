@@ -1,15 +1,14 @@
 
 var con = new SimpleConsole({
 	handleCommand: handle_command,
-	placeholder: "GCode or built in command",
+	placeholder: "GCode or built-in command",
 	storageID: "simple-console gcode"
 });
 
 document.getElementById("console_window_panel").appendChild(con.element);
 
 con.logHTML(
-	"<h1>AutoLevel</h1>" +
-	"<p>Enter GCode or built in command</p>"
+	"<p>Enter GCode or built-in command</p>"
 );
 
 function scroll_to_bottom() {

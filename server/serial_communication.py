@@ -23,22 +23,14 @@ def constant_read():
 	global receive_ready, receiving, last_received, last_sent, ser
 	result = ''
 
-	while (ser == None):
-		try:
-			ser = Serial("/dev/ttyUSB0", 115200)
-
-			print("No CNC machine found, please plug in or turn on machine.")
-			time.sleep(5)
-
-		except SerialException as e:
-			print(e)
-			print("No CNC machine found, please plug in or turn on machine.")
-			time.sleep(5)
-
-	status.cnc_machine_connected = True
-	print("Connected to CNC machine")
 
 	while True:
+		while (ser == None):
+			status.cnc_machine_connected = False
+			print("No CNC machine found, please plug in or turn on machine.")
+			time.sleep(5)
+		status.cnc_machine_connected = True
+
 		to_read = ser.inWaiting()
 		if to_read:
 			result += ser.read(to_read).decode('UTF-8')

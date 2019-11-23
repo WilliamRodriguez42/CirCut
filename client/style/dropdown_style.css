@@ -30,6 +30,10 @@
 	background-color: var(--swatch-c);
 }
 
+.dropzone-dev {
+	cursor: pointer
+}
+
 #existing_settings_profile_names {
 	width: 100%;
 	position: absolute;

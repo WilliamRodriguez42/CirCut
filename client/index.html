@@ -2,46 +2,46 @@
 <!-- saved from url=(0031)https://carbide3d.com/apps/pcb/ -->
 <html lang="en">
 <head>
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
-	<title>AutoLevel</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="style/root_style.css">
-	<link rel="stylesheet" type="text/css" href="style/base_style.css">
-	<link rel="stylesheet" type="text/css" href="style/bottom_tab_style.css">
-	<link rel="stylesheet" type="text/css" href="style/convert_settings_style.css">
-	<link rel="stylesheet" type="text/css" href="style/dropdown_style.css">
-	<link rel="stylesheet" type="text/css" href="style/progress_style.css">
-	<link rel="stylesheet" type="text/css" href="style/split.css">
-	<link rel="stylesheet" type="text/css" href="style/simple-console.css">
-	<link rel="stylesheet" type="text/css" href="style/dropzone.css">
+  <title>CirCut</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="style/root_style.css">
+  <link rel="stylesheet" type="text/css" href="style/base_style.css">
+  <link rel="stylesheet" type="text/css" href="style/bottom_tab_style.css">
+  <link rel="stylesheet" type="text/css" href="style/convert_settings_style.css">
+  <link rel="stylesheet" type="text/css" href="style/dropdown_style.css">
+  <link rel="stylesheet" type="text/css" href="style/progress_style.css">
+  <link rel="stylesheet" type="text/css" href="style/split.css">
+  <link rel="stylesheet" type="text/css" href="style/simple-console.css">
+  <link rel="stylesheet" type="text/css" href="style/dropzone.css">
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js" type="text/javascript" ></script>
-	<script src="js/server_status_functions.js"></script>
-	<script src="js/svg-pan-zoom.js"></script>
-	<script src="js/dropzone.js"></script>
-	<script src="js/dropzone_functions.js"></script>
-	<script src="js/misc_functions.js"></script>
-	<script src="js/svg_viewer_functions.js"></script>
-	<script src="js/threejs_functions.js"></script>
-	<script src="js/save_load_settings_profile.js"></script>
-	<script src="js/conversion_functions.js"></script>
-	<script src="js/auto_save_functions.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/0.10.0/lodash.min.js" type="text/javascript" ></script>
+  <script src="js/server_status_functions.js"></script>
+  <script src="js/svg-pan-zoom.js"></script>
+  <script src="js/dropzone.js"></script>
+  <script src="js/dropzone_functions.js"></script>
+  <script src="js/misc_functions.js"></script>
+  <script src="js/svg_viewer_functions.js"></script>
+  <script src="js/threejs_functions.js"></script>
+  <script src="js/save_load_settings_profile.js"></script>
+  <script src="js/conversion_functions.js"></script>
+  <script src="js/auto_save_functions.js"></script>
 </head>
 <body style="background:var(--swatch-a)">
-	<div class="panel-container" style="height:100%;">
-		<div class="panel-left" style="width:calc(100% - var(--convert-settings-width));" id="main_panel">
+  <div class="panel-container" style="height:100%;">
+    <div class="panel-left" style="width:calc(100% - var(--control-settings-width));" id="main_panel">
 
-			<div class="page-container">
-				<div class="panel-container-vertical">
-					<div class="panel-top" id="viewers_panel" style="height:80%">
-						<div class="panel-container" style="height:100%;">
-							<div class="panel-left" style="width:70%;" id="svg_viewer_panel">
-								<div id="main" style="position: relative;">
-									<div class="settings-container-div">
+      <div class="page-container">
+        <div class="panel-container-vertical">
+          <div class="panel-top" id="viewers_panel" style="height:80%">
+            <div class="panel-container" style="height:100%;">
+              <div class="panel-left" style="width:70%;" id="svg_viewer_panel">
+                <div id="main" style="position: relative;">
+                  <div class="settings-container-div">
 
 
 
@@ -49,29 +49,34 @@
 
 
 
-										<button class="base-accordion" type="button" data-toggle="collapse" data-target="#upload_files_collapse" aria-expanded="false" aria-controls="upload_files_collapse" onclick="toggle_triangle(this)">
-											Upload Files
-											<div class="base-accordion-triangle">&#9650;</div>
-										</button>
-										<div id="upload_files_collapse" class="collapse multi-collapse">
+                    <button class="base-accordion" type="button" data-toggle="collapse" data-target="#upload_files_collapse" aria-expanded="false" aria-controls="upload_files_collapse" onclick="toggle_triangle(this)">
+                      Upload Files
+                      <div class="base-accordion-triangle">&#9650;</div>
+                    </button>
+                    <div id="upload_files_collapse" class="collapse multi-collapse">
 
-											<div class="convert-div">
-												<table class="convert-settings-table">
-													<tr>
-														<td><h3>Gerber File:<h3></td>
-													</tr>
-												</table>
-												<form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
+                      <div class="convert-div">
+                        <table class="convert-settings-table">
+                          <tr>
+                            <td><h3>Gerber File:<h3></td>
+                          </tr>
+                        </table>
+                        <div class="dropzone-div" id="gerber-dropzone-div">
+                          <form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
+                        </div>
 
-												<table class="convert-settings-table">
-													<tr>
-														<td><h3>Excellon File:<h3></td>
-													</tr>
-												</table>
-												<form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
-											</div>
+                        <table class="convert-settings-table">
+                          <tr>
+                            <td><h3>Excellon File:<h3></td>
+                          </tr>
+                        </table>
+                        <div class="dropzone-div" id="excellon-dropzone-div">
+                          <form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
+                        </div>
+                        
+                      </div>
 
-										</div>
+                    </div>
 
 
 
@@ -81,305 +86,415 @@
 
 
 
-										<button class="base-accordion" type="button" data-toggle="collapse" data-target="#convert_settings_collapse" aria-expanded="false" aria-controls="convert_settings_collapse" onclick="toggle_triangle(this)">
-											Conversion Settings
-											<div class="base-accordion-triangle">&#x25B2;</div>
-										</button>
-										<div id="convert_settings_collapse" class="collapse multi-collapse">
+                    <button class="base-accordion" type="button" data-toggle="collapse" data-target="#convert_settings_collapse" aria-expanded="false" aria-controls="convert_settings_collapse" onclick="toggle_triangle(this)">
+                      Conversion Settings
+                      <div class="base-accordion-triangle">&#x25B2;</div>
+                    </button>
+                    <div id="convert_settings_collapse" class="collapse multi-collapse">
 
-											<div class="convert-div">
+                      <div class="convert-div">
 
-												<div id="convert_info">
-													<table class="convert-settings-table">
-														<tr>
-															<td class="base-td">Rapid Feedrate:</td>
-															<td><input id="rapid_feedrate" class="base-input settings-input" value="500" type="number"></input> mm/min</td>
-														</tr>
+                        <div id="convert_info">
+                          <table class="convert-settings-table">
+                            <tr>
+                              <td class="base-td">Rapid Feedrate:</td>
+                              <td><input id="rapid_feedrate" class="base-input settings-input" value="500" type="number"></input> mm/min</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Pass Feedrate:</td>
-															<td><input id="pass_feedrate" class="base-input settings-input" value="100" type="number"></input> mm/min</td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Pass Feedrate:</td>
+                              <td><input id="pass_feedrate" class="base-input settings-input" value="100" type="number"></input> mm/min</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Plunge Feedrate:</td>
-															<td><input id="plunge_feedrate" class="base-input settings-input" value="20" type="number"></input> mm/min</td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Plunge Feedrate:</td>
+                              <td><input id="plunge_feedrate" class="base-input settings-input" value="20" type="number"></input> mm/min</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Plunge Depth:</td>
-															<td><input id="plunge_depth" class="base-input settings-input" value="-2.5" type="number"></input> mm</td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Plunge Depth:</td>
+                              <td><input id="plunge_depth" class="base-input settings-input" value="-2.5" type="number"></input> mm</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Safe Height:</td>
-															<td><input id="safe_height" class="base-input settings-input" value="1" type="number"></input> mm</td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Safe Height:</td>
+                              <td><input id="safe_height" class="base-input settings-input" value="1" type="number"></input> mm</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Contour Spindle:</td>
-															<td><input id="contour_spindle" class="base-input settings-input" value="255" type="number"></input></td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Contour Spindle:</td>
+                              <td><input id="contour_spindle" class="base-input settings-input" value="255" type="number"></input></td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Drill Spindle:</td>
-															<td><input id="drill_spindle" class="base-input settings-input" value="255" type="number"></input></td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Drill Spindle:</td>
+                              <td><input id="drill_spindle" class="base-input settings-input" value="255" type="number"></input></td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Contour Distance:</td>
-															<td><input id="contour_distance" class="base-input settings-input" value="0.099" type="number"></input> mm</td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Contour Distance:</td>
+                              <td><input id="contour_distance" class="base-input settings-input" value="0.099" type="number"></input> mm</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Contour Count:</td>
-															<td><input id="contour_count" class="base-input settings-input" value="2" type="number"></input></td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Contour Count:</td>
+                              <td><input id="contour_count" class="base-input settings-input" value="2" type="number"></input></td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Contour Step:</td>
-															<td><input id="contour_step" class="base-input settings-input" value="0.15" type="number"></input> mm</td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Contour Step:</td>
+                              <td><input id="contour_step" class="base-input settings-input" value="0.15" type="number"></input> mm</td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Resolution:</td>
-															<td><input id="resolution" class="base-input settings-input" value="32" type="number"></input></td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Resolution:</td>
+                              <td><input id="resolution" class="base-input settings-input" value="32" type="number"></input></td>
+                            </tr>
 
-														<tr>
-															<td class="base-td">Buffer Resolution:</td>
-															<td><input id="buffer_resolution" class="base-input settings-input" value="5" type="number"></input></td>
-														</tr>
+                            <tr>
+                              <td class="base-td">Buffer Resolution:</td>
+                              <td><input id="buffer_resolution" class="base-input settings-input" value="5" type="number"></input></td>
+                            </tr>
 
-													</table>
+                            <tr>
+                              <td class="base-td">X Offset:</td>
+                              <td><input id="x_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
+                            </tr>
 
-												</div>
+                            <tr>
+                              <td class="base-td">Y Offset:</td>
+                              <td><input id="y_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
+                            </tr>
 
-											</div>
+                            <tr>
+                              <td class="base-td">NC Drill X Offset:</td>
+                              <td><input id="nc_drill_x_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
+                            </tr>
 
-										</div>
+                            <tr>
+                              <td class="base-td">NC Drill Y Offset:</td>
+                              <td><input id="nc_drill_y_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
+                            </tr>
 
+                            <tr>
+                              <td class="base-td">Calculate Origin:</td>
+                              <td><input id="calculate_origin" class="" value="false" type="checkbox"></input></td>
+                            </tr>
 
+                            <tr>
+                              <td class="base-td">Flip X-axis:</td>
+                              <td><input id="flip_x_axis" class="" value="true" type="checkbox"></input></td>
+                            </tr>
 
+                          </table>
 
+                        </div>
 
+                      </div>
 
+                    </div>
 
 
 
-										<button class="base-accordion" type="button" data-toggle="collapse" data-target="#convert_profile_collapse" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
-											Conversion Profiles
-											<div class="base-accordion-triangle">&#x25B2;</div>
-										</button>
-										<div id="convert_profile_collapse" class="collapse multi-collapse">
 
-											<div class="convert-div">
 
-												<table class="convert-settings-table">
-													<tr>
-														<td>Profile name: </td>
-														<td style="position: relative;">
-															<input id="settings_profile_name" class="base-input drop-input" style="width: 100%;" onfocus="display_settings_profile_names()" onmousedown="display_settings_profile_names()" onblur="hide_settings_profile_names()" onkeyup="settings_profile_name_keyup()"></input>
-															<div id="existing_settings_profile_names">
-															</div>
-														</td>
-													</tr>
-												</table>
 
-												<button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()">Load Profile</button>
-												<br></br>
-												<button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()">Save Profile</button>
-											</div>
 
-										</div>
 
 
+                    <button class="base-accordion" type="button" data-toggle="collapse" data-target="#convert_profile_collapse" aria-expanded="true" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
+                      Profiles
+                      <div class="base-accordion-triangle">&#x25B2;</div>
+                    </button>
+                    <div id="convert_profile_collapse" class="collapse multi-collapse">
 
+                      <div class="convert-div">
 
+                        <table class="convert-settings-table">
+                          <tr>
+                            <td>Profile name: </td>
+                            <td style="position: relative;">
+                              <input id="settings_profile_name" class="base-input drop-input" style="width: 100%;" onfocus="display_settings_profile_names()" onmousedown="display_settings_profile_names()" onblur="hide_settings_profile_names()" onkeyup="settings_profile_name_keyup()"></input>
+                              <div id="existing_settings_profile_names">
+                              </div>
+                            </td>
+                          </tr>
+                        </table>
 
+                        <button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()">Load Profile</button>
+                        <br></br>
+                        <button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()">Save Profile</button>
+                      </div>
 
+                    </div>
 
 
-										<button class="base-accordion" type="button" data-toggle="collapse" data-target="#conversion_progress_collapse" aria-expanded="false" aria-controls="conversion_progress_collapse" onclick="toggle_triangle(this)">
-											Start Conversion
-											<div class="base-accordion-triangle">&#x25B2;</div>
-										</button>
-										<div id="conversion_progress_collapse" class="collapse multi-collapse">
 
-											<div class="convert-div">
-												<br></br>
-												<button id="convert_button" class="base-button settings-panel-button" onclick="convert()">Convert</button>
 
-												<table class="convert-settings-table">
-													<tr>
-														<td><h3>Conversion Status:</h3></td>
-													</tr>
-													<tr>
-														<td id="convert_progress_text" style="font-size: 9pt; vertical-align: bottom;"><td>
-													</tr>
-												</table>
-												<div id="convert_progress">
-													<div id="convert_progress_bar">
-													</div>
-												</div>
 
-											</div>
 
-										</div>
 
 
+                    <div id="conversion_progress_collapse">
 
+                      <div class="convert-div">
+                        <br></br>
+                        <button id="convert_button" class="base-button settings-panel-button" onclick="convert()">Convert</button>
 
+                        <table class="convert-settings-table">
+                          <tr>
+                            <td><h3>Conversion Status:</h3></td>
+                          </tr>
+                          <tr>
+                            <td id="convert_progress_text" style="font-size: 9pt; vertical-align: bottom;"><td>
+                          </tr>
+                        </table>
+                        <div id="convert_progress">
+                          <div id="convert_progress_bar">
+                          </div>
+                        </div>
 
-									</div>
+                      </div>
 
-									<div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: calc(100% - var(--convert-settings-width))">
-										<table style="margin: 5px">
-											<tr>
-												<td>
-													<button class="base-button button-bottom-tab" onclick="svg_controller.center()">
-														Center
-													</button>
-												</td>
-												<td>
-													<button class="base-button button-bottom-tab" onclick="svg_controller.fit().center()">
-														Fit
-													</button>
-												</td>
-											</tr>
-										</table>
-									</div>
-									<div id="svg_viewer_div" style="width: calc(100% - var(--convert-settings-width)); height: 100%; min-width: 10px;"></div>
-								</div>
-							</div>
+                    </div>
 
 
 
 
 
-							<div class="splitter" id="view_panels_splitter"></div>
+                  </div>
 
+                  <div id="svg_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: calc(100% - var(--convert-settings-width))">
+                    <table style="margin: 5px">
+                      <tr>
+                        <td>
+                          <button class="base-button button-bottom-tab" onclick="svg_controller.center()">
+                            Center
+                          </button>
+                        </td>
+                        <td>
+                          <button class="base-button button-bottom-tab" onclick="svg_controller.fit().center()">
+                            Fit
+                          </button>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div id="svg_viewer_div" style="width: calc(100% - var(--convert-settings-width)); height: 100%; min-width: 10px;"></div>
+                </div>
+              </div>
 
 
 
 
-							<div id="threejs_viewer_panel" class="panel-right" style="position: relative;">
 
-								<script src="gv_files/three.js"></script>
-								<script src="gv_files/GCodeLoader.js"></script>
-								<script src="gv_files/OrbitControls.js"></script>
+              <div class="splitter" id="view_panels_splitter"></div>
 
-								<div id="threejs_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: 100%;">
-									<table style="margin: 5px;">
-										<tr>
-											<td>
-												<button class="base-button button-bottom-tab" onclick="controls.recenter()">
-													Focus
-												</button>
-											</td>
-											<td>
-												<button class="base-button button-bottom-tab" onclick="controls.reset()">
-													Reset
-												</button>
-											</td>
-										</tr>
-									</table>
-								</div>
 
-							</div>
 
-						</div>
-					</div>
 
-					<div class="splitter-horizontal" id="main_horizontal_splitter">
-					</div>
 
-					<div id="console_window_panel" class="panel-bottom">
+              <div id="threejs_viewer_panel" class="panel-right" style="position: relative;">
 
-					</div>
-				</div>
-			</div>
-		</div>
+                <script src="gv_files/three.js"></script>
+                <script src="gv_files/GCodeLoader.js"></script>
+                <script src="gv_files/OrbitControls.js"></script>
 
+                <div id="threejs_viewer_control_tab" class="bottom-tab" style="visibility: hidden; width: 100%;">
+                  <table style="margin: 5px;">
+                    <tr>
+                      <td>
+                        <button class="base-button button-bottom-tab" onclick="controls.recenter()">
+                          Focus
+                        </button>
+                      </td>
+                      <td>
+                        <button class="base-button button-bottom-tab" onclick="controls.reset()">
+                          Reset
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
 
+              </div>
 
+            </div>
+          </div>
 
+          <div class="splitter-horizontal" id="main_horizontal_splitter">
+          </div>
 
+          <div id="console_window_panel" class="panel-bottom">
 
+          </div>
+        </div>
+      </div>
+    </div>
 
 
 
 
 
-		<div class="splitter" id="main_vertical_splitter">
-		</div>
 
 
 
 
 
 
+    <div class="splitter" id="main_vertical_splitter">
+    </div>
 
 
 
 
 
-		<div class="panel-right" id="control_panel" style="margin: 20px">
 
-			<script src="js/control_panel.js"></script>
 
-			<h3 style="text-align: center; color:var(--swatch-d)">Control Panel</h3>
 
-			<br></br>
 
-			<table style="width:100%; color:var(--swatch-d);">
-				<tr>
-					<td></td>
-					<td><button class="base-button" onmousedown="move_Zp()">Z+</button></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><button class="base-button" onmousedown="move_Zn()">Z-</button></td>
-					<td></td>
-				</tr>
-				<tr style="height:100px">
-				</tr>
-				<tr>
-					<td></td>
-					<td><button class="base-button" onmousedown="move_Yp()">Y+</button></td>
-					<td></td>
-				</tr>
-				<tr>
-					<td><button class="base-button" onmousedown="move_Xn()">X-</button></td>
-					<td></td>
-					<td><button class="base-button" onmousedown="move_Xp()">X+</button></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td><button class="base-button" onmousedown="move_Yn()">Y-</button></td>
-					<td></td>
-				</tr>
 
-			</table>
 
-			<br></br>
+    <div class="panel-right" id="control_panel" style="color:var(--swatch-d); overflow: scroll;">
 
-			<table style="width:200px; color:var(--swatch-d)">
-				<tr>
-					<td>Distance:</td>
-					<td><input id="move_distance" class="base-input settings-input" value="1.00" type="number"></input> mm</td>
-				</tr>
-			</table>
+      <script src="js/control_panel.js"></script>
 
-		</div>
-	</div>
+      <button class="base-accordion" type="button" data-toggle="collapse" data-target="#connection" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
+        Connection
+        <div class="base-accordion-triangle">&#x25B2;</div>
+      </button>
+      <div id="connection" class="collapse multi-collapse" style="margin: 20px">
+        <table style="width:100%;">
+          <tr>
+            <td>Port:</td>
+            <td><input id="connection_port" class="base-input settings-input" value="/dev/ttyUSB0" type="text" style="width:100%">
+            <td></input></td></td>
+          </tr>
+        </table>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="connect()" style="width: 100%">Connect</button>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="disconnect()" style="width: 100%">Disconnect</button>
+      </div>
 
+      <button class="base-accordion" type="button" data-toggle="collapse" data-target="#basic-controls" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
+        Basic Controls
+        <div class="base-accordion-triangle">&#x25B2;</div>
+      </button>
+      <div id="basic-controls" class="collapse multi-collapse" style="margin: 20px">
+        <table style="width:100%;">
+          <tr>
+            <td>Distance:</td>
+            <td><input id="move_distance" class="base-input settings-input" value="1.00" type="number">
+            <td></input> mm</td></td>
+          </tr>
+          <tr style="height:30px"></tr>
+          <tr>
+            <td></td>
+            <td><button class="base-button" onmousedown="move_Zp()">Z+</button></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><button class="base-button" onmousedown="move_Zn()">Z-</button></td>
+            <td></td>
+          </tr>
+          <tr style="height:30px"></tr>
+          <tr>
+            <td></td>
+            <td><button class="base-button" onmousedown="move_Yp()">Y+</button></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td><button class="base-button" onmousedown="move_Xn()">X-</button></td>
+            <td></td>
+            <td><button class="base-button" onmousedown="move_Xp()">X+</button></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><button class="base-button" onmousedown="move_Yn()">Y-</button></td>
+            <td></td>
+          </tr>
 
-	<script src="js/jquery-resizable.js"></script>
-	<script src="js/index_load.js"></script>
-	<script src="js/simple-console.js"></script>
-	<script src="js/console.js"></script>
+        </table>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="zero()" style="width: 100%">Set As Zero Position</button>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="probez()" style="width: 100%">Probe Then Zero</button>
+
+      </div>
+      
+      <button class="base-accordion" type="button" data-toggle="collapse" data-target="#level-controls" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
+        Bed Leveling
+        <div class="base-accordion-triangle">&#x25B2;</div>
+      </button>
+      <div id="level-controls" class="collapse multi-collapse" style="margin: 20px">
+        <table style="width:100%; ">
+          <tr>
+            <td>Safety Height Multiplier:</td>
+            <td><input id="leveling_safety_height" class="base-input settings-input" value="1.00" type="number">
+            <td></input> mm</td></td>
+          </tr>
+          <tr>
+            <td>X axis step:</td>
+            <td><input id="leveling_x_axis_step" class="base-input settings-input" value="3.00" type="number">
+            <td></input> mm</td></td>
+          </tr>
+          <tr>
+            <td>Y axis step:</td>
+            <td><input id="leveling_y_axis_step" class="base-input settings-input" value="3.00" type="number">
+            <td></input> mm</td></td>
+          </tr>
+          <tr style="height:30px"></tr>
+        </table>
+        <button class="base-button" onmousedown="level()" style="width: 100%">Level</button>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="unlevel()" style="width: 100%">Reset Bed Level</button>
+        <div style="font-size: 10pt;">*Once you are done leveling the bed, please re-convert to see the results</div>
+      </div>
+
+      <button class="base-accordion" type="button" data-toggle="collapse" data-target="#start-cutting" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
+        Begin Cutting
+        <div class="base-accordion-triangle">&#x25B2;</div>
+      </button>
+      <div id="start-cutting" class="collapse multi-collapse" style="margin: 20px">
+        <button class="base-button" onmousedown="send_contour_gcode()" style="width: 100%">Send Contour GCode</button>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="send_drill_gcode()" style="width: 100%">Send Drill GCode</button>
+      </div>
+
+      <button class="base-accordion" type="button" data-toggle="collapse" data-target="#z-height-and-cutting-depth" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
+        Change Z Height
+        <div class="base-accordion-triangle">&#x25B2;</div>
+      </button>
+      <div id="z-height-and-cutting-depth" class="collapse multi-collapse" style="margin: 20px">
+        <table style="width:100%; ">
+          <tr>
+            <td>Raise/Lower Z Height By</td>
+            <td><input id="change_z_height_by" class="base-input settings-input" value="0.02" type="number">
+            <td></input> mm</td></td>
+          </tr>
+          <tr style="height:30px"></tr>
+        </table>
+        <button class="base-button" onmousedown="raise_z_height()" style="width: 100%">Raise</button>
+        <div style="height: 15px;"></div>
+        <button class="base-button" onmousedown="lower_z_height()" style="width: 100%">Lower</button>
+      </div>
+  
+      <div style="margin: 20px;">
+        <h3>Stop Sending GCode</h3>
+        <div style="height: 15px;"></div>
+        <button class="base-button evil-button" onmousedown="terminate()" style="width: 100%">Stop</button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <script src="js/jquery-resizable.js"></script>
+  <script src="js/index_load.js"></script>
+  <script src="js/simple-console.js"></script>
+  <script src="js/console.js"></script>
 
 </body>
 </html>

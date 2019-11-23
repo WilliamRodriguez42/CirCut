@@ -72,7 +72,7 @@ def make_grid(nx, ny):
 
 
 def probe_grid(dx, dy, dz):
-	global x_points, y_points, z_points, f
+	global x_points, y_points, z_points, f, terminate
 	write('G10 P0 L20 X0 Y0 Z0')	# Set current position as zero
 	poll_ok()
 	machine_z_zero = probe(dz, True)
@@ -167,6 +167,9 @@ def load_gcodes():
 	#gf_drills.bisect_codes()
 
 	gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
+
+terminate = False
+commands = []
 
 gf_contours = GCodeFile()
 gf_drills = GCodeFile()
