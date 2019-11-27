@@ -1,71 +1,76 @@
 .page-container {
-  margin: 0;
+	margin: 0;
 }
 
 
 /* horizontal panel*/
 
 .panel-container {
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
 
-  /* avoid browser level touch actions */
-  xtouch-action: none;
+	/* avoid browser level touch actions */
+	xtouch-action: none;
 }
 
 .panel-left {
-  flex: 0 0 auto;
-  /* only manually resize */
-  min-height: 200px;
-  max-width: calc(100% - 20px);
-  background: #222;
-  color: #ccc;
+	flex: 0 0 auto;
+	/* only manually resize */
+	min-height: 200px;
+	max-width: calc(100% - 18px);
+	min-width: var(--convert-settings-width);
+	background: #222;
+	color: #ccc;
 }
 
 .splitter {
-  flex: 0 0 auto;
-  width: 18px;
-  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/vsizegrip.png) center center no-repeat #535353;
-  min-height: 200px;
-  cursor: col-resize;
+	flex: 0 0 auto;
+	width: 18px;
+	background: url(../images/three_lines_vertical.png) center center no-repeat #535353;
+	background-color: #444;
+	background-size: 15px 70px;
+	min-height: 200px;
+	cursor: col-resize;
 }
 
 .panel-right {
-  flex: 1 1 auto;
-  /* resizable */
-  width: 100%;
-  background: var(--swatch-c);
+	flex: 1 1 auto;
+	/* resizable */
+	width: 100%;
+	background: var(--swatch-a);
 }
 
 
 /* vertical panel */
 
 .panel-container-vertical {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	overflow: hidden;
 }
 
 .panel-top {
-  flex: 0 0 auto;
-  /* only manually resize */
-  width: 100%;
-  max-height: calc(100% - 20px);
-  background: var(--swatch-c);
+	flex: 0 0 auto;
+	/* only manually resize */
+	width: 100%;
+	max-height: calc(100% - 20px);
+	background: var(--swatch-a);
 }
 
 .splitter-horizontal {
-  flex: 0 0 auto;
-  height: 18px;
-  background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/hsizegrip.png) center center no-repeat #535353;
-  cursor: row-resize;
+	flex: 0 0 auto;
+	height: 18px;
+	background: url(../images/three_lines_horizontal.png) center center no-repeat #535353;
+	background-color: #444;
+	background-size: 70px 15px;
+	cursor: row-resize;
 }
 
 .panel-bottom {
-  flex: 1 1 auto;
-  /* resizable */
-  background: var(--swatch-c);
-  overflow: auto;
+	flex: 1 1 auto;
+	/* resizable */
+	background: var(--swatch-a);
+	overflow: auto;
 }

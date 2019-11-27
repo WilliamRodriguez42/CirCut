@@ -1,13 +1,20 @@
 from flask import Flask, Response, request, jsonify, abort
+import helper_functions as hf
 from helper_functions import *
 import threading
 from gerber_to_gcode.gtg import GTG, STATUS
 from status import *
+import bleach
+from pathvalidate import sanitize_filename
+import os
+import glob
+import time
+import serial_communication as sc
 
 # set the project root directory as the static folder
 app = Flask(__name__)
 
-@app.route('/<path:path>')
+@app.route('/<path:path>', methods=['GET'])
 def send_whatever(path):
 	ext = path[path.rfind('.')+1:]
 	file = open('../client/' + path, 'rb')
@@ -15,7 +22,7 @@ def send_whatever(path):
 	file.close()
 
 	if ext == 'ico':
-		response = Response(content)
+		response = Response(content, mimetype='image/vnd.microsoft.icon')
 
 	elif ext == 'css':
 		response = Response(content, mimetype="text/css")
@@ -46,19 +53,17 @@ def receive_drills():
 
 @app.route('/command', methods=['POST'])
 def receive_command():
-	global commands, terminate
-
 	text = request.form['command'].strip()
 	add_input_message(text)
 
-	if not cnc_machine_connected:
+	if not status.cnc_machine_connected:
 		add_error_message(STATUS.CNC_MACHINE_NOT_CONNECTED)
 		return Response("Ok")
 
 	text = text.lower()
 	if (text == 's' or text == 'stop'):
-		commands = []
-		terminate = True
+		hf.commands = []
+		hf.terminate = True
 		print("User interrupt... raising head and returning to zero in X and Y axis only")
 		poll_ok()
 		write('G1 Z3 F500')	# Back up to safe height
@@ -66,12 +71,13 @@ def receive_command():
 		write('M5')
 		poll_ok()
 
-		while (terminate):
-			pass
+		while (hf.terminate):
+			time.sleep(1)
 
 		print("TERMINATED")
+		return Response("Ok")
 
-	commands.append(text)
+	hf.commands.append(text)
 	return Response("Ok")
 
 @app.route('/file-upload', methods=['POST'])
@@ -79,7 +85,7 @@ def file_upload():
 	file = request.files['file']
 	if file.filename[-3:] == 'gbr':
 		file.save('resources/gerber.gbr')
-	elif file.filename[-3:] == 'drl':
+	else:
 		file.save('resources/excellon.drl')
 	return Response("OK")
 
@@ -88,8 +94,8 @@ def convert():
 	global progress_text, progress_step, progress_load_svg, gtg_status
 
 	if progress_step != PROGRESS_TOTAL_STEPS:
-		abort(409); # Conflict
-		return;
+		abort(409) # Conflict
+		return
 
 	gtg = GTG()
 	progress_step = 0
@@ -104,24 +110,32 @@ def convert():
 		contour_count=int(request.form['contour_count']),
 		contour_step=float(request.form['contour_step']),
 		buffer_resolution=int(request.form['buffer_resolution']),
-		resolution=int(request.form['resolution']))
+		resolution=int(request.form['resolution']),
+		flip_x_axis=request.form['flip_x_axis'] == 'true')
 
 	progress_text = "Loading Excellon file..."
 	progress_step += 1
 	print(progress_text)
 	gtg.load_excellon(
 		"resources/excellon.drl",
-		resolution=int(request.form['resolution']))
+		resolution=int(request.form['resolution']),
+		flip_x_axis=request.form['flip_x_axis'] == 'true')
 
 	progress_text = "Combining GCode and Excellon files..."
 	progress_step += 1
 	print(progress_text)
-	gtg.update_translation()
+	gtg.update_translation(
+		calculate_origin=request.form['calculate_origin'] == 'true',
+		flip_x_axis=request.form['flip_x_axis'] == 'true',
+		x_offset=float(request.form['x_offset']),
+		y_offset=float(request.form['y_offset']),
+		nc_drill_x_offset=float(request.form['nc_drill_x_offset']),
+		nc_drill_y_offset=float(request.form['nc_drill_y_offset']))
 
 	progress_text = "Writing result to SVG format..."
 	progress_step += 1
 	print(progress_text)
-	gtg.write_svg("resources/test.svg")
+	gtg.write_svg("resources/preview.svg")
 
 	progress_load_svg = True
 
@@ -162,7 +176,7 @@ def convert_progress():
 
 @app.route('/svg', methods=['GET'])
 def get_svg():
-	svg = open('resources/test.svg', 'r')
+	svg = open('resources/preview.svg', 'r')
 	content = svg.read()
 	svg.close()
 
@@ -177,8 +191,82 @@ def archive_message():
 
 	return Response("Ok")
 
-commands = []
-terminate = False
+@app.route('/save-settings-profile', methods=['POST'])
+def save_settings_profile():
+	form = json.loads(request.data)
+
+	settings_profile_name = form['name']
+	settings_profile_name = sanitize_filename(settings_profile_name)
+	if not settings_profile_name: return
+	form['name'] = settings_profile_name
+
+	profile_path = os.path.join("settings_profiles", settings_profile_name)
+	content = json_dumps(form)
+
+	profile = open(profile_path, 'w+')
+	profile.write(content)
+	profile.close()
+
+	return Response("Ok")
+
+@app.route('/get-settings-profile-names', methods=['GET'])
+def get_settings_profile_names():
+	settings_profile_names = glob.glob('settings_profiles/*.cnc_profile')
+	result = [s[len("settings_profiles/"):] for s in settings_profile_names]
+	return Response(json_dumps(result))
+
+@app.route('/load-settings-profile/<path:path>', methods=['GET'])
+def load_settings_profile(path):
+	path = os.path.join('settings_profiles', path)
+
+	if not glob.glob(path):
+		return Response("File does not exist")
+
+	file = open(path, 'r')
+	content = file.read()
+	file.close()
+
+	return Response(content)
+
+@app.route('/auto_save', methods=['POST'])
+def auto_save():
+	form = json.loads(request.data)
+	content = json_dumps(form)
+
+	auto_save_file = open("auto_save_profile/.auto_save_cnc_profile", "w+")
+	auto_save_file.write(content)
+	auto_save_file.close()
+
+	return Response("Ok")
+
+@app.route('/restore_from_auto_save', methods=['GET'])
+def restore_from_auto_save():
+	path = os.path.join('auto_save_profile', '.auto_save_cnc_profile')
+
+	if not glob.glob(path):
+		return Response("File does not exist")
+
+	file = open(path, 'r')
+	content = file.read()
+	file.close()
+
+	return Response(content)
+
+@app.route('/connect', methods=['POST'])
+def connect():
+	port = request.form['port']
+
+	try:
+		sc.ser = Serial(port, 115200)
+	except:
+		sc.ser = None
+
+	return Response("Ok")
+
+@app.route('/disconnect', methods=['POST'])
+def disconnect():
+	sc.ser = None
+	return Response("Ok")
 
 # Start in the ready state
 PROGRESS_TOTAL_STEPS = 7

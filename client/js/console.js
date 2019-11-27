@@ -1,15 +1,14 @@
 
 var con = new SimpleConsole({
 	handleCommand: handle_command,
-	placeholder: "GCode or built in command",
+	placeholder: "GCode or built-in command",
 	storageID: "simple-console gcode"
 });
 
 document.getElementById("console_window_panel").appendChild(con.element);
 
 con.logHTML(
-	"<h1>AutoLevel</h1>" +
-	"<p>Enter GCode or built in command</p>"
+	"<p>Enter GCode or built-in command</p>"
 );
 
 function scroll_to_bottom() {
@@ -33,11 +32,11 @@ function console_display_message(m) {
 	} else if (m.type === "error") {
 		con.error("ERROR: " + m.message);
 	} else if (m.type === "warning") {
-		con.warn("WARNING: " + m.message)
+		con.warn("WARNING: " + m.message);
 	} else if (m.type === "info") {
-		con.log(m.message)
+		con.log("INFO: " + m.message);
 	} else if (m.type === "input") {
-		con.log("> " + m.message)
+		con.log("> " + m.message);
 	}
 
 	scroll_to_bottom();

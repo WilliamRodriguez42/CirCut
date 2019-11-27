@@ -1,0 +1,37 @@
+.settings-container-div {
+	background:var(--swatch-a);
+	width: var(--convert-settings-width);
+	height: 100%;
+	float:right;
+	overflow:scroll;
+	box-shadow: 0px 0px 7px 0px #000;
+}
+
+.settings-panel-button {
+	position: relative;
+	z-index: 5;
+}
+
+.settings-input {
+
+}
+
+.convert-settings-table {
+	margin: 10px 0px;
+	width: calc(var(--convert-settings-width) - 40px);
+	color: var(--swatch-d);
+	border-spacing: 0px 7px;
+}
+
+.convert-div {
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-bottom: 20px;
+}
+
+br {
+  content: "";
+  margin: 3em;
+  display: block;
+  font-size: 24%;
+}

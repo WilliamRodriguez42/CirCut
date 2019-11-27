@@ -1,6 +1,14 @@
 from serial import Serial, SerialException
 import time
 import status
+import glob
+
+"""import serial.tools.list_ports
+ports = list(serial.tools.list_ports.comports())
+for p in ports:
+	print(dir(p))
+	print(p.usb_info())
+	print(p.device_path)"""
 
 RX_BUFFER_SIZE = 64
 
@@ -15,16 +23,14 @@ def constant_read():
 	global receive_ready, receiving, last_received, last_sent, ser
 	result = ''
 
-	while (ser == None):
-		try:
-			ser = Serial("COM9", 115200)
-		except SerialException:
-			print("No CNC machine found on COM9, please plug in or turn on machine.")
-			time.sleep(5)
-
-	status.cnc_machine_connected = True
 
 	while True:
+		while (ser == None):
+			status.cnc_machine_connected = False
+			print("No CNC machine found, please plug in or turn on machine.")
+			time.sleep(5)
+		status.cnc_machine_connected = True
+
 		to_read = ser.inWaiting()
 		if to_read:
 			result += ser.read(to_read).decode('UTF-8')

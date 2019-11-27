@@ -81,10 +81,16 @@ def make_line_gbr(line, resolution=20):
 	return make_cylinder(start, end, radius, resolution)
 
 def make_obround_gbr(obround, resolution=20):
-	pos = obround.position
-	radius = obround.width / 2
+	subshapes = obround.subshapes
+	circle1 = subshapes['circle1']
+	circle2 = subshapes['circle2']
+	rectangle = subshapes['rectangle']
 
-	return make_circle(pos, radius, resolution)
+	c1 = make_circle_gbr(circle1)
+	c2 = make_circle_gbr(circle2)
+	r = make_rect_gbr(rectangle)
+
+	return c1.union(c2).union(r)
 
 def make_circle_gbr(circle, resolution=20):
 	pos = circle.position
@@ -116,7 +122,12 @@ def gerber_to_poly(data, resolution):
 	#poly = scale(poly, -1.0, -1.0)
 	return poly
 
-def poly_to_svg(poly, stroke_width="0.05", stroke_color="#000000", fill_color="#66cc99"):
+def poly_to_svg(
+	poly,
+	stroke_width="0.05",
+	stroke_color="#000000",
+	fill_color="#66cc99"
+):
 	return 	poly.svg() \
 			    .replace('stroke-width="2.0"', 'stroke-width="{}"'.format(stroke_width)) \
 				.replace('stroke="#555555"', 'stroke="{}"'.format(stroke_color)) \
@@ -124,7 +135,12 @@ def poly_to_svg(poly, stroke_width="0.05", stroke_color="#000000", fill_color="#
 				.replace('fill="#66cc99"', 'fill="{}"'.format(fill_color)) \
 				.replace('opacity="0.6"', 'opacity="1.0"')
 
-def initial_to_svg(poly, stroke_width="0.05", stroke_color="#000000", fill_color="#66cc99"):
+def initial_to_svg(
+	poly,
+	stroke_width="0.05",
+	stroke_color="#000000",
+	fill_color="#66cc99"
+):
 	content = ""
 	if type(poly) == Polygon:
 		content += poly_to_svg(poly, stroke_width, stroke_color, fill_color)
@@ -133,7 +149,13 @@ def initial_to_svg(poly, stroke_width="0.05", stroke_color="#000000", fill_color
 			content += poly_to_svg(geom, stroke_width, stroke_color, fill_color)
 	return content
 
-def gerber_poly_to_paths(poly, contour_distance=0.25, contour_count=1, contour_step=0.1, buffer_resolution=16):
+def gerber_poly_to_paths(
+	poly,
+	contour_distance=0.25,
+	contour_count=1,
+	contour_step=0.1,
+	buffer_resolution=16
+):
 	num_geoms = 0
 	if type(poly) != Polygon:
 		num_geoms = len(poly.geoms)
@@ -160,14 +182,14 @@ def gerber_poly_to_paths(poly, contour_distance=0.25, contour_count=1, contour_s
 
 def excellon_to_poly_coords(data, resolution=50):
 	exc = gerber.excellon.loads(data)
-	exc.to_inch()
-
 	poly = Polygon()
 
 	exc_coords = []
 	for prim in exc.primitives:
+		prim.to_metric()
 		pos = prim.position
-		exc_coords.append((pos[0]*-25.4, pos[1]*25.4))
+		#exc_coords.append((pos[0]*-25.4, pos[1]*25.4))
+		exc_coords.append(pos)
 
 		radius = prim.radius
 
@@ -175,12 +197,10 @@ def excellon_to_poly_coords(data, resolution=50):
 
 	return poly, exc_coords
 
-def poly_paths_to_svg(gbr_poly, exc_poly, gbr_paths):
+def get_bounds(gbr_poly, exc_poly, gbr_paths):
 	bounds = [10000000, 1000000, 0, 0]
-	paths = []
 
 	# Scale and get bounds
-	gbr_poly = scale(gbr_poly, 1, -1, origin=(0,0))
 	if gbr_poly.bounds[0] < bounds[0]:
 		bounds[0] = gbr_poly.bounds[0]
 	if gbr_poly.bounds[1] < bounds[1]:
@@ -189,7 +209,6 @@ def poly_paths_to_svg(gbr_poly, exc_poly, gbr_paths):
 		bounds[2] = gbr_poly.bounds[2]
 	if gbr_poly.bounds[3] > bounds[3]:
 		bounds[3] = gbr_poly.bounds[3]
-	exc_poly = scale(exc_poly, 1, -1, origin=(0,0))
 	if exc_poly.bounds[0] < bounds[0]:
 		bounds[0] = exc_poly.bounds[0]
 	if exc_poly.bounds[1] < bounds[1]:
@@ -199,8 +218,6 @@ def poly_paths_to_svg(gbr_poly, exc_poly, gbr_paths):
 	if exc_poly.bounds[3] > bounds[3]:
 		bounds[3] = exc_poly.bounds[3]
 	for i, path in enumerate(gbr_paths):
-		path = scale(path, 1, -1, origin=(0,0))
-		paths.append(path)
 		if path.bounds[0] < bounds[0]:
 			bounds[0] = path.bounds[0]
 		if path.bounds[1] < bounds[1]:
@@ -210,13 +227,26 @@ def poly_paths_to_svg(gbr_poly, exc_poly, gbr_paths):
 		if path.bounds[3] > bounds[3]:
 			bounds[3] = path.bounds[3]
 
+	return bounds
+
+def poly_paths_to_svg(gbr_poly, exc_poly, gbr_paths):
+
+	# Scale and get bounds
+	gbr_poly = scale(gbr_poly, 1, -1, origin=(0,0))
+	exc_poly = scale(exc_poly, 1, -1, origin=(0,0))
+	gbr_paths = scale_paths(gbr_paths, 1, -1)
+
+	bounds = get_bounds(gbr_poly, exc_poly, gbr_paths)
+
 	content = """
 	<svg xmlns="http://www.w3.org/2000/svg">
-	""".format(get_view_box(bounds))
-
+	<polygon points="-0.5,0 -0.5,-20 -0.7,-20 -0.25,-22 0.2,-20, 0,-20 0,0" style="fill:green; stroke-opacity:0"/>
+	<polygon points="0,0.5 20,0.5 20,0.7 22,0.25 20,-0.2 20,0 0,0" style="fill:red; stroke-opacity:0"/>
+	<polygon points="0,0 0,0.5 -0.5,0.5 -0.5,0" style="fill:black; stroke-opacity:0"/>
+	"""
 	content += initial_to_svg(gbr_poly)
 	content += initial_to_svg(exc_poly, fill_color="#000000")
-	for path in paths:
+	for path in gbr_paths:
 		content += poly_to_svg(path, stroke_color="#000000")
 
 	content += """
@@ -232,7 +262,13 @@ def scale_paths(paths, scale_x, scale_y):
 
 	return new_paths
 
-def paths_to_gcode(paths, rapid_feedrate=500, pass_feedrate=100, safe_height=1, spindle_speed=255):
+def paths_to_gcode(
+	paths,
+	rapid_feedrate=500,
+	pass_feedrate=100,
+	safe_height=1,
+	spindle_speed=255
+):
 	content = ""
 	path_coords = []
 	first_coord_in_paths = []
@@ -244,6 +280,7 @@ def paths_to_gcode(paths, rapid_feedrate=500, pass_feedrate=100, safe_height=1, 
 
 	# Order the coords here (christofide's algorithm)
 	length, path = christofides.tsp(first_coord_in_paths)
+	path = np.unique(path)
 
 	path_coords = np.array(path_coords)
 	path_coords = path_coords[path]
@@ -279,7 +316,14 @@ def paths_to_gcode(paths, rapid_feedrate=500, pass_feedrate=100, safe_height=1, 
 	""".format(rapid_feedrate, safe_height, rapid_feedrate)
 	return content
 
-def drills_to_gcode(coords, rapid_feedrate=500, plunge_feedrate=20, plunge_depth=-2.5, safe_height=1, spindle_speed=255):
+def drills_to_gcode(
+	coords,
+	rapid_feedrate=500,
+	plunge_feedrate=20,
+	plunge_depth=-2.5,
+	safe_height=1,
+	spindle_speed=255
+):
 	content = """
 	G00
 	G17
@@ -316,7 +360,7 @@ def drills_to_gcode(coords, rapid_feedrate=500, plunge_feedrate=20, plunge_depth
 
 	return content
 
-class GTG():
+class GTG:
 	def __init__(self):
 		self.gbr_poly = Polygon()
 		self.exc_poly = Polygon()
@@ -327,7 +371,16 @@ class GTG():
 		self.translated_exc_poly = Polygon()
 		self.translated_gbr_paths = []
 
-	def load_gerber(self, filename, contour_distance=0.2, contour_count=1, contour_step=0.2, buffer_resolution=5, resolution=16):
+	def load_gerber(
+		self,
+		filename,
+		contour_distance=0.2,
+		contour_count=1,
+		contour_step=0.2,
+		buffer_resolution=5,
+		resolution=16,
+		flip_x_axis=True
+	):
 		file = open(filename, "r")
 		gbr_data = file.read()
 		file.close()
@@ -336,7 +389,8 @@ class GTG():
 		self.gbr_poly = gerber_to_poly(gbr_data, resolution=resolution)
 
 		# Translate and modify those polygons before futher interpretation
-		self.gbr_poly = scale(self.gbr_poly, -1, 1, origin = (0, 0))
+		if flip_x_axis:
+			self.gbr_poly = scale(self.gbr_poly, -1, 1, origin = (0, 0))
 
 		# Convert the gerber polygon to contour paths
 		self.gbr_paths = gerber_poly_to_paths(self.gbr_poly,
@@ -345,61 +399,84 @@ class GTG():
 					contour_step=contour_step,
 					buffer_resolution=buffer_resolution)
 
-	def load_excellon(self, filename, resolution=16):
+	def load_excellon(self, filename, resolution=16, flip_x_axis=True):
 		file = open(filename, "r")
 		exc_data = file.read()
 		file.close()
+
+		print(filename)
 
 		# Get polygon from the excellon files
 		self.exc_poly, self.exc_coords = excellon_to_poly_coords(exc_data, resolution=resolution)
 
 		# Translate and modify those polygons before futher interpretation
-		self.exc_poly = scale(self.exc_poly, -25.4, 25.4, origin = (0, 0))
+		#self.exc_poly = scale(self.exc_poly, -25.4, 25.4, origin = (0, 0))
+		if flip_x_axis:
+			self.exc_poly = scale(self.exc_poly, -1, 1, origin = (0, 0))
+			exc_coords = self.exc_coords
+			self.exc_coords = []
 
-	def update_translation(self):
-		self.bounds = list(self.gbr_poly.bounds)
+			for coord in exc_coords:
+				self.exc_coords.append((coord[0]*-1, coord[1]))
 
-		# Get bounds of paths
-		if self.exc_poly.bounds[0] < self.bounds[0]:
-			self.bounds[0] = self.exc_poly.bounds[0]
-		if self.exc_poly.bounds[1] < self.bounds[1]:
-			self.bounds[1] = self.exc_poly.bounds[1]
-		if self.exc_poly.bounds[2] > self.bounds[2]:
-			self.bounds[2] = self.exc_poly.bounds[2]
-		if self.exc_poly.bounds[3] > self.bounds[3]:
-			self.bounds[3] = self.exc_poly.bounds[3]
-		for i, path in enumerate(self.gbr_paths):
-			self.gbr_paths[i] = path
-			if path.bounds[0] < self.bounds[0]:
-				self.bounds[0] = path.bounds[0]
-			if path.bounds[1] < self.bounds[1]:
-				self.bounds[1] = path.bounds[1]
-			if path.bounds[2] > self.bounds[2]:
-				self.bounds[2] = path.bounds[2]
-			if path.bounds[3] > self.bounds[3]:
-				self.bounds[3] = path.bounds[3]
+	def update_translation(
+		self,
+		calculate_origin=False,
+		flip_x_axis=True,
+		x_offset=0,
+		y_offset=0,
+		nc_drill_x_offset=0,
+		nc_drill_y_offset=0,
+	):
+		self.bounds = get_bounds(self.gbr_poly, self.exc_poly, self.gbr_paths)
 
-		self.bounds[0] -= 1 # Add 1 mm space for wiggle room
-		self.bounds[1] -= 1
+		if flip_x_axis and not calculate_origin:
+			x_offset *= -1
+
+		if calculate_origin:
+			x_offset -= self.bounds[0]
+			y_offset -= self.bounds[1]
+
+		nc_drill_x_offset += x_offset
+		nc_drill_y_offset += y_offset
 
 		# Translate everything to start at zero
-		self.translated_gbr_poly = translate(self.gbr_poly, -self.bounds[0], -self.bounds[1])
-		self.translated_exc_poly = translate(self.exc_poly, -self.bounds[0], -self.bounds[1])
+		self.translated_gbr_poly = translate(self.gbr_poly, x_offset, y_offset)
+		self.translated_exc_poly = translate(self.exc_poly, nc_drill_x_offset, nc_drill_y_offset)
 		self.translated_gbr_paths = []
 		for path in self.gbr_paths:
-			self.translated_gbr_paths.append(translate(path, -self.bounds[0], -self.bounds[1]))
+			self.translated_gbr_paths.append(translate(path, x_offset, y_offset))
 
 		self.translated_exc_coords = []
 		for coord in self.exc_coords:
-			self.translated_exc_coords.append((coord[0]-self.bounds[0], coord[1]-self.bounds[1]))
+			self.translated_exc_coords.append((coord[0]+nc_drill_x_offset, coord[1]+nc_drill_y_offset))
 
 	def svg(self):
 		return poly_paths_to_svg(self.translated_gbr_poly, self.translated_exc_poly, self.translated_gbr_paths)
 
-	def gcode(self, rapid_feedrate=500, pass_feedrate=100, plunge_feedrate=20, plunge_depth=-2.5, safe_height=1, contour_spindle_speed=255, drill_spindle_speed=255):
+	def gcode(
+		self,
+		rapid_feedrate=500,
+		pass_feedrate=100,
+		plunge_feedrate=20,
+		plunge_depth=-2.5,
+		safe_height=1,
+		contour_spindle_speed=255,
+		drill_spindle_speed=255):
+
 		return (
-			paths_to_gcode(self.translated_gbr_paths, rapid_feedrate=rapid_feedrate, pass_feedrate=pass_feedrate, safe_height=safe_height, spindle_speed=contour_spindle_speed),
-			drills_to_gcode(self.translated_exc_coords, rapid_feedrate=rapid_feedrate, plunge_feedrate=plunge_feedrate, plunge_depth=plunge_depth, safe_height=safe_height, spindle_speed=drill_spindle_speed)
+			paths_to_gcode(self.translated_gbr_paths,
+				rapid_feedrate=rapid_feedrate,
+				pass_feedrate=pass_feedrate,
+				safe_height=safe_height,
+				spindle_speed=contour_spindle_speed),
+				
+			drills_to_gcode(self.translated_exc_coords,
+				rapid_feedrate=rapid_feedrate,
+				plunge_feedrate=plunge_feedrate,
+				plunge_depth=plunge_depth,
+				safe_height=safe_height,
+				spindle_speed=drill_spindle_speed)
 		)
 
 	def write_svg(self, filename):
@@ -407,8 +484,26 @@ class GTG():
 		file.write(self.svg())
 		file.close()
 
-	def write_gcode(self, gerber_filename, excellon_filename, rapid_feedrate=500, pass_feedrate=100, plunge_feedrate=20, plunge_depth=-2.5, safe_height=1, contour_spindle_speed=255, drill_spindle_speed=255):
-		gerber_gcode, excellon_gcode = self.gcode(rapid_feedrate=rapid_feedrate, pass_feedrate=pass_feedrate, plunge_feedrate=plunge_feedrate, plunge_depth=plunge_depth, contour_spindle_speed=contour_spindle_speed, drill_spindle_speed=drill_spindle_speed)
+	def write_gcode(
+		self,
+		gerber_filename,
+		excellon_filename,
+		rapid_feedrate=500,
+		pass_feedrate=100,
+		plunge_feedrate=20,
+		plunge_depth=-2.5,
+		safe_height=1,
+		contour_spindle_speed=255,
+		drill_spindle_speed=255):
+
+		gerber_gcode, excellon_gcode = self.gcode(
+			rapid_feedrate=rapid_feedrate,
+			pass_feedrate=pass_feedrate,
+			plunge_feedrate=plunge_feedrate,
+			plunge_depth=plunge_depth,
+			contour_spindle_speed=contour_spindle_speed,
+			drill_spindle_speed=drill_spindle_speed)
+
 		file = open(gerber_filename, 'w+')
 		file.write(gerber_gcode)
 		file.close()

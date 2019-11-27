@@ -1,15 +1,8 @@
 var container;
 var camera, scene, renderer, loader, g_object, d_object;
 var controls;
-var svg_controller;
-
-function invalid(elem_id) {
-	$("#" + elem_id).css('background', 'var(--invalid-color)');
-}
-
-function valid(elem_id) {
-	$("#" + elem_id).css('background', '');
-}
+var mouseDown = 0;
+var mouseOver = 0;
 
 function load_contour(gcode) {
 	scene.remove(g_object);
@@ -132,39 +125,6 @@ function disable_controls() {
 	mouseOver = 0;
 }
 
-var mouseDown = 0;
-var mouseOver = 0;
-
-Dropzone.options.gerberDropzone = {
-	acceptedFiles: ".gbr",
-	accept: function(file, done) {
-		if (this.files.length > 1) {
-			this.removeFile(this.files[0])
-		}
-		done();
-	}
-}
-
-Dropzone.options.excellonDropzone = {
-	acceptedFiles: ".drl",
-	accept: function(file, done) {
-		if (this.files.length > 1) {
-			this.removeFile(this.files[0])
-		}
-		done();
-	}
-}
-
-function svg_viewer_control_tab_resize() {
-	var parent = $("#svg_viewer_div");
-	var tab = $("#svg_viewer_control_tab");
-	var x_pos = (parent.width() - tab.width()) / 2;
-
-	tab = document.getElementById("svg_viewer_control_tab");
-	tab.style.left = x_pos + "px";
-	tab.style.visibility = "visible";
-}
-
 function threejs_viewer_control_tab_resize() {
 	var parent = $("#threejs_viewer_panel");
 	var tab = $("#threejs_viewer_control_tab");
@@ -183,38 +143,4 @@ function threejs_resize() {
 	camera.updateProjectionMatrix();
 
 	renderer.setSize( width-18, height );
-}
-
-function custom_resize() {
-	svg_controller.resize();
-	threejs_resize();
-
-	svg_viewer_control_tab_resize();
-	threejs_viewer_control_tab_resize();
-
-}
-
-function load_svg() {
-	$.ajax({
-		type: 'GET',
-		url: 'svg',
-		success: function(data) {
-			elem = document.getElementById('svg_viewer_div');
-			elem.innerHTML = data;
-
-			var svg_element = elem.getElementsByTagName('svg')[0]
-			svg_element.id = "svg_element"
-			svg_element.style = "width: 100%; height: 100%; will-change: transform;"
-
-			svg_controller = svgPanZoom('#svg_element', {
-        zoomEnabled: true,
-			  panEnabled: true,
-			  controlIconsEnabled: false,
-      });
-			svg_controller.center();
-		  svg_controller.fit();
-
-			custom_resize();
-		}
-	});
 }

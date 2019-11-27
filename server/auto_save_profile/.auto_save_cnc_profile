@@ -1,0 +1,24 @@
+{
+	"convert_settings": {
+		"buffer_resolution": 5,
+		"calculate_origin": false,
+		"connection_port": "/dev/ttyUSB0",
+		"contour_count": 1,
+		"contour_distance": 0,
+		"contour_spindle": 255,
+		"contour_step": 0.15,
+		"drill_spindle": 255,
+		"flip_x_axis": true,
+		"nc_drill_x_offset": 0,
+		"nc_drill_y_offset": 0,
+		"pass_feedrate": 300,
+		"plunge_depth": -2.5,
+		"plunge_feedrate": 20,
+		"rapid_feedrate": 500,
+		"resolution": 32,
+		"safe_height": 1,
+		"x_offset": 1,
+		"y_offset": 1
+	},
+	"name": "keep_out.cnc_profile"
+}

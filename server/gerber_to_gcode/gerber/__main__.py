@@ -37,5 +37,5 @@ if __name__ == '__main__':
         gerberfile = read(filename)
         gerberfile.render(ctx)
 
-    print('Saving image to test.svg')
-    ctx.dump('test.svg')
+    print('Saving image to preview.svg')
+    ctx.dump('preview.svg')

@@ -1,0 +1,16 @@
+.bottom-tab {
+	background-color: var(--swatch-a);
+	height: 50px;
+	max-width: 200px;
+	border-radius: var(--radius) var(--radius) 0px 0px;
+	position: absolute;
+	bottom: 0px;
+	z-index: 1;
+	overflow: scroll;
+}
+
+.button-bottom-tab {
+	padding: 5px 15px;
+	width: 92.5px;
+	height: 100%;
+}
