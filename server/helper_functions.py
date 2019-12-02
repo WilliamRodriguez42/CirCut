@@ -76,7 +76,7 @@ def probe_grid(dx, dy, dz):
 	global x_points, y_points, z_points, f, terminate
 	write('G10 P0 L20 X0 Y0 Z0')	# Set current position as zero
 	poll_ok()
-	machine_z_zero = probe(dz, True)
+	probe(dz, True)
 
 	# Find nx and ny
 	nx = int(gf_contours.rangex / dx + 1)
@@ -88,6 +88,7 @@ def probe_grid(dx, dy, dz):
 	z_points = np.zeros((ny, nx))
 	x_points = np.zeros(nx)
 	y_points = np.zeros(ny)
+	current = 0
 
 	for (i, j) in make_grid(nx, ny):
 		if terminate: break
@@ -103,16 +104,9 @@ def probe_grid(dx, dy, dz):
 		if z_pos == -10000: # Error code
 			return
 
-		z_points[j, i] = z_pos - machine_z_zero # Find depth of this point relative to 0
-
-		current = 0
-		for y in reversed(range(ny)):
-			row = ''
-			for x in range(nx):
-				row += '{0:.3f}'.format(z_points[y, x]) + '\t'
-				current += 1
-				status.add_info_message('Leveling {0.3f}% complete'.format(current / (nx*ny) * 100))
-			#print(row)
+		z_points[j, i] = z_pos # Find depth of this point relative to 0
+		current += 1
+		status.add_info_message('Leveling {0:.2f}% complete'.format(current / (nx*ny) * 100))
 
 	np.savetxt('level/y_points', y_points)
 	np.savetxt('level/x_points', x_points)

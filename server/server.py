@@ -51,7 +51,7 @@ def execute_commands():
 					while(dy > my):
 						dy /= 2
 
-					dz = math.sqrt(dx ** 2 + dy ** 2) * 0.1 * safety_height_multiplier
+					dz = math.sqrt(dx ** 2 + dy ** 2) * 0.2 * safety_height_multiplier
 					status.add_info_message("Safe height set to: {}".format(dz))
 
 					hf.f = probe_grid(dx, dy, dz)
