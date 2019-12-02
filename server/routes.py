@@ -45,10 +45,12 @@ def send_home():
 
 @app.route('/contours', methods=['GET'])
 def receive_contours():
+	gf_contours.update_content(hf.f)
 	return Response(gf_contours.content)
 
 @app.route('/drills', methods=['GET'])
 def receive_drills():
+	gf_drills.update_content(hf.f)
 	return Response(gf_drills.content)
 
 @app.route('/command', methods=['POST'])
@@ -166,13 +168,17 @@ def convert():
 
 @app.route('/status', methods=['GET'])
 def convert_progress():
-	return jsonify({
+	global client_load_gcodes
+	result = jsonify({
 		'step': progress_step,
 		'of': PROGRESS_TOTAL_STEPS,
 		'text': progress_text,
 		'load_svg': progress_load_svg,
-		'status_messages': status_messages
+		'status_messages': status_messages,
+		'load_gcodes': client_load_gcodes,
 	})
+	client_load_gcodes = False
+	return result
 
 @app.route('/svg', methods=['GET'])
 def get_svg():
@@ -273,3 +279,4 @@ PROGRESS_TOTAL_STEPS = 7
 progress_step = PROGRESS_TOTAL_STEPS
 progress_text = "Ready to convert"
 progress_load_svg = False
+client_load_gcodes = False

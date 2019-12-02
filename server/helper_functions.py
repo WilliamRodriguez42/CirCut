@@ -4,6 +4,7 @@ from scipy.interpolate import interp2d
 from GCodeLib.GCode import GCodeFile
 import re
 import json
+import status
 
 def json_dumps(form):
 	content = json.dumps(form, sort_keys=True, indent=4)
@@ -104,11 +105,14 @@ def probe_grid(dx, dy, dz):
 
 		z_points[j, i] = z_pos - machine_z_zero # Find depth of this point relative to 0
 
+		current = 0
 		for y in reversed(range(ny)):
 			row = ''
 			for x in range(nx):
 				row += '{0:.3f}'.format(z_points[y, x]) + '\t'
-			print(row)
+				current += 1
+				status.add_info_message('Leveling {0.3f}% complete'.format(current / (nx*ny) * 100))
+			#print(row)
 
 	np.savetxt('level/y_points', y_points)
 	np.savetxt('level/x_points', x_points)
@@ -133,25 +137,19 @@ def draw_perimeter():
 	write('G1 X0 Y0 Z1 F500')
 
 def level_arg_error():
-	print('You must have 2 arguments for the LEVEL command: \n\tstep size in X (mm) \n\tstep size in Y (mm)')
+	status.add_error_message('You must have 2 arguments for the LEVEL command and an optional third argument: \n\tstep size in X (mm) \n\tstep size in Y (mm) \n\tsafety height multiplier')
 
 def predict_arg_error():
-	print('You must have 2 arguments for the PREDICT command: \n\tposition in X (mm) \n\tposition in Y(mm)')
+	status.add_error_message('You must have 2 arguments for the PREDICT command: \n\tposition in X (mm) \n\tposition in Y(mm)')
 
 def raise_arg_error():
-	print('There is one optional argument for the RAISE / R command: \n\t+Z offset increment in mm')
+	status.add_error_message('There is one optional argument for the RAISE / R command: \n\t+Z offset increment in mm')
 
 def lower_arg_error():
-	print('There is one optional argument for the LOWER / L command: \n\t-Z offset increment in mm')
+	status.add_error_message('There is one optional argument for the LOWER / L command: \n\t-Z offset increment in mm')
 
 def warp_arg_error():
-	print("You must have 3 arguments for the WARP command and an optional fourth argument: \n\tX, Y, Z the position you would like to travel to in mm\n\tF the feed rate (int)")
-
-def up_arg_error():
-	print("There is one optional argument for the UP / U command: \n\t+Y offset increment in mm")
-
-def down_arg_error():
-	print("There is one optional argument for the DOWN / D command: \n\t-Y offest increment in mm")
+	status.add_error_message("You must have 3 arguments for the WARP command and an optional fourth argument: \n\tX, Y, Z the position you would like to travel to in mm\n\tF the feed rate (int)")
 
 def load_gcodes():
 	global gf_contours, gf_drills

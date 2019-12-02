@@ -1,7 +1,7 @@
 {
 	"convert_settings": {
 		"buffer_resolution": 5,
-		"calculate_origin": false,
+		"calculate_origin": true,
 		"connection_port": "/dev/ttyUSB0",
 		"contour_count": 1,
 		"contour_distance": 0,

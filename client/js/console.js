@@ -50,10 +50,6 @@ function handle_command(command){
 			command: command
 		},
 		success: function(responseText) {
-				if (command.startsWith('level')) {
-					load_gcodes();
-				}
-
 				scroll_to_bottom();
 		},
 		error: function() {

@@ -6,7 +6,9 @@ import threading
 from serial_communication import *
 import helper_functions as hf
 from helper_functions import *
+import routes
 from routes import *
+import status
 import math
 
 if os.name == 'nt':
@@ -24,15 +26,14 @@ def execute_commands():
 		text = hf.commands[0]
 		del hf.commands[0]
 
-		poll_ok()
+		#poll_ok()
 
 		parts = text.split()
-		if len(parts) == 0: return
+		if len(parts) == 0: continue
 
 		if parts[0] == 'level':
-			if 3 > len(parts) > 4:
+			if len(parts) < 3 or len(parts) > 4:
 				level_arg_error()
-				return
 			else:
 				safety_height_multiplier = 1
 				if len(parts) == 4:
@@ -51,12 +52,12 @@ def execute_commands():
 						dy /= 2
 
 					dz = math.sqrt(dx ** 2 + dy ** 2) * 0.1 * safety_height_multiplier
-					print("Safe height set to: ", dz)
+					status.add_info_message("Safe height set to: {}".format(dz))
 
 					hf.f = probe_grid(dx, dy, dz)
+					routes.client_load_gcodes = True
 				except ValueError:
 					level_arg_error()
-					return
 
 		elif parts[0] == 'zero':
 			write('G10 P0 L20 X0 Y0 Z0')
@@ -69,12 +70,12 @@ def execute_commands():
 				x = float(parts[1])
 				y = float(parts[2])
 
-				print('Depth at position ({0:.3f}, {0:.3f}): '.format(x, y) + str(hf.f(x, y)))
+				status.add_info_message('Depth at position ({0:.3f}, {0:.3f}): '.format(x, y) + str(hf.f(x, y)))
 			except ValueError:
 				predict_arg_error()
 
 		elif parts[0] == 'show':
-			print(hf.gf_drills.get_content(hf.f))
+			status.add_info_message(hf.gf_drills.get_content(hf.f))
 
 		elif parts[0] == 'contour':
 			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
@@ -89,7 +90,8 @@ def execute_commands():
 		elif parts[0] == 'unlevel':
 			# Make a default hf.f function
 			hf.f = lambda x, y: [0]
-			print('Reset the level plane to zero')
+			status.add_info_message('Reset the level plane to zero')
+			routes.client_load_gcodes = True
 
 		elif parts[0] == 'r' or parts[0] == 'raise':
 			# Raise the safety height
@@ -97,13 +99,15 @@ def execute_commands():
 				try:
 					amount = float(parts[1])
 					hf.gf_contours.z_offset += amount
-					print('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+					routes.client_load_gcodes = True
+					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
 				except ValueError:
 					raise_arg_error()
 
 			elif len(parts) == 1:
 				hf.gf_contours.z_offset += 0.02
-				print('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+				routes.client_load_gcodes = True
 
 			else:
 				raise_arg_error()
@@ -114,52 +118,21 @@ def execute_commands():
 				try:
 					amount = float(parts[1])
 					hf.gf_contours.z_offset -= amount
-					print('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+					routes.client_load_gcodes = True
+					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
 				except ValueError:
 					lower_arg_error()
 
 			elif len(parts) == 1:
 				hf.gf_contours.z_offset -= 0.02
-				print('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+				routes.client_load_gcodes = True
 
 			else:
 				lower_arg_error()
 
-		elif parts[0] == 'u' or parts[0] == 'up':
-			# lower the safety height
-			if len(parts) == 2:
-				try:
-					amount = float(parts[1])
-					hf.gf_drills.y_offset += amount
-					print('Y offset currently set to: {0:0.3f}'.format(hf.gf_contours.y_offset))
-				except ValueError:
-					up_arg_error()
-
-			elif len(parts) == 1:
-				hf.gf_drills.y_offset += 0.25
-				print('Y offset currently set to: {0:0.3f}'.format(hf.gf_contours.y_offset))
-
-			else:
-				up_arg_error()
-
-		elif parts[0] == 'd' or parts[0] == 'down':
-			# lower the safety height
-			if len(parts) == 2:
-				try:
-					amount = float(parts[1])
-					hf.gf_drills.y_offset -= amount
-					print('Y offset currently set to: {0:0.3f}'.format(hf.gf_contours.y_offset))
-				except ValueError:
-					down_arg_error()
-
-			elif len(parts) == 1:
-				hf.gf_drills.y_offset -= 0.25
-				print('Y offset currently set to: {0:0.3f}'.format(hf.gf_contours.y_offset))
-
-			else:
-				down_arg_error()
 		elif parts[0] == 'state':
-			print(get_machine_state())
+			status.add_info_message(get_machine_state())
 		elif parts[0] == 'probez':
 			probez()
 		elif parts[0] == 'perim':
