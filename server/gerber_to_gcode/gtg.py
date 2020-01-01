@@ -341,6 +341,7 @@ def drills_to_gcode(
 
 	# Order the coords here (christofide's algorithm)
 	length, path = christofides.tsp(coords)
+	path = np.unique(path)
 
 	path_coords = np.array(coords)
 	path_coords = path_coords[path]

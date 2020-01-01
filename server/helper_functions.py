@@ -76,7 +76,8 @@ def probe_grid(dx, dy, dz):
 	global x_points, y_points, z_points, f, terminate
 	write('G10 P0 L20 X0 Y0 Z0')	# Set current position as zero
 	poll_ok()
-	probe(dz, True)
+	machine_z_zero = probe(dz, True)
+	print(machine_z_zero)
 
 	# Find nx and ny
 	nx = int(gf_contours.rangex / dx + 1)
@@ -104,7 +105,7 @@ def probe_grid(dx, dy, dz):
 		if z_pos == -10000: # Error code
 			return
 
-		z_points[j, i] = z_pos # Find depth of this point relative to 0
+		z_points[j, i] = z_pos - machine_z_zero # Find depth of this point relative to 0
 		current += 1
 		status.add_info_message('Leveling {0:.2f}% complete'.format(current / (nx*ny) * 100))
 
@@ -151,14 +152,14 @@ def load_gcodes():
 	temp_file = open('resources/contours.gcode', 'r')
 	gf_contours.load(temp_file.read(), f)
 	temp_file.close()
-	#gf_contours.bisect_codes()
+	gf_contours.bisect_codes()
 
 	temp_file = open('resources/drills.gcode', 'r')
 	gf_drills.load(temp_file.read(), f)
 	temp_file.close()
-	#gf_drills.bisect_codes()
+	gf_drills.bisect_codes()
 
-	gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
+	#gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
 
 terminate = False
 commands = []

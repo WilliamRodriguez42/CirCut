@@ -26,7 +26,7 @@ def execute_commands():
 		text = hf.commands[0]
 		del hf.commands[0]
 
-		#poll_ok()
+		poll_ok()
 
 		parts = text.split()
 		if len(parts) == 0: continue
@@ -39,18 +39,8 @@ def execute_commands():
 				if len(parts) == 4:
 					safety_height_multiplier = float(parts[3])
 				try:
-					mx = float(parts[1])
-					my = float(parts[2])
-
-					dx = hf.gf_contours.rangex
-					dy = hf.gf_contours.rangey
-
-					while(dx > mx):
-						dx /= 2
-
-					while(dy > my):
-						dy /= 2
-
+					dx = float(parts[1])
+					dy = float(parts[2])
 					dz = math.sqrt(dx ** 2 + dy ** 2) * 0.2 * safety_height_multiplier
 					status.add_info_message("Safe height set to: {}".format(dz))
 
