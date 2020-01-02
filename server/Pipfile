@@ -12,10 +12,10 @@ numpy = "*"
 scipy = "*"
 six = "*"
 euclid3 = "*"
-shapely = "*"
+shapely = {path = "C:/Users/William/Downloads/Shapely-1.6.4.post2-cp38-cp38-win32.whl"}
 bleach = "*"
 pathvalidate = "*"
 pyudev = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"

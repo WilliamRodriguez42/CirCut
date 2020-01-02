@@ -23,10 +23,10 @@ function load_svg() {
 			svg_element.style = "width: 100%; height: 100%; will-change: transform;"
 
 			svg_controller = svgPanZoom('#svg_element', {
-        zoomEnabled: true,
-			  panEnabled: true,
-			  controlIconsEnabled: false,
-      });
+				zoomEnabled: true,
+				panEnabled: true,
+				controlIconsEnabled: false,
+		});
 			svg_controller.center();
 		  svg_controller.fit();
 

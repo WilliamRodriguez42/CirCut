@@ -64,8 +64,13 @@ def execute_commands():
 			except ValueError:
 				predict_arg_error()
 
-		elif parts[0] == 'show':
-			status.add_info_message(hf.gf_drills.get_content(hf.f))
+		elif parts[0] == 'show_contour':
+			content = ""
+			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
+				if hf.terminate: break
+				content += str(gcode) + "\n"
+			status.add_info_message(content)
+			print(content)
 
 		elif parts[0] == 'contour':
 			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
