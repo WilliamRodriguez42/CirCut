@@ -15,24 +15,31 @@ function reset_conversion_state_values() {
 
 function convert() {
 	// Send form to server
-	convert_settings = get_and_validate_convert_settings();
-	if (convert_settings === null) {
+	var shape_object_id = '';
+	if (previously_selected_element != null) {
+		shape_object_id = previously_selected_element.id;
+	} else {
+		console_display_message({
+			type: "error",
+			message: "Could not convert: no files have been uploaded / selected"
+		});
 		return;
 	}
-
+	layout = get_layout_for_id(previously_selected_element.id);
 	reset_conversion_state_values();
 
 	var contours = $.ajax({
 		type: "POST",
-		url: "convert",
-		data: convert_settings,
+		url: "/convert",
+		data: JSON.stringify({
+			shape_object_id: shape_object_id,
+			layout: layout
+		}),
+		contentType: "text/plain",
 		success: function() {
 			load_gcodes();
 		},
 		error: function(err) {
-			if (err.status === 409) {
-				alert("Conversion already in progress");
-			}
 		}
 	});
 }

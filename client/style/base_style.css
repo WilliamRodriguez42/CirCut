@@ -77,3 +77,8 @@
 .evil-button:hover:not(:active):not(:disabled) {
 	background: linear-gradient(to bottom, var(--lighter-red), var(--dark-red));
 }
+
+
+.removed {
+	display: none;
+}

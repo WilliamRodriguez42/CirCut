@@ -1,0 +1,16 @@
+#drop_area {
+	border: 2px dashed #ccc;
+	border-radius: 20px;
+	width: 100%;
+	font-family: sans-serif;
+	padding: 20px;
+}
+#drop_area.highlight {
+	border-color: purple;
+}
+.drop_form {
+	margin-bottom: 10px;
+}
+#drop_file_input {
+	display: none;
+}

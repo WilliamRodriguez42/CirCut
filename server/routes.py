@@ -1,8 +1,7 @@
-from flask import Flask, Response, request, jsonify, abort
+from flask import Flask, Response, request, jsonify, abort, render_template
 import helper_functions as hf
 from helper_functions import *
 import threading
-from gerber_to_gcode.gtg import GTG, STATUS
 from status import *
 import bleach
 from pathvalidate import sanitize_filename
@@ -10,9 +9,12 @@ import os
 import glob
 import time
 import serial_communication as sc
+from shape_object.convert_to_shape_object import conversion_map
+from shape_object.shape_object import add_shape_object_to_list, find_shape_object_with_id
+from settings_management.defaults import extension_uses_profile, default_profile_layouts, iterable_default_layout
 
 # set the project root directory as the static folder
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../client/templates')
 
 @app.route('/<path:path>', methods=['GET'])
 def send_whatever(path):
@@ -37,21 +39,17 @@ def send_whatever(path):
 
 @app.route('/')
 def send_home():
-	html = open('../client/index.html', 'r')
-	content = html.read()
-	html.close()
-
-	return Response(content)
+	return render_template('index.html', layout=iterable_default_layout)
 
 @app.route('/contours', methods=['GET'])
 def receive_contours():
-	gf_contours.update_content(hf.f)
-	return Response(gf_contours.content)
+	# gf_contours.update_content(hf.f)
+	return Response('')
 
 @app.route('/drills', methods=['GET'])
 def receive_drills():
-	gf_drills.update_content(hf.f)
-	return Response(gf_drills.content)
+	# gf_drills.update_content(hf.f)
+	return Response('')
 
 @app.route('/command', methods=['POST'])
 def receive_command():
@@ -82,83 +80,96 @@ def receive_command():
 	hf.commands.append(text)
 	return Response("Ok")
 
-@app.route('/file-upload', methods=['POST'])
+@app.route('/file_upload', methods=['POST'])
 def file_upload():
+	# Convert the input file into a shape object
 	file = request.files['file']
-	if file.filename[-3:] == 'gbr':
-		file.save('resources/gerber.gbr')
+	period_index = file.filename.rfind('.')
+	extension = file.filename[period_index+1:]
+
+	if extension in conversion_map:
+		content = file.read().decode('UTF-8')
+
+		shape_object = conversion_map[extension](content)
+		if shape_object is None:
+			add_error_message("There was an issue converting the file")
+			abort(409) # Need better status (Could not convert)
+			return
+
+		profile_name = extension_uses_profile[extension]
+		profile = default_profile_layouts[profile_name]
+
+		shape_object.layout = profile['layout']
+		add_shape_object_to_list(shape_object)
+
+		return jsonify({
+			'layout': profile['layout'],
+			'shape_object_id': shape_object.id
+		})
 	else:
-		file.save('resources/excellon.drl')
-	return Response("OK")
+		add_error_message("File type uknown: {}".format(extension))
+		abort(409) # Need better status (Extension not supported)
+
+@app.route('/get_thumbnail_svg_for_id', methods=['POST'])
+def get_thumbnail_svg_for_id():
+	shape_object_id = request.form['shape_object_id']
+	shape_object_id = int(shape_object_id[13:])
+
+	shape_object = find_shape_object_with_id(shape_object_id)
+	return shape_object.get_thumbnail_svg()
+
+@app.route('/get_preview_svg_for_id', methods=['POST'])
+def get_preview_svg_for_id():
+	shape_object_id = request.form['shape_object_id']
+	shape_object_id = int(shape_object_id[13:])
+
+	shape_object = find_shape_object_with_id(shape_object_id)
+	return shape_object.get_preview_svg()
 
 @app.route('/convert', methods=['POST'])
 def convert():
 	global progress_text, progress_step, progress_load_svg, gtg_status
+	form = json.loads(request.data)
 
 	if progress_step != PROGRESS_TOTAL_STEPS:
+		add_error_message('Could not convert: another conversion is already in progress')
 		abort(409) # Conflict
 		return
 
-	gtg = GTG()
+	shape_object_id = form['shape_object_id'][13:]
+	shape_object_id = int(shape_object_id)
+
+	shape_object = find_shape_object_with_id(shape_object_id)
+	if shape_object is None:
+		add_error_message('Could not convert: specified file not found, server out of sync')
+		abort(400)
+		return
+
+	shape_object.layout = form['layout']
+
 	progress_step = 0
 	progress_load_svg = False
 
-	progress_text = "Loading GCode file..."
+	progress_text = "Calculating paths..."
 	progress_step += 1
 	print(progress_text)
-	gtg.load_gerber(
-		"resources/gerber.gbr",
-		contour_distance=float(request.form['contour_distance']),
-		contour_count=int(request.form['contour_count']),
-		contour_step=float(request.form['contour_step']),
-		buffer_resolution=int(request.form['buffer_resolution']),
-		resolution=int(request.form['resolution']),
-		flip_x_axis=request.form['flip_x_axis'] == 'true')
+	shape_object.calculate_paths()
 
-	progress_text = "Loading Excellon file..."
+	progress_text = "Converting to SVG..."
 	progress_step += 1
 	print(progress_text)
-	gtg.load_excellon(
-		"resources/excellon.drl",
-		resolution=int(request.form['resolution']),
-		flip_x_axis=request.form['flip_x_axis'] == 'true')
-
-	progress_text = "Combining GCode and Excellon files..."
-	progress_step += 1
-	print(progress_text)
-	gtg.update_translation(
-		calculate_origin=request.form['calculate_origin'] == 'true',
-		flip_x_axis=request.form['flip_x_axis'] == 'true',
-		x_offset=float(request.form['x_offset']),
-		y_offset=float(request.form['y_offset']),
-		nc_drill_x_offset=float(request.form['nc_drill_x_offset']),
-		nc_drill_y_offset=float(request.form['nc_drill_y_offset']))
-
-	progress_text = "Writing result to SVG format..."
-	progress_step += 1
-	print(progress_text)
-	gtg.write_svg("resources/preview.svg")
+	svg = shape_object.get_preview_svg()
 
 	progress_load_svg = True
-
-	progress_text = "Writing result to GCode format..."
+	progress_text = "Converting to G Code..."
 	progress_step += 1
 	print(progress_text)
-	gtg.write_gcode(
-		"resources/contours.gcode",
-		"resources/drills.gcode",
-		rapid_feedrate=float(request.form['rapid_feedrate']),
-		pass_feedrate=float(request.form['pass_feedrate']),
-		plunge_feedrate=float(request.form['plunge_feedrate']),
-		plunge_depth=float(request.form['plunge_depth']),
-		safe_height=float(request.form['safe_height']),
-		contour_spindle_speed=int(request.form['contour_spindle']),
-		drill_spindle_speed=int(request.form['drill_spindle']))
+	shape_object.calculate_gcode()
 
-	progress_text = "Switching to new GCode files..."
+	progress_text = "Adjusting G Code to bed level..."
 	progress_step += 1
 	print(progress_text)
-	load_gcodes()
+	shape_object.bisect_codes()
 
 	progress_text = "Ready to convert"
 	progress_step += 1
@@ -274,8 +285,16 @@ def disconnect():
 	sc.ser = None
 	return Response("Ok")
 
+@app.route('/shape_object_settings', methods=['POST'])
+def shape_object_settings():
+	shape_object_id = request.form['shape_object_id']
+	shape_object_id = int(shape_object_id)
+
+	content = "HELLO WORLD"
+	return Response(content)
+
 # Start in the ready state
-PROGRESS_TOTAL_STEPS = 7
+PROGRESS_TOTAL_STEPS = 5
 progress_step = PROGRESS_TOTAL_STEPS
 progress_text = "Ready to convert"
 progress_load_svg = False

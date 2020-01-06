@@ -11,7 +11,7 @@ function svg_viewer_control_tab_resize() {
 }
 
 function load_svg() {
-	$.ajax({
+	/*$.ajax({
 		type: 'GET',
 		url: 'svg',
 		success: function(data) {
@@ -26,11 +26,11 @@ function load_svg() {
 				zoomEnabled: true,
 				panEnabled: true,
 				controlIconsEnabled: false,
-		});
+			});
 			svg_controller.center();
-		  svg_controller.fit();
+			svg_controller.fit();
 
 			custom_resize();
 		}
-	});
+	});*/
 }

@@ -67,7 +67,7 @@ def bisect_codes(self):
 	print("Bisected GCode file")
 
 class GCodeFile:
-	def load(self, content, f):
+	def load(self, content):
 		self.minx = 10000000
 		self.maxx = -1
 		self.miny = 10000000
@@ -119,13 +119,6 @@ class GCodeFile:
 		self.rangey = maxy - miny
 
 		self.all_gcodes = all_gcodes # Should never write to all_gcodes
-		self.content = ''
-		self.update_content(f)
-
-	def update_content(self, f):
-		self.content = ''
-		for gcode in self.enumerate_gcodes(f):
-			self.content += gcode + '\n'
 
 	def enumerate_gcodes(self, f):
 		for gcode in self.all_gcodes:

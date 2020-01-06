@@ -15,6 +15,8 @@
   <link rel="stylesheet" type="text/css" href="style/split.css">
   <link rel="stylesheet" type="text/css" href="style/simple-console.css">
   <link rel="stylesheet" type="text/css" href="style/dropzone.css">
+  <link rel="stylesheet" type="text/css" href="draggable_list/style/draggable.css">
+  <link rel="stylesheet" type="text/css" href="drag_and_drop_files/style/drag_and_drop_files.css">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -30,6 +32,8 @@
   <script src="js/save_load_settings_profile.js"></script>
   <script src="js/conversion_functions.js"></script>
   <script src="js/auto_save_functions.js"></script>
+  <script src="shape_objects/active_shape_objects.js"></script>
+  <script src="svg_render/render.js"></script>
 </head>
 <body style="background:var(--swatch-a)">
   <div class="panel-container" style="height:100%;">
@@ -43,152 +47,66 @@
                 <div id="main" style="position: relative;">
                   <div class="settings-container-div">
 
-
-
-
-
-
-
-                    <button class="base-accordion" type="button" data-toggle="collapse" data-target="#upload_files_collapse" aria-expanded="false" aria-controls="upload_files_collapse" onclick="toggle_triangle(this)">
-                      Upload Files
-                      <div class="base-accordion-triangle">&#9650;</div>
-                    </button>
-                    <div id="upload_files_collapse" class="collapse multi-collapse">
-
-                      <div class="convert-div">
-                        <table class="convert-settings-table">
-                          <tr>
-                            <td><h3>Gerber File:<h3></td>
-                          </tr>
-                        </table>
-                        <div class="dropzone-div" id="gerber-dropzone-div">
-                          <form id="gerber-dropzone" action="/file-upload" class="dropzone"></form>
-                        </div>
-
-                        <table class="convert-settings-table">
-                          <tr>
-                            <td><h3>Excellon File:<h3></td>
-                          </tr>
-                        </table>
-                        <div class="dropzone-div" id="excellon-dropzone-div">
-                          <form id="excellon-dropzone" action="/file-upload" class="dropzone"></form>
-                        </div>
-                        
+                    <div class="convert-div">
+                      <table class="convert-settings-table">
+                        <tr>
+                          <td><h3>Upload Files:</h3></td>
+                        </tr>
+                      </table>
+                      <!--
+                      <div class="dropzone-div" id="custom-dropzone-div">
+                        <form id="custom-dropzone" action="/file-upload" class="dropzone"></form>
                       </div>
-
+                      -->
+                      <div id="drop_area">
+                        <form class="drop_form">
+                          <p>Click or drop files here to upload</p>
+                          <input type="file" id="drop_file_input" multiple accept="*" onchange="handle_dropped_files(this.files);">
+                          <label class="button" for="drop_file_input">Select some files?</label>
+                        </form>
+                      </div>
                     </div>
 
+                    <div class="convert-div">
+                      <table class="convert-settings-table">
+                        <tr>
+                          <td><h3>File Selection and View Order:<h3></td>
+                        </tr>
+                      </table>
 
+                      <ul id="draggable_list">
+                        <li id="non_draggable_list_element" class="draggable_list_element" style="cursor:default"><header></header></li>
+                      </ul>
+                    </div>
 
+                    <div class="convert-div">
+                      <table class="convert-settings-table">
+                        <tr>
+                          <td><h3>Selected File:</h3></td>
+                        </tr>
+                        <tr>
+                          <td id="selected_file_text" style="font-size: 7pt; vertical-align: bottom;"><td>
+                        </tr>
+                      </table>
+                    </div>
 
+                    <div class="convert-div">
 
+                      <div id="convert_info">
+                        <table class="convert-settings-table">
+                          <tr>
+                            <td><h4>G Code Conversion Settings:</h4></td>
+                          </tr>
+                        </table>
 
-
-
-
-                    <button class="base-accordion" type="button" data-toggle="collapse" data-target="#convert_settings_collapse" aria-expanded="false" aria-controls="convert_settings_collapse" onclick="toggle_triangle(this)">
-                      Conversion Settings
-                      <div class="base-accordion-triangle">&#x25B2;</div>
-                    </button>
-                    <div id="convert_settings_collapse" class="collapse multi-collapse">
-
-                      <div class="convert-div">
-
-                        <div id="convert_info">
-                          <table class="convert-settings-table">
-                            <tr>
-                              <td class="base-td">Rapid Feedrate:</td>
-                              <td><input id="rapid_feedrate" class="base-input settings-input" value="500" type="number"></input> mm/min</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Pass Feedrate:</td>
-                              <td><input id="pass_feedrate" class="base-input settings-input" value="100" type="number"></input> mm/min</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Plunge Feedrate:</td>
-                              <td><input id="plunge_feedrate" class="base-input settings-input" value="20" type="number"></input> mm/min</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Plunge Depth:</td>
-                              <td><input id="plunge_depth" class="base-input settings-input" value="-2.5" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Safe Height:</td>
-                              <td><input id="safe_height" class="base-input settings-input" value="1" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Contour Spindle:</td>
-                              <td><input id="contour_spindle" class="base-input settings-input" value="255" type="number"></input></td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Drill Spindle:</td>
-                              <td><input id="drill_spindle" class="base-input settings-input" value="255" type="number"></input></td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Contour Distance:</td>
-                              <td><input id="contour_distance" class="base-input settings-input" value="0.099" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Contour Count:</td>
-                              <td><input id="contour_count" class="base-input settings-input" value="2" type="number"></input></td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Contour Step:</td>
-                              <td><input id="contour_step" class="base-input settings-input" value="0.15" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Resolution:</td>
-                              <td><input id="resolution" class="base-input settings-input" value="32" type="number"></input></td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Buffer Resolution:</td>
-                              <td><input id="buffer_resolution" class="base-input settings-input" value="5" type="number"></input></td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">X Offset:</td>
-                              <td><input id="x_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Y Offset:</td>
-                              <td><input id="y_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">NC Drill X Offset:</td>
-                              <td><input id="nc_drill_x_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">NC Drill Y Offset:</td>
-                              <td><input id="nc_drill_y_offset" class="base-input settings-input" value="0" type="number"></input> mm</td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Calculate Origin:</td>
-                              <td><input id="calculate_origin" class="" value="false" type="checkbox"></input></td>
-                            </tr>
-
-                            <tr>
-                              <td class="base-td">Flip X-axis:</td>
-                              <td><input id="flip_x_axis" class="" value="true" type="checkbox"></input></td>
-                            </tr>
-
-                          </table>
-
-                        </div>
+                        <table class="convert-settings-table" id="convert_settings">
+                        {% for setting in layout %}
+                          <tr id="{{setting.html_id}}_row" class="removed">
+                            <td class="base-td">{{setting.name}}</td>
+                            <td><input id="{{setting.html_id}}" class="{{setting.classes}}" value="{{setting.value}}" type="{{setting.type}}"></input> {{setting.units}}</td>
+                          </tr>
+                        {% endfor %}
+                        </table>
 
                       </div>
 
@@ -202,30 +120,23 @@
 
 
 
-                    <button class="base-accordion" type="button" data-toggle="collapse" data-target="#convert_profile_collapse" aria-expanded="true" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">
-                      Profiles
-                      <div class="base-accordion-triangle">&#x25B2;</div>
-                    </button>
-                    <div id="convert_profile_collapse" class="collapse multi-collapse">
 
-                      <div class="convert-div">
+                    <div class="convert-div">
 
-                        <table class="convert-settings-table">
-                          <tr>
-                            <td>Profile name: </td>
-                            <td style="position: relative;">
-                              <input id="settings_profile_name" class="base-input drop-input" style="width: 100%;" onfocus="display_settings_profile_names()" onmousedown="display_settings_profile_names()" onblur="hide_settings_profile_names()" onkeyup="settings_profile_name_keyup()"></input>
-                              <div id="existing_settings_profile_names">
-                              </div>
-                            </td>
-                          </tr>
-                        </table>
+                      <table class="convert-settings-table">
+                        <tr>
+                          <td>Profile name: </td>
+                          <td style="position: relative; width: 60%;">
+                            <input id="settings_profile_name" class="base-input drop-input" style="width: 100%;" onfocus="display_settings_profile_names()" onmousedown="display_settings_profile_names()" onblur="hide_settings_profile_names()" onkeyup="settings_profile_name_keyup()"></input>
+                            <div id="existing_settings_profile_names">
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
 
-                        <button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()">Load Profile</button>
-                        <br></br>
-                        <button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()">Save Profile</button>
-                      </div>
-
+                      <button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()">Load Profile</button>
+                      <br></br>
+                      <button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()">Save Profile</button>
                     </div>
 
 
@@ -233,30 +144,25 @@
 
 
 
+                    <div class="convert-div">
+                      <br></br>
+                      <button id="convert_button" class="base-button settings-panel-button" onclick="convert()">Convert</button>
 
-
-                    <div id="conversion_progress_collapse">
-
-                      <div class="convert-div">
-                        <br></br>
-                        <button id="convert_button" class="base-button settings-panel-button" onclick="convert()">Convert</button>
-
-                        <table class="convert-settings-table">
-                          <tr>
-                            <td><h3>Conversion Status:</h3></td>
-                          </tr>
-                          <tr>
-                            <td id="convert_progress_text" style="font-size: 9pt; vertical-align: bottom;"><td>
-                          </tr>
-                        </table>
-                        <div id="convert_progress">
-                          <div id="convert_progress_bar">
-                          </div>
+                      <table class="convert-settings-table">
+                        <tr>
+                          <td><h3>Conversion Status:</h3></td>
+                        </tr>
+                        <tr>
+                          <td id="convert_progress_text" style="font-size: 9pt; vertical-align: bottom;"><td>
+                        </tr>
+                      </table>
+                      <div id="convert_progress">
+                        <div id="convert_progress_bar">
                         </div>
-
                       </div>
 
                     </div>
+
 
 
 
@@ -280,7 +186,13 @@
                       </tr>
                     </table>
                   </div>
-                  <div id="svg_viewer_div" style="width: calc(100% - var(--convert-settings-width)); height: 100%; min-width: 10px;"></div>
+                  <div id="svg_viewer_div" style="width: calc(100% - var(--convert-settings-width)); height: 100%; min-width: 10px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" id="svg_element" style="width: 100%; height: 100%; will-change: transform;">
+                      <polygon points="-0.5,0 -0.5,-20 -0.7,-20 -0.25,-22 0.2,-20, 0,-20 0,0" style="fill:green; stroke-opacity:0"/>
+                      <polygon points="0,0.5 20,0.5 20,0.7 22,0.25 20,-0.2 20,0 0,0" style="fill:red; stroke-opacity:0"/>
+                      <polygon id="top_svg" points="0,0 0,0.5 -0.5,0.5 -0.5,0" style="fill:black; stroke-opacity:0"/>
+                    </svg>
+                  </div>
                 </div>
               </div>
 
@@ -494,6 +406,8 @@
   <script src="js/index_load.js"></script>
   <script src="js/simple-console.js"></script>
   <script src="js/console.js"></script>
-
+  <script src="draggable_list/js/draggable.js"></script>
+  <script src="shape_objects/shape_object_settings.js"></script>
+  <script src="drag_and_drop_files/js/drag_and_drop_files.js"></script>
 </body>
 </html>

@@ -2,7 +2,6 @@
 window.onload = function() {
 	init();
 	animate();
-	load_svg();
 	start_server_polling();
 	restore_from_auto_save();
 	start_auto_save();
@@ -29,6 +28,12 @@ window.onload = function() {
 	var collapse = $(".base-accordion");
 	collapse[0].click();
 	collapse[3].click();
+
+	$(document).on("wheel", "input[type=number]", function (e) {
+		$(this).blur();
+	});
+
+	this.initialize_svg_viewer();
 }
 
 window.onbeforeunload = function () {

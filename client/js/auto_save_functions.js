@@ -23,7 +23,7 @@ function restore_from_auto_save() {
 		url: '/restore_from_auto_save',
 		success: function(data) {
 			var data = JSON.parse(data);
-			load_and_validate_convert_settings(data.convert_settings);
+			//load_and_validate_convert_settings(data.convert_settings);
 
 			if (data.name !== ".cnc_profile") $("#settings_profile_name").val(data.name);
 

@@ -1,6 +1,6 @@
 from shapely.geometry import Polygon
 from shapely.affinity import scale
-import gerber_to_gcode.christofides as christofides
+import shape_object.christofides as christofides
 import numpy as np
 
 def poly_to_svg(
@@ -16,7 +16,7 @@ def poly_to_svg(
 				.replace('fill="#66cc99"', 'fill="{}"'.format(fill_color)) \
 				.replace('opacity="0.6"', 'opacity="1.0"')
 
-def poly_to_paths(
+def geom_to_paths(
 	poly,
 	contour_distance=0.25,
 	contour_count=1,
@@ -47,7 +47,16 @@ def poly_to_paths(
 
 	return paths
 
-def poly_geom_to_svg(
+def paths_to_svg(
+	paths,
+	stroke_color="#000000"
+):
+	content = ""
+	for path in paths:
+		content += poly_to_svg(path, stroke_color=stroke_color)
+	return content
+
+def geom_to_svg(
 	poly,
 	stroke_width="0.05",
 	stroke_color="#000000",

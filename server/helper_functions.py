@@ -157,12 +157,12 @@ def load_gcodes():
 	global gf_contours, gf_drills
 
 	temp_file = open('resources/contours.gcode', 'r')
-	gf_contours.load(temp_file.read(), f)
+	gf_contours.load(temp_file.read())
 	temp_file.close()
 	gf_contours.bisect_codes()
 
 	temp_file = open('resources/drills.gcode', 'r')
-	gf_drills.load(temp_file.read(), f)
+	gf_drills.load(temp_file.read())
 	temp_file.close()
 	gf_drills.bisect_codes()
 
