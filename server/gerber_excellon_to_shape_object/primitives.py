@@ -75,9 +75,23 @@ def make_circle_gbr(circle, resolution=20):
 
 	return make_circle(pos, radius, resolution)
 
+def make_region_gbr(region, resolution=20):
+	poly = Polygon()
+
+	for prim in region.primitives:
+		prim_t = type(prim)
+		if prim_t in primitives_map:
+			next_poly = primitives_map[prim_t](prim, resolution)
+			poly = poly.union(next_poly)
+		else:
+			print("Unknown primitive type: ", prim_t)
+
+	return Polygon(poly.exterior.coords)
+
 primitives_map = {
 	gerber.primitives.Rectangle : make_rect_gbr,
 	gerber.primitives.Line : make_line_gbr,
 	gerber.primitives.Obround : make_obround_gbr,
 	gerber.primitives.Circle : make_circle_gbr,
+	gerber.primitives.Region : make_region_gbr,
 }

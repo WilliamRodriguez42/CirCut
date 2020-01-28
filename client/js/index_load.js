@@ -34,6 +34,8 @@ window.onload = function() {
 	});
 
 	this.initialize_svg_viewer();
+
+	this.get_uploaded_files();
 }
 
 window.onbeforeunload = function () {

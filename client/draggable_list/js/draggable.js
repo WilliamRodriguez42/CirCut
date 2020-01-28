@@ -73,7 +73,7 @@ function select_element(elem) {
 			previously_selected_element.classList.remove('chosen');
 		}
 		previously_selected_element = elem;
-		
+
 		// Update selected file text
 		var selected_file_text_element = document.querySelector("#selected_file_text");
 		selected_file_text_element.innerText = elem.querySelector("header").innerText;

@@ -33,7 +33,7 @@ function position_svg_for_id(id, other_element_id) {
 }
 
 function update_thumbnail_svg_for_id(id) {
-
+	console.log('HI');
 }
 
 function initialize_svg_viewer() {
@@ -41,6 +41,9 @@ function initialize_svg_viewer() {
 		zoomEnabled: true,
 		panEnabled: true,
 		controlIconsEnabled: false,
+		zoomScaleSensitivity: 0.8,
+		minZoom: 0,
+		maxZoom: 100,
 	});
 
 	svg_controller.center();

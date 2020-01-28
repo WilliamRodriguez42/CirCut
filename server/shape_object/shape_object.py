@@ -15,6 +15,7 @@ class ShapeObject:
 		self.layout = None
 		self.id = None
 		self.gcode = None
+		self.name = None
 
 	def calculate_paths(self):
 		print(self.layout)
@@ -78,6 +79,9 @@ def find_shape_object_with_id(id):
 	for i in range(len(active_shape_objects)):
 		if active_shape_objects[i].id == id:
 			return active_shape_objects[i]
+
+def get_active_shape_objects():
+	return active_shape_objects
 
 active_shape_objects = []
 current_shape_object_id = 0

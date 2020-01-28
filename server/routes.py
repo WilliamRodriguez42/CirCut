@@ -10,7 +10,7 @@ import glob
 import time
 import serial_communication as sc
 from shape_object.convert_to_shape_object import conversion_map
-from shape_object.shape_object import add_shape_object_to_list, find_shape_object_with_id
+from shape_object.shape_object import add_shape_object_to_list, find_shape_object_with_id, get_active_shape_objects
 from settings_management.defaults import extension_uses_profile, default_profile_layouts, iterable_default_layout
 
 # set the project root directory as the static folder
@@ -100,15 +100,28 @@ def file_upload():
 		profile = default_profile_layouts[profile_name]
 
 		shape_object.layout = profile['layout']
+		shape_object.name = file.filename
 		add_shape_object_to_list(shape_object)
 
 		return jsonify({
-			'layout': profile['layout'],
+			'layout': shape_object.layout,
+			'name': shape_object.name,
 			'shape_object_id': shape_object.id
 		})
 	else:
 		add_error_message("File type uknown: {}".format(extension))
 		abort(409) # Need better status (Extension not supported)
+
+@app.route('/get_uploaded_files', methods=['GET'])
+def get_uploaded_files():
+	result = []
+	for shape_object in get_active_shape_objects():
+		result.append({
+			'layout': shape_object.layout,
+			'name': shape_object.name,
+			'shape_object_id': shape_object.id
+		})
+	return jsonify(result)
 
 @app.route('/get_thumbnail_svg_for_id', methods=['POST'])
 def get_thumbnail_svg_for_id():
