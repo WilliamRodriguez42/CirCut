@@ -7,6 +7,20 @@ function add_shape_object_to_list(shape_object_id, layout) {
 	update_html_for_layout(layout);
 }
 
+function remove_shape_object_from_list(shape_object_id) {
+	for (var i = 0; i < active_shape_objects.length; i ++) {
+		if (active_shape_objects[i].shape_object_id == shape_object_id) {
+			active_shape_objects.splice(i, 1);
+			$.ajax({
+				type: "POST",
+				url: "/delete_shape_object",
+				data: { shape_object_id: shape_object_id }
+			});
+			break;
+		}
+	}
+}
+
 function shape_object_response(result) {
 	var font_size = 1/result.name.length * 300;
 	if (font_size > 17.5) {
@@ -20,21 +34,22 @@ function shape_object_response(result) {
 	var html = ' \
 	<li id="' + shape_object_id + '" class="draggable_list_element" draggable="true"> \
 		<header style="font-size:' + font_size + 'px; float: left; width: 80%">' + result.name + '</header> \
-		<header style="float: right; text-align: right; width: 20%">' + result.shape_object_id + '</header>\
+		<header style="float: left; text-align: left; width: 10%">' + result.shape_object_id + '</header> \
+		<img src="images/delete_shape_object.png" onclick="delete_shape_object(this);"></img> \
 	</li>';
 	var parent = document.getElementById("draggable_list");
-	parent.insertAdjacentHTML('afterbegin', html)
+	parent.insertAdjacentHTML('afterbegin', html);
 	var elem = document.querySelector('#'+shape_object_id);
 	addDnDHandlers(elem);
 	select_element(elem);
-	inject_thumbnail_svg_for_id(shape_object_id)
+	inject_svg_for_id(shape_object_id);
 
 	// var settings_table = document.getElementById("convert_settings");
 	// settings_table.innerHTML = '';
 	// settings_table.insertAdjacentHTML('afterbegin', result.html);
 
 	// Append a new shape object
-	add_shape_object_to_list(shape_object_id, result.layout)
+	add_shape_object_to_list(shape_object_id, result.layout);
 }
 
 function get_uploaded_files() {

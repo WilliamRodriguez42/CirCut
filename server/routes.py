@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, jsonify, abort, render_template
+from flask import Flask, Response, request, jsonify, abort, render_template, Markup
 import helper_functions as hf
 from helper_functions import *
 import threading
@@ -10,7 +10,7 @@ import glob
 import time
 import serial_communication as sc
 from shape_object.convert_to_shape_object import conversion_map
-from shape_object.shape_object import add_shape_object_to_list, find_shape_object_with_id, get_active_shape_objects
+from shape_object.shape_object import add_shape_object_to_list, remove_shape_object_from_list, find_shape_object_with_id, get_active_shape_objects, move_shape_object_after_id
 from settings_management.defaults import extension_uses_profile, default_profile_layouts, iterable_default_layout
 
 # set the project root directory as the static folder
@@ -39,7 +39,7 @@ def send_whatever(path):
 
 @app.route('/')
 def send_home():
-	return render_template('index.html', layout=iterable_default_layout)
+	return render_template('index.html', layout=iterable_default_layout, svg_element_content=Markup(open("../client/images/Origin.svg").read()))
 
 @app.route('/contours', methods=['GET'])
 def receive_contours():
@@ -100,6 +100,7 @@ def file_upload():
 		profile = default_profile_layouts[profile_name]
 
 		shape_object.layout = profile['layout']
+		shape_object.update_minor_settings()
 		shape_object.name = file.filename
 		add_shape_object_to_list(shape_object)
 
@@ -112,6 +113,12 @@ def file_upload():
 		add_error_message("File type uknown: {}".format(extension))
 		abort(409) # Need better status (Extension not supported)
 
+@app.route('/delete_shape_object', methods=['POST'])
+def delete_shape_object():
+	shape_object_id = int(request.form['shape_object_id'][13:])
+	remove_shape_object_from_list(shape_object_id)
+	return Response("Ok")
+
 @app.route('/get_uploaded_files', methods=['GET'])
 def get_uploaded_files():
 	result = []
@@ -122,6 +129,15 @@ def get_uploaded_files():
 			'shape_object_id': shape_object.id
 		})
 	return jsonify(result)
+
+@app.route('/get_svg_for_id', methods=['POST'])
+def get_svg_for_id():
+	shape_object_id = int(request.form['shape_object_id'][13:])
+	shape_object = find_shape_object_with_id(shape_object_id)
+	return {
+		'thumbnail': shape_object.get_thumbnail_svg(),
+		'preview': shape_object.get_preview_svg()
+	}
 
 @app.route('/get_thumbnail_svg_for_id', methods=['POST'])
 def get_thumbnail_svg_for_id():
@@ -139,9 +155,26 @@ def get_preview_svg_for_id():
 	shape_object = find_shape_object_with_id(shape_object_id)
 	return shape_object.get_preview_svg()
 
+@app.route('/update_shape_object_layout', methods=['POST'])
+def update_shape_object_layout():
+	form = json.loads(request.data)
+
+	shape_object_id = form['shape_object_id'][13:]
+	shape_object_id = int(shape_object_id)
+
+	shape_object = find_shape_object_with_id(shape_object_id)
+	if shape_object is None:
+		add_error_message('Could not update shape object layout: specified file not found, server out of sync')
+		abort(400)
+		return
+
+	shape_object.update_layout(form['layout'])
+
+	return Response('Ok')
+
 @app.route('/convert', methods=['POST'])
 def convert():
-	global progress_text, progress_step, progress_load_svg, gtg_status
+	global progress_text, progress_step, gtg_status
 	form = json.loads(request.data)
 
 	if progress_step != PROGRESS_TOTAL_STEPS:
@@ -158,10 +191,9 @@ def convert():
 		abort(400)
 		return
 
-	shape_object.layout = form['layout']
+	shape_object.update_layout(form['layout'])
 
 	progress_step = 0
-	progress_load_svg = False
 
 	progress_text = "Calculating paths..."
 	progress_step += 1
@@ -173,7 +205,6 @@ def convert():
 	print(progress_text)
 	svg = shape_object.get_preview_svg()
 
-	progress_load_svg = True
 	progress_text = "Converting to G Code..."
 	progress_step += 1
 	print(progress_text)
@@ -192,17 +223,20 @@ def convert():
 
 @app.route('/status', methods=['GET'])
 def convert_progress():
-	global client_load_gcodes
 	result = jsonify({
 		'step': progress_step,
 		'of': PROGRESS_TOTAL_STEPS,
 		'text': progress_text,
-		'load_svg': progress_load_svg,
 		'status_messages': status_messages,
-		'load_gcodes': client_load_gcodes,
 	})
-	client_load_gcodes = False
 	return result
+
+@app.route('/reorder_shape_objects', methods=['POST'])
+def reorder_shape_objects():
+	shape_object_id = int(request.form['shape_object_id'][13:])
+	inject_before_id = int(request.form['inject_before_id'][13:])
+	move_shape_object_after_id(shape_object_id, inject_before_id)
+	return Response("Ok")
 
 @app.route('/svg', methods=['GET'])
 def get_svg():
@@ -298,17 +332,7 @@ def disconnect():
 	sc.ser = None
 	return Response("Ok")
 
-@app.route('/shape_object_settings', methods=['POST'])
-def shape_object_settings():
-	shape_object_id = request.form['shape_object_id']
-	shape_object_id = int(shape_object_id)
-
-	content = "HELLO WORLD"
-	return Response(content)
-
 # Start in the ready state
 PROGRESS_TOTAL_STEPS = 5
 progress_step = PROGRESS_TOTAL_STEPS
 progress_text = "Ready to convert"
-progress_load_svg = False
-client_load_gcodes = False

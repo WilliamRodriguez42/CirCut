@@ -25,7 +25,8 @@ function convert() {
 		});
 		return;
 	}
-	layout = get_layout_for_id(previously_selected_element.id);
+	update_shape_object_settings_from_html(shape_object_id);
+	layout = get_layout_for_id(shape_object_id);
 	reset_conversion_state_values();
 
 	var contours = $.ajax({
@@ -37,7 +38,9 @@ function convert() {
 		}),
 		contentType: "text/plain",
 		success: function() {
-			load_gcodes();
+			update_thumbnail_svg_for_id(shape_object_id);
+			update_preview_svg_for_id(shape_object_id);
+			// load_gcodes();
 		},
 		error: function(err) {
 		}

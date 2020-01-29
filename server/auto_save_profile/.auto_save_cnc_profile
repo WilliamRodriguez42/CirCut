@@ -1,7 +1,7 @@
 {
 	"convert_settings": {
 		"bit_travel_x": 0.1,
-		"bit_travel_y": -0.1,
+		"bit_travel_y": 0.1,
 		"buffer_resolution": 5,
 		"calculate_origin": false,
 		"connection_port": "/dev/ttyUSB0",
@@ -15,10 +15,10 @@
 		"rapid_feedrate": 500,
 		"resolution": 32,
 		"safe_height": 1,
-		"shape_object_id": "shape_object_2",
+		"shape_object_id": "shape_object_3",
 		"spindle_speed": 255,
 		"x_offset": 1,
-		"y_offset": 1
+		"y_offset": -1
 	},
 	"name": "default.cnc_profile"
 }

@@ -36,10 +36,21 @@ function handleDrop(e) {
 
 	// Don't do anything if dropping the same column we're dragging.
 	if (dragSrcEl != this) {
+
 		if (this.id == 'non_draggable_list_element') {
 			position_svg_for_id(dragSrcEl.id, "top");
+			$.ajax({
+				type: "POST",
+				url: "/reorder_shape_objects",
+				data: {shape_object_id: dragSrcEl.id, inject_before_id: "shape_object_-1"},
+			});
 		} else {
 			position_svg_for_id(dragSrcEl.id, this.id);
+			$.ajax({
+				type: "POST",
+				url: "/reorder_shape_objects",
+				data: {shape_object_id: dragSrcEl.id, inject_before_id: this.id},
+			});
 		}
 
 		this.parentNode.removeChild(dragSrcEl);
@@ -51,6 +62,7 @@ function handleDrop(e) {
 		if (dragSrcEl.classList.contains('chosen')) {
 			previously_selected_element = dropElem;
 		}
+
 	}
 	this.classList.remove('over');
 	return false;
@@ -68,10 +80,15 @@ function handleDragEnd(e) {
 
 function select_element(elem) {
 	if (previously_selected_element != elem) {
+		if (previously_selected_element !== null) {
+			update_shape_object_settings_from_html(previously_selected_element.id);
+		}
+
 		elem.classList.add('chosen');
 		if (previously_selected_element != null) {
 			previously_selected_element.classList.remove('chosen');
 		}
+		
 		previously_selected_element = elem;
 
 		// Update selected file text
@@ -79,23 +96,6 @@ function select_element(elem) {
 		selected_file_text_element.innerText = elem.querySelector("header").innerText;
 
 		update_html_for_id(elem.id);
-		// 
-		// Query server for file settings
-		/*$.ajax({
-			type: "POST",
-			url: "/shape_object_settings",
-			data: {shape_object_id: 0},
-			success: function(result) {
-				// Need to convert the returned string to HTML and also somehow check if the numbers are valid
-				load_shape_object_settings_from_json(result);
-			},
-			error: function() {
-				console_display_message({
-					type: "error",
-					message: "Settings profile could not be saved"
-				});
-			}
-		});*/
 	}
 }
 
@@ -114,6 +114,15 @@ function addNonSelectHandlers(elem) {
 function addDnDHandlers(elem) {
 	addNonSelectHandlers(elem);
 	elem.addEventListener('click', handleClick, false);
+}
+
+function delete_shape_object(elem) {
+	var parent = elem.parentNode;
+	var grand_parent = parent.parentNode;
+	grand_parent.removeChild(parent);
+
+	remove_svg_for_id(parent.id);
+	remove_shape_object_from_list(parent.id);
 }
 
 var element = document.querySelector('#draggable_list .draggable_list_element');

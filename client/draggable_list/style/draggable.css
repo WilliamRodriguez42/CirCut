@@ -29,6 +29,12 @@
 	float: left;
 	padding: 5px;
 }
+.draggable_list_element img {
+	width: 10%;
+	padding-top: 4px;
+	cursor: pointer;
+	float: right;
+}
 
 .draggable_list_element.dragElem {
 	opacity: 0.4;

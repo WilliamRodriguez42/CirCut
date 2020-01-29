@@ -45,7 +45,6 @@ def execute_commands():
 					status.add_info_message("Safe height set to: {}".format(dz))
 
 					hf.f = probe_grid(dx, dy, dz)
-					routes.client_load_gcodes = True
 				except ValueError:
 					level_arg_error()
 
@@ -86,7 +85,6 @@ def execute_commands():
 			# Make a default hf.f function
 			hf.f = lambda x, y: [0]
 			status.add_info_message('Reset the level plane to zero')
-			routes.client_load_gcodes = True
 
 		elif parts[0] == 'r' or parts[0] == 'raise':
 			# Raise the safety height
@@ -94,7 +92,6 @@ def execute_commands():
 				try:
 					amount = float(parts[1])
 					hf.gf_contours.z_offset += amount
-					routes.client_load_gcodes = True
 					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
 				except ValueError:
 					raise_arg_error()
@@ -102,7 +99,6 @@ def execute_commands():
 			elif len(parts) == 1:
 				hf.gf_contours.z_offset += 0.02
 				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
-				routes.client_load_gcodes = True
 
 			else:
 				raise_arg_error()
@@ -113,7 +109,6 @@ def execute_commands():
 				try:
 					amount = float(parts[1])
 					hf.gf_contours.z_offset -= amount
-					routes.client_load_gcodes = True
 					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
 				except ValueError:
 					lower_arg_error()
@@ -121,7 +116,6 @@ def execute_commands():
 			elif len(parts) == 1:
 				hf.gf_contours.z_offset -= 0.02
 				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
-				routes.client_load_gcodes = True
 
 			else:
 				lower_arg_error()

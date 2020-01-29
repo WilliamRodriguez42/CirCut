@@ -16,11 +16,6 @@ function get_server_status() {
 				convert_prev_state = convert_curr_state;
 
 				convert_prev_state_text = convert_curr_state_text;
-
-				if (data.load_svg && !convert_svg_loaded) {
-					load_svg();
-					convert_svg_loaded = true;
-				}
 			}
 
 			// Handle server messages
@@ -47,10 +42,6 @@ function get_server_status() {
 				}
 			}
 
-			if (data.load_gcodes && !prev_load_gcodes) {
-				load_gcodes();
-			}
-			prev_load_gcodes = data.load_gcodes;
 		}
 	})
 }
@@ -58,4 +49,3 @@ function get_server_status() {
 var poll_server_status_id = null;
 var status_latest_id = -1;
 var status_first_load = true;
-var prev_load_gcodes = false;

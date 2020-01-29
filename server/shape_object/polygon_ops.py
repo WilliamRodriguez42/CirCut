@@ -1,7 +1,8 @@
 from shapely.geometry import Polygon
-from shapely.affinity import scale
+from shapely.affinity import translate, scale
 import shape_object.christofides as christofides
 import numpy as np
+from status import add_warning_message, STATUS
 
 def poly_to_svg(
 	poly,
@@ -175,3 +176,21 @@ def coords_to_gcode(
 	""".format(rapid_feedrate, safe_height, rapid_feedrate)
 
 	return content
+
+def translate_poly(poly, x_offset, y_offset):
+	return translate(poly, x_offset, y_offset)
+
+def translate_coords(coords, x_offset, y_offset):
+	translated_coords = []
+	for coord in coords:
+		translated_coords.append((coord[0]+x_offset, coord[1]+y_offset))
+	return translated_coords
+
+def scale_poly(poly, x_scale, y_scale):
+	return scale(poly, x_scale, y_scale, origin=(0, 0))
+
+def scale_coords(coords, x_scale, y_scale):
+	scaled_coords = []
+	for coord in coords:
+		scaled_coords.append((coord[0]*x_scale, coord[1]*y_scale))
+	return scaled_coords

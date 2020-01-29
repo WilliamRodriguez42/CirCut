@@ -62,7 +62,7 @@ default_layout["X Offset"] = {
 	'type': 'number',
 }
 default_layout["Y Offset"] = {
-	'value': 1,
+	'value': -1,
 	'units': 'mm',
 	'type': 'number',
 }
@@ -72,22 +72,142 @@ default_layout["Bit Travel X"] = {
 	'type': 'number',
 }
 default_layout["Bit Travel Y"] = {
-	'value': -0.1,
+	'value': 0.1,
 	'units': 'mm',
 	'type': 'number',
 }
 default_layout["Calculate Origin"] = {
-	'value': False,
+	'value': 'false',
 	'units': '',
 	'type': 'checkbox',
 }
 default_layout["Flip X Axis"] = {
-	'value': False,
+	'value': 'true',
 	'units': '',
 	'type': 'checkbox',
 }
 
 
+default_requirements = {}
+default_requirements["Rapid Feedrate"] = {
+	'min': 0,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Pass Feedrate"] = {
+	'min': 0,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Plunge Feedrate"] = {
+	'min': 0,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Plunge Depth"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': 0,
+	'max_inclusive': True,
+	'integer': False,
+}
+default_requirements["Safe Height"] = {
+	'min': 0,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Spindle Speed"] = {
+	'min': 0,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Contour Distance"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Contour Count"] = {
+	'min': 1,
+	'min_inclusive': True,
+	'max': None,
+	'max_inclusive': False,
+	'integer': True,
+}
+default_requirements["Contour Step"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Resolution"] = {
+	'min': 3,
+	'min_inclusive': True,
+	'max': None,
+	'max_inclusive': False,
+	'integer': True,
+}
+default_requirements["Buffer Resolution"] = {
+	'min': 3,
+	'min_inclusive': True,
+	'max': None,
+	'max_inclusive': False,
+	'integer': True,
+}
+default_requirements["X Offset"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Y Offset"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Bit Travel X"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Bit Travel Y"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Calculate Origin"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
+default_requirements["Flip X Axis"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
 
 
 
