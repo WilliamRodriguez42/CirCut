@@ -81,7 +81,7 @@ function handleDragEnd(e) {
 function select_element(elem) {
 	if (previously_selected_element != elem) {
 		if (previously_selected_element !== null) {
-			update_shape_object_settings_from_html(previously_selected_element.id);
+			update_layout_from_html_for_id(previously_selected_element.id);
 		}
 
 		elem.classList.add('chosen');
@@ -111,6 +111,7 @@ function addNonSelectHandlers(elem) {
 	elem.addEventListener('drop', handleDrop, false);
 	elem.addEventListener('dragend', handleDragEnd, false);
 }
+
 function addDnDHandlers(elem) {
 	addNonSelectHandlers(elem);
 	elem.addEventListener('click', handleClick, false);
@@ -122,6 +123,7 @@ function delete_shape_object(elem) {
 	grand_parent.removeChild(parent);
 
 	remove_svg_for_id(parent.id);
+	remove_gcode_for_id(parent.id);
 	remove_shape_object_from_list(parent.id);
 }
 

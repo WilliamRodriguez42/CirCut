@@ -8,28 +8,29 @@ if os.name == 'nt':
 else:
 	from GCodeLib.GCodeLib import GCodeFile
 
-
 import re
 import json
 import status
+
+from CommandObject import TerminateObject, CommandObjectList
 
 def json_dumps(form):
 	content = json.dumps(form, sort_keys=True, indent=4)
 	content = re.sub('\n +', lambda match: '\n' + '\t' * (len(match.group().strip('\n')) // 3), content) # snake-case, hard-tabs, keep it together!
 	return content
 
-def sanitize_filename(filename):
-	prev_filename = filename
-	attempts = 0
-	while True: # Sanitize until we know the name is clean
-		filename = bleach.clean(filename)
-		filename = sanitize_filename(filename)
-		if prev_filename == filename:
-			return filename
-		prev_filename = filename
+# def sanitize_filename(filename):
+# 	prev_filename = filename
+# 	attempts = 0
+# 	while True: # Sanitize until we know the name is clean
+# 		filename = bleach.clean(filename)
+# 		filename = sanitize_filename(filename)
+# 		if prev_filename == filename:
+# 			return filename
+# 		prev_filename = filename
 
-		attempts += 1
-		if (attempts > 2): return False
+# 		attempts += 1
+# 		if (attempts > 2): return False
 
 def probez():
 	poll_ok()
@@ -153,30 +154,30 @@ def lower_arg_error():
 def warp_arg_error():
 	status.add_error_message("You must have 3 arguments for the WARP command and an optional fourth argument: \n\tX, Y, Z the position you would like to travel to in mm\n\tF the feed rate (int)")
 
-def load_gcodes():
-	global gf_contours, gf_drills
+# def load_gcodes():
+# 	global gf_contours, gf_drills
 
-	temp_file = open('resources/contours.gcode', 'r')
-	gf_contours.load(temp_file.read())
-	temp_file.close()
-	gf_contours.bisect_codes()
+# 	temp_file = open('resources/contours.gcode', 'r')
+# 	gf_contours.load(temp_file.read())
+# 	temp_file.close()
+# 	gf_contours.bisect_codes()
 
-	temp_file = open('resources/drills.gcode', 'r')
-	gf_drills.load(temp_file.read())
-	temp_file.close()
-	gf_drills.bisect_codes()
+# 	temp_file = open('resources/drills.gcode', 'r')
+# 	gf_drills.load(temp_file.read())
+# 	temp_file.close()
+# 	gf_drills.bisect_codes()
 
-	#gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
+# 	#gf_drills.y_offset = 0.25 # Permenantly make the drills compensate for bit travelling
 
-terminate = False
-commands = []
+terminator = TerminateObject()
+commands = CommandObjectList()
 
-gf_contours = GCodeFile()
-gf_drills = GCodeFile()
+# gf_contours = GCodeFile()
+# gf_drills = GCodeFile()
 
 y_points = np.loadtxt('level/y_points')
 x_points = np.loadtxt('level/x_points')
 z_points = np.loadtxt('level/z_points')
 f = interp2d(x_points, y_points, z_points)
 
-load_gcodes()
+# load_gcodes()

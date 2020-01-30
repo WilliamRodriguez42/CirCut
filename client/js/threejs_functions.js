@@ -4,88 +4,105 @@ var controls;
 var mouseDown = 0;
 var mouseOver = 0;
 
-function load_contour(gcode) {
-	scene.remove(g_object);
-	g_object = loader.parse(gcode);
-	scene.add(g_object);
+// function load_contour(gcode) {
+// 	scene.remove(g_object);
+// 	g_object = loader.parse(gcode);
+// 	scene.add(g_object);
+// 	animate();
+// }
+
+// function load_drill(gcode) {
+// 	scene.remove(d_object);
+// 	d_object = loader.parse(gcode);
+// 	scene.add(d_object);
+// 	animate();
+// }
+
+function create_threejs_gcode_object(shape_object, gcode_content) {
+	shape_object.gcode_object = loader.parse(gcode_content);
+	scene.add(shape_object.gcode_object);
 	animate();
 }
 
-function load_drill(gcode) {
-	scene.remove(d_object);
-	d_object = loader.parse(gcode);
-	scene.add(d_object);
+function update_threejs_gcode_object(shape_object, gcode_content) {
+	scene.remove(shape_object.gcode_object);
+	shape_object.gcode_object = loader.parse(gcode_content);
+	scene.add(shape_object.gcode_object);
+	animate();
+}
+
+function remove_threejs_gcode_object(shape_object) {
+	scene.remove(shape_object.gcode_object);
 	animate();
 }
 
 function animate() {
 	renderer.render( scene, camera );
-
 	requestAnimationFrame( animate );
 }
 
-function copy_position_scale_properties() {
-	d_object.scale.set(
-		g_object.scaling_factor,
-		g_object.scaling_factor,
-		g_object.scaling_factor);
+// function copy_position_scale_properties() {
+// 	d_object.scale.set(
+// 		g_object.scaling_factor,
+// 		g_object.scaling_factor,
+// 		g_object.scaling_factor);
 
-	d_object.position.set(
-		-g_object.center.x,
-		-g_object.center.y,
-		-g_object.center.z);
-}
+// 	d_object.position.set(
+// 		-g_object.center.x,
+// 		-g_object.center.y,
+// 		-g_object.center.z);
+// }
 
-function load_gcodes() {
-	var contours_loaded = false;
-	var drills_loaded = false;
-	var in_crit = false;
+// function load_gcodes() {
+// 	var contours_loaded = false;
+// 	var drills_loaded = false;
+// 	var in_crit = false;
 
-	var contours = $.ajax({
-		type: "GET",
-		url: "contours",
-		success: function() {
-			while (in_crit);
-			in_crit = true;
-			load_contour(contours.responseText);
+// 	var contours = $.ajax({
+// 		type: "GET",
+// 		url: "contours",
+// 		success: function() {
+// 			while (in_crit);
+// 			in_crit = true;
+// 			load_contour(contours.responseText);
 
-			g_object.scale.set(
-				g_object.scaling_factor,
-				g_object.scaling_factor,
-				g_object.scaling_factor);
+// 			g_object.scale.set(
+// 				g_object.scaling_factor,
+// 				g_object.scaling_factor,
+// 				g_object.scaling_factor);
 
-			g_object.position.set(
-				-g_object.center.x,
-				-g_object.center.y,
-				-g_object.center.z);
+// 			g_object.position.set(
+// 				-g_object.center.x,
+// 				-g_object.center.y,
+// 				-g_object.center.z);
 
-			if (drills_loaded) {
-				copy_position_scale_properties();
-			}
+// 			if (drills_loaded) {
+// 				copy_position_scale_properties();
+// 			}
 
-			contours_loaded = true;
-			in_crit = false;
-		}
-	});
+// 			contours_loaded = true;
+// 			in_crit = false;
+// 		}
+// 	});
 
-	var drills = $.ajax({
-		type: "GET",
-		url: "drills",
-		success: function() {
-			while (in_crit);
-			in_crit = true;
+// 	var drills = $.ajax({
+// 		type: "GET",
+// 		url: "drills",
+// 		success: function() {
+// 			while (in_crit);
+// 			in_crit = true;
 
-			load_drill(drills.responseText);
+// 			load_drill(drills.responseText);
 
-			if (contours_loaded) {
-				copy_position_scale_properties();
-			}
+// 			if (contours_loaded) {
+// 				copy_position_scale_properties();
+// 			}
 
-			drills_loaded = true;
-			in_crit = false;
-		}
-	});
-}
+// 			drills_loaded = true;
+// 			in_crit = false;
+// 		}
+// 	});
+// }
 
 function init() {
 
@@ -109,8 +126,6 @@ function init() {
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
-
-	load_gcodes();
 }
 
 function enable_controls() {

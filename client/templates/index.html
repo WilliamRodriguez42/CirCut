@@ -29,7 +29,6 @@
   <script src="js/threejs_functions.js"></script>
   <script src="js/save_load_settings_profile.js"></script>
   <script src="js/conversion_functions.js"></script>
-  <script src="js/auto_save_functions.js"></script>
   <script src="shape_objects/active_shape_objects.js"></script>
   <script src="svg_render/render.js"></script>
 </head>
@@ -132,9 +131,9 @@
                         </tr>
                       </table>
 
-                      <button id="load_settings_button" class="base-button settings-panel-button" onclick="load_and_validate_settings_profile()">Load Profile</button>
+                      <button id="load_settings_button" class="base-button settings-panel-button" onclick="load_settings_profile()">Load Profile</button>
                       <br></br>
-                      <button id="save_settings_button" class="base-button settings-panel-button" onclick="save_profile()">Save Profile</button>
+                      <button id="save_settings_button" class="base-button settings-panel-button" onclick="save_settings_profile()">Save Profile</button>
                     </div>
 
 

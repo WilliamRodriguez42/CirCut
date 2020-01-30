@@ -2,6 +2,7 @@ from serial import Serial, SerialException
 import time
 import status
 import glob
+import threading
 
 """import serial.tools.list_ports
 ports = list(serial.tools.list_ports.comports())
@@ -13,6 +14,7 @@ for p in ports:
 RX_BUFFER_SIZE = 64
 
 ser = None
+cnc_connected = threading.Event()
 receive_ready = False
 
 receive_buffer_size = 5
@@ -25,11 +27,7 @@ def constant_read():
 
 
 	while True:
-		while (ser == None):
-			status.cnc_machine_connected = False
-			print("No CNC machine found, please plug in or turn on machine.")
-			time.sleep(5)
-		status.cnc_machine_connected = True
+		cnc_connected.wait()
 
 		to_read = ser.inWaiting()
 		if to_read:
@@ -63,7 +61,7 @@ def get_machine_state():
 	return ''
 
 def write(text):
-	global receive_ready, last_sent
+	global receive_ready, last_sent, ser
 
 	text = text.strip()
 
@@ -71,11 +69,11 @@ def write(text):
 		pass
 
 	receive_ready = False
-	print(text)
+	# print(text)
 
 	last_sent.append(len(text) + 1)
 
-	if ser == None:
+	if ser is None:
 		return
 
 	ser.write((text + '\r').encode())
@@ -85,3 +83,14 @@ def poll_ok():
 	global receive_ready
 	while not receive_ready or len(last_sent) > 0:
 		time.sleep(0.01)
+
+def connect(port):
+	global ser, cnc_connected
+	ser = Serial(port, 115200)
+	cnc_connected.set()
+
+def disconnect():
+	global ser, cnc_connected
+	# ser.close()
+	ser = None
+	cnc_connected.clear()

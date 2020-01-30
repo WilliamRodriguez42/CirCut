@@ -2,9 +2,10 @@ function add_shape_object_to_list(shape_object_id, layout) {
 	so = {
 		shape_object_id: shape_object_id,
 		layout: layout,
+		gcode_object: null,
 	}
 	active_shape_objects.push(so);
-	update_html_for_layout(layout);
+	update_html_from_layout(layout);
 }
 
 function remove_shape_object_from_list(shape_object_id) {
@@ -44,12 +45,9 @@ function shape_object_response(result) {
 	select_element(elem);
 	inject_svg_for_id(shape_object_id);
 
-	// var settings_table = document.getElementById("convert_settings");
-	// settings_table.innerHTML = '';
-	// settings_table.insertAdjacentHTML('afterbegin', result.html);
-
 	// Append a new shape object
 	add_shape_object_to_list(shape_object_id, result.layout);
+	inject_gcode_for_id(shape_object_id);
 }
 
 function get_uploaded_files() {
@@ -63,4 +61,22 @@ function get_uploaded_files() {
 		}
 	});
 }
+
+function get_layout_for_shape_object_id(shape_object_id) {
+	for (var i = 0; i < active_shape_objects.length; i ++) {
+		if (active_shape_objects[i].shape_object_id == shape_object_id) {
+			return active_shape_objects[i].layout;
+		}
+	}
+	return null;
+}
+
+function get_shape_object_from_shape_object_id(shape_object_id) {
+	for (var i = 0; i < active_shape_objects.length; i ++) {
+		if (active_shape_objects[i].shape_object_id == shape_object_id) {
+			return active_shape_objects[i];
+		}
+	}
+}
+
 active_shape_objects = [];

@@ -28,7 +28,6 @@ class ShapeObject:
 		self.name = None
 
 	def calculate_paths(self):
-		print(self.layout)
 		if self.geom is not None:
 			self.paths = po.geom_to_paths(
 				self.geom,
@@ -47,8 +46,8 @@ class ShapeObject:
 	def get_preview_svg(self):
 		if self.geom is not None and self.paths is not None: # Render the paths that the CNC machine will take
 			return po.paths_to_svg(self.paths, stroke_color="#000000")
-		elif self.geom is None and self.svg_geom is not None: # Render a bunch of circles representing drill areas
-			return po.geom_to_svg(self.svg_geom, fill_color="#000000")
+		# elif self.geom is None and self.svg_geom is not None: # Render a bunch of circles representing drill areas
+		# 	return po.geom_to_svg(self.svg_geom, fill_color="#000000")
 		return ""
 
 	def calculate_gcode(self):
@@ -73,6 +72,11 @@ class ShapeObject:
 
 	def bisect_codes(self):
 		self.gcode.bisect_codes()
+
+	def get_gcodes(self, f):
+		if self.gcode is not None:
+			return self.gcode.get_content(f)
+		return ""
 
 	def update_layout(self, layout):
 		message = ""
@@ -127,21 +131,19 @@ class ShapeObject:
 
 		if message != "":
 			add_error_message(message)
-		else:
-			self.update_minor_settings()
 
 	def update_minor_settings(self):
 		# Perform minor changes to objects such as the svg_geom, geom, and coords
 		x_scale = 1
 		if self.layout['Flip X Axis']['value']:
 			x_scale = -1
-		self.svg_geom = po.scale_poly(self.svg_geom_original, x_scale, -1)
+		self.svg_geom = po.scale_poly(self.svg_geom_original, x_scale, 1)
 		if self.geom is not None:
-			self.geom = po.scale_poly(self.geom_original, x_scale, -1)
+			self.geom = po.scale_poly(self.geom_original, x_scale, 1)
 			self.svg_geom = po.translate_poly(self.svg_geom, self.layout['X Offset']['value'], self.layout['Y Offset']['value'])
 			self.geom = po.translate_poly(self.geom, self.layout['X Offset']['value'], self.layout['Y Offset']['value'])
 		if self.coords is not None:
-			self.coords = po.scale_coords(self.coords_original, x_scale, -1)
+			self.coords = po.scale_coords(self.coords_original, x_scale, 1)
 			self.svg_geom = po.translate_poly(self.svg_geom, self.layout['X Offset']['value'] - self.layout['Bit Travel X']['value'], self.layout['Y Offset']['value'] - self.layout['Bit Travel Y']['value'])
 			self.coords = po.translate_coords(self.coords, self.layout['X Offset']['value'] - self.layout['Bit Travel X']['value'], self.layout['Y Offset']['value'] - self.layout['Bit Travel Y']['value'])
 
@@ -180,5 +182,6 @@ def move_shape_object_after_id(shape_object_id, inject_before_id):
 				break
 	else:
 		active_shape_objects.insert(0, shape_object)
+
 active_shape_objects = []
 current_shape_object_id = 0

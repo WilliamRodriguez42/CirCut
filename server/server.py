@@ -18,18 +18,15 @@ if os.name == 'nt':
 
 def execute_commands():
 	while (True):
-		while (len(hf.commands) == 0):
-			time.sleep(0.1) # Wait for command
-			hf.terminate = False
-
-
-		text = hf.commands[0]
-		del hf.commands[0]
-
-		poll_ok()
+		hf.commands.wait_until_populated()
+		text = hf.commands[0].text
 
 		parts = text.split()
-		if len(parts) == 0: continue
+		if len(parts) == 0: 
+			hf.commands[0].set_complete()
+			del hf.commands[0]
+
+		# poll_ok()
 
 		if parts[0] == 'level':
 			if len(parts) < 3 or len(parts) > 4:
@@ -66,19 +63,19 @@ def execute_commands():
 		elif parts[0] == 'show_contour':
 			content = ""
 			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
-				if hf.terminate: break
+				if hf.terminator.termination_pending(): break
 				content += str(gcode) + "\n"
 			status.add_info_message(content)
 			print(content)
 
 		elif parts[0] == 'contour':
 			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
-				if hf.terminate: break
+				if hf.terminator.termination_pending(): break
 				write(gcode)
 
 		elif parts[0] == 'drill':
 			for gcode in hf.gf_drills.enumerate_gcodes(hf.f):
-				if hf.terminate: break
+				if hf.terminator.termination_pending(): break
 				write(gcode)
 
 		elif parts[0] == 'unlevel':
@@ -126,10 +123,15 @@ def execute_commands():
 			probez()
 		elif parts[0] == 'perim':
 			draw_perimeter()
+		elif parts[0] == 'stop':
+			write('G1 Z3 F500')	# Back up to safe height
+			write('G1 X0 Y0 F500')
+			write('M5')
 		else:
 			write(text)
 
-		hf.terminate = False
+		hf.commands[0].set_complete()
+		del hf.commands[0]
 
 def start_threads():
 	global t

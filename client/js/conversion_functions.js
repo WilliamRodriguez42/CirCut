@@ -25,8 +25,9 @@ function convert() {
 		});
 		return;
 	}
-	update_shape_object_settings_from_html(shape_object_id);
-	layout = get_layout_for_id(shape_object_id);
+	update_layout_from_html_for_id(shape_object_id);
+	var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
+	var layout = shape_object.layout;
 	reset_conversion_state_values();
 
 	var contours = $.ajax({
@@ -37,12 +38,10 @@ function convert() {
 			layout: layout
 		}),
 		contentType: "text/plain",
-		success: function() {
+		success: function(data) {
 			update_thumbnail_svg_for_id(shape_object_id);
 			update_preview_svg_for_id(shape_object_id);
-			// load_gcodes();
-		},
-		error: function(err) {
+			update_gcode_for_id(shape_object_id);
 		}
 	});
 }

@@ -10,6 +10,7 @@ def poly_to_svg(
 	stroke_color="#000000",
 	fill_color="#66cc99"
 ):
+	poly = scale_poly(poly, 1, -1) # SVG renders upside down for no reason
 	return 	poly.svg() \
 				.replace('stroke-width="2.0"', 'stroke-width="{}"'.format(stroke_width)) \
 				.replace('stroke="#555555"', 'stroke="{}"'.format(stroke_color)) \

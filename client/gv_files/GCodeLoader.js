@@ -217,28 +217,6 @@ THREE.GCodeLoader.prototype.parse = function ( data ) {
 		object.add( segments );
 		object.bounding_box = bounding_box;
 
-		var center = new THREE.Vector3();
-		center.x = (bounding_box.min_x + bounding_box.max_x) / 2,
-		center.z = (bounding_box.min_z + bounding_box.max_z) / 2;
-		center.y = 0;
-
-		var range_x = bounding_box.max_x - bounding_box.min_x;
-		var range_z = bounding_box.max_z - bounding_box.min_z;
-
-		var scaling_factor = 1;
-
-		if (range_x > range_z) {
-			scaling_factor = 1 / range_x;
-		} else {
-			scaling_factor = 1 / range_z;
-		}
-		scaling_factor = scaling_factor * 50;
-		center.x = center.x * scaling_factor;
-		center.y = center.y * scaling_factor;
-		center.z = center.z * scaling_factor;
-
-		object.scaling_factor = scaling_factor;
-		object.center = center;
 	}
 
 	var object = new THREE.Group();

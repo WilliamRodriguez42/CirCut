@@ -23,6 +23,35 @@ function inject_svg_for_id(id) {
 	});
 }
 
+function inject_gcode_for_id(shape_object_id) {
+	var contours = $.ajax({
+		type: "POST",
+		url: "/get_gcode_for_id",
+		data: { shape_object_id: shape_object_id },
+		success: function(gcode_content) {
+			var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
+			create_threejs_gcode_object(shape_object, gcode_content);
+		}
+	});
+}
+
+function update_gcode_for_id(shape_object_id) {
+	var contours = $.ajax({
+		type: "POST",
+		url: "/get_gcode_for_id",
+		data: { shape_object_id: shape_object_id },
+		success: function(gcode_content) {
+			var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
+			update_threejs_gcode_object(shape_object, gcode_content);
+		}
+	});
+}
+
+function remove_gcode_for_id(shape_object_id) {
+	var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
+	remove_threejs_gcode_object(shape_object);
+}
+
 function remove_svg_for_id(id) {
 	var elem = document.getElementById(id + '_svg');
 	elem.parentNode.removeChild(elem);

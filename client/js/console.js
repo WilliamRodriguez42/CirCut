@@ -42,15 +42,15 @@ function console_display_message(m) {
 	scroll_to_bottom();
 }
 
-function handle_command(command){
+function handle_command(command_entry, command){
 	$.ajax({
 		type: "POST",
 		url:"/command",
 		data: {
 			command: command
 		},
-		success: function(responseText) {
-				scroll_to_bottom();
+		success: function(status) {
+			con.edit_status(command_entry, status);
 		},
 		error: function() {
 			console_display_message({

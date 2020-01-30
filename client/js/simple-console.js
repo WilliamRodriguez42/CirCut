@@ -31,6 +31,18 @@ var SimpleConsole = function(options) {
 		);
 	};
 
+	var add_status = function(to_element, text) {
+		var status = document.createElement("span");
+		status.className = "input-status";
+		status.innerHTML = '<div>' + text + '</div>';
+		to_element.insertBefore(status, to_element.firstChild);
+	};
+
+	var edit_status = function(to_element, text) {
+		var status = to_element.querySelector('.input-status');
+		status.innerHTML = '<div>' + text + '</div>';
+	}
+
 	var console_element = document.createElement("div");
 	console_element.className = "simple-console";
 
@@ -361,28 +373,33 @@ var SimpleConsole = function(options) {
 
 	load_command_history();
 
+	var enter_user_command = function(command) {
+		if (command === "") {
+			return;
+		}
+		input.value = "";
+
+		if (command_history[command_history.length - 1] !== command) {
+			command_history.push(command);
+		}
+		command_index = command_history.length;
+		save_command_history();
+
+		var command_entry = log(command);
+		command_entry.classList.add("input");
+		add_chevron(command_entry);
+		add_status(command_entry, "Pending...");
+
+		output.scroll_to_bottom();
+
+		handle_command(command_entry, command);
+	}
+
 	input.addEventListener("keydown", function(e) {
 		if (e.keyCode === 13) { // Enter
 
 			var command = input.value;
-			if (command === "") {
-				return;
-			}
-			input.value = "";
-
-			if (command_history[command_history.length - 1] !== command) {
-				command_history.push(command);
-			}
-			command_index = command_history.length;
-			save_command_history();
-
-			var command_entry = log(command);
-			command_entry.classList.add("input");
-			add_chevron(command_entry);
-
-			output.scroll_to_bottom();
-
-			handle_command(command);
+			enter_user_command(command);
 
 		} else if (e.keyCode === 38) { // Up
 
@@ -437,5 +454,7 @@ var SimpleConsole = function(options) {
 	this.success = success;
 	this.getLastEntry = get_last_entry;
 	this.clear = clear;
+	this.enter_user_command = enter_user_command;
+	this.edit_status = edit_status;
 
 };

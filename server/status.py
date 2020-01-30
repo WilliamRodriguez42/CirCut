@@ -39,5 +39,3 @@ def add_info_message(message):
 current_status_message_id = 0
 status_messages = []
 STATUS_MESSAGES_MAX_LENGTH = 1000
-
-cnc_machine_connected = False

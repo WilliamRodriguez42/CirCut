@@ -12,15 +12,7 @@ function distance_pre_check() {
 }
 
 function control_panel_send_command(command) {
-	$.ajax({
-		type: "POST",
-		url:"/command",
-		data: {
-			command: command
-		}
-	});
-	con.log("> " + command);
-	scroll_to_bottom();
+	con.enter_user_command(command);
 }
 
 function move_Zp() {

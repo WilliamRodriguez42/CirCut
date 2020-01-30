@@ -3,8 +3,6 @@ window.onload = function() {
 	init();
 	animate();
 	start_server_polling();
-	restore_from_auto_save();
-	start_auto_save();
 
 	$(".panel-top").resizable({
 		handleSelector: "#main_horizontal_splitter",
@@ -39,7 +37,9 @@ window.onload = function() {
 }
 
 window.onbeforeunload = function () {
-	if (document.getElementById("save_settings_button").disabled === false) {
-		return "The changes you made may not be saved";
+
+	if (previously_selected_element != null) {
+		update_layout_from_html_for_id(previously_selected_element.id);
 	}
+	sync_all_settings_with_server();
 }

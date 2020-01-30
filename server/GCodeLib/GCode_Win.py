@@ -77,7 +77,6 @@ class GCodeFile:
 
 		self.all_gcodes = None
 		self.z_offset = 0.1
-		self.y_offset = 0
 
 		lines = content.split('\n')
 
@@ -128,13 +127,19 @@ class GCodeFile:
 
 			if type(gcode) in supported_moves:
 				x = gcode.params['X'].value
-				y = gcode.params['Y'].value + self.y_offset
+				y = gcode.params['Y'].value
 				z = gcode.params['Z'].value
 
 				z += f(x, y)[0] + self.z_offset
 				gcode.params['Z'] = make_word('Z', z)
 				gcode.params['Y'] = make_word('Y', y)
 			yield str(gcode)
+
+	def get_content(self, f):
+		content = ""
+		for gcode in self.enumerate_gcodes(f):
+			content += gcode + "\n"
+		return content
 
 	def bisect_codes(self):
 		bisect_codes(self)

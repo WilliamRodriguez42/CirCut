@@ -62,7 +62,7 @@ default_layout["X Offset"] = {
 	'type': 'number',
 }
 default_layout["Y Offset"] = {
-	'value': -1,
+	'value': 1,
 	'units': 'mm',
 	'type': 'number',
 }
@@ -72,7 +72,7 @@ default_layout["Bit Travel X"] = {
 	'type': 'number',
 }
 default_layout["Bit Travel Y"] = {
-	'value': 0.1,
+	'value': -0.1,
 	'units': 'mm',
 	'type': 'number',
 }

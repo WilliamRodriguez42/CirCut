@@ -3,8 +3,7 @@ import helper_functions as hf
 from helper_functions import *
 import threading
 from status import *
-import bleach
-from pathvalidate import sanitize_filename
+# import bleach
 import os
 import glob
 import time
@@ -12,6 +11,8 @@ import serial_communication as sc
 from shape_object.convert_to_shape_object import conversion_map
 from shape_object.shape_object import add_shape_object_to_list, remove_shape_object_from_list, find_shape_object_with_id, get_active_shape_objects, move_shape_object_after_id
 from settings_management.defaults import extension_uses_profile, default_profile_layouts, iterable_default_layout
+import copy
+from CommandObject import CommandObject, TerminateObject
 
 # set the project root directory as the static folder
 app = Flask(__name__, template_folder='../client/templates')
@@ -41,44 +42,49 @@ def send_whatever(path):
 def send_home():
 	return render_template('index.html', layout=iterable_default_layout, svg_element_content=Markup(open("../client/images/Origin.svg").read()))
 
-@app.route('/contours', methods=['GET'])
-def receive_contours():
-	# gf_contours.update_content(hf.f)
-	return Response('')
+# @app.route('/contours', methods=['GET'])
+# def receive_contours():
+# 	# gf_contours.update_content(hf.f)
+# 	return Response('')
 
-@app.route('/drills', methods=['GET'])
-def receive_drills():
-	# gf_drills.update_content(hf.f)
-	return Response('')
+# @app.route('/drills', methods=['GET'])
+# def receive_drills():
+# 	# gf_drills.update_content(hf.f)
+# 	return Response('')
+
+@app.route('/get_gcode_for_id', methods=['POST'])
+def get_gcode_for_id():
+	shape_object_id = int(request.form['shape_object_id'][13:])
+	shape_object = find_shape_object_with_id(shape_object_id)
+	gcode_content = shape_object.get_gcodes(hf.f)
+	return Response(gcode_content)
 
 @app.route('/command', methods=['POST'])
 def receive_command():
 	text = request.form['command'].strip()
 	add_input_message(text)
 
-	if not status.cnc_machine_connected:
+	if not sc.cnc_connected.is_set():
 		add_error_message(STATUS.CNC_MACHINE_NOT_CONNECTED)
-		return Response("Ok")
+		return Response("NOT CONNECTED")
 
 	text = text.lower()
 	if (text == 's' or text == 'stop'):
-		hf.commands = []
-		hf.terminate = True
-		print("User interrupt... raising head and returning to zero in X and Y axis only")
-		poll_ok()
-		write('G1 Z3 F500')	# Back up to safe height
-		write('G1 X0 Y0 F500')
-		write('M5')
-		poll_ok()
+		for command in hf.commands:
+			command.set_terminated()
+		hf.commands.clear()
+		hf.commands.append(hf.terminator)
 
-		while (hf.terminate):
-			time.sleep(1)
+		hf.terminator.send_terminate_signal()
+		hf.terminator.wait_until_terminated()
 
-		print("TERMINATED")
-		return Response("Ok")
+		return Response(hf.terminator.status)
 
-	hf.commands.append(text)
-	return Response("Ok")
+	co = CommandObject(text)
+	hf.commands.append(co)
+	co.wait_until_complete()
+
+	return Response(co.status)
 
 @app.route('/file_upload', methods=['POST'])
 def file_upload():
@@ -99,7 +105,7 @@ def file_upload():
 		profile_name = extension_uses_profile[extension]
 		profile = default_profile_layouts[profile_name]
 
-		shape_object.layout = profile['layout']
+		shape_object.layout = copy.deepcopy(profile['layout'])
 		shape_object.update_minor_settings()
 		shape_object.name = file.filename
 		add_shape_object_to_list(shape_object)
@@ -192,6 +198,7 @@ def convert():
 		return
 
 	shape_object.update_layout(form['layout'])
+	shape_object.update_minor_settings()
 
 	progress_step = 0
 
@@ -255,17 +262,29 @@ def archive_message():
 
 	return Response("Ok")
 
-@app.route('/save-settings-profile', methods=['POST'])
+@app.route('/load_settings_profile', methods=['POST'])
+def load_settings_profile():
+	profile_name = request.form['profile_name']
+	profile_name = os.path.join('settings_profiles', profile_name)
+
+	if not glob.glob(profile_name):
+		return Response("File does not exist")
+
+	file = open(profile_name, 'r')
+	content = file.read()
+	file.close()
+
+	return Response(content)
+
+@app.route('/save_settings_profile', methods=['POST'])
 def save_settings_profile():
 	form = json.loads(request.data)
 
-	settings_profile_name = form['name']
-	settings_profile_name = sanitize_filename(settings_profile_name)
-	if not settings_profile_name: return
-	form['name'] = settings_profile_name
+	layout = form['layout']
+	profile_name = form['profile_name']
 
-	profile_path = os.path.join("settings_profiles", settings_profile_name)
-	content = json_dumps(form)
+	profile_path = os.path.join("settings_profiles", profile_name)
+	content = json_dumps(form["layout"])
 
 	profile = open(profile_path, 'w+')
 	profile.write(content)
@@ -275,61 +294,32 @@ def save_settings_profile():
 
 @app.route('/get-settings-profile-names', methods=['GET'])
 def get_settings_profile_names():
-	settings_profile_names = glob.glob('settings_profiles/*.cnc_profile')
+	settings_profile_names = glob.glob('settings_profiles/*')
 	result = [s[len("settings_profiles/"):] for s in settings_profile_names]
 	return Response(json_dumps(result))
-
-@app.route('/load-settings-profile/<path:path>', methods=['GET'])
-def load_settings_profile(path):
-	path = os.path.join('settings_profiles', path)
-
-	if not glob.glob(path):
-		return Response("File does not exist")
-
-	file = open(path, 'r')
-	content = file.read()
-	file.close()
-
-	return Response(content)
-
-@app.route('/auto_save', methods=['POST'])
-def auto_save():
-	form = json.loads(request.data)
-	content = json_dumps(form)
-
-	auto_save_file = open("auto_save_profile/.auto_save_cnc_profile", "w+")
-	auto_save_file.write(content)
-	auto_save_file.close()
-
-	return Response("Ok")
-
-@app.route('/restore_from_auto_save', methods=['GET'])
-def restore_from_auto_save():
-	path = os.path.join('auto_save_profile', '.auto_save_cnc_profile')
-
-	if not glob.glob(path):
-		return Response("File does not exist")
-
-	file = open(path, 'r')
-	content = file.read()
-	file.close()
-
-	return Response(content)
 
 @app.route('/connect', methods=['POST'])
 def connect():
 	port = request.form['port']
 
 	try:
-		sc.ser = Serial(port, 115200)
-	except:
-		sc.ser = None
+		if sc.ser is not None:
+			sc.disconnect()
+		sc.connect(port)
+		status.add_info_message("CNC successfully connected")
+	except Exception as e:
+		status.add_error_message(str(e))
 
 	return Response("Ok")
 
 @app.route('/disconnect', methods=['POST'])
 def disconnect():
-	sc.ser = None
+	if sc.ser is not None:
+		sc.disconnect()
+		status.add_info_message("CNC successfully disconnected")
+	else:
+		status.add_error_message("No CNC machine connected to disconnect")
+
 	return Response("Ok")
 
 # Start in the ready state
