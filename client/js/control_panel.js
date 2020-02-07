@@ -11,8 +11,8 @@ function distance_pre_check() {
 	return amount;
 }
 
-function control_panel_send_command(command) {
-	con.enter_user_command(command);
+function control_panel_send_command(command, callback = function(command_entry, status){}) {
+	con.enter_user_command(command, callback);
 }
 
 function move_Zp() {
@@ -107,7 +107,12 @@ function level() {
 	if (safety_height < 0) return;
 
 	var command = "level " + x_axis_step + " " + y_axis_step + " " + safety_height;
-	control_panel_send_command(command);
+	control_panel_send_command(
+		command, 
+		function(command_entry, status){
+			update_all_gcodes();
+		}
+	);
 }
 
 function terminate() {
@@ -127,16 +132,16 @@ function probez() {
 
 function unlevel() {
 	var command = "unlevel";
-	control_panel_send_command(command);
+	control_panel_send_command(
+		command, 
+		function(command_entry, status){
+			update_all_gcodes();
+		}
+	);
 }
 
-function send_contour_gcode() {
-	var command = "contour";
-	control_panel_send_command(command);
-}
-
-function send_drill_gcode() {
-	var command = "drill";
+function send_gcode() {
+	var command = "send_gcode";
 	control_panel_send_command(command);
 }
 
@@ -158,7 +163,12 @@ function raise_z_height() {
 	if (dz < 0) return;
 
 	var command = "r " + dz;
-	control_panel_send_command(command);
+	control_panel_send_command(
+		command, 
+		function(command_entry, status){
+			update_all_gcodes();
+		}
+	);
 }
 
 function lower_z_height() {
@@ -166,7 +176,12 @@ function lower_z_height() {
 	if (dz < 0) return;
 
 	var command = "l " + dz;
-	control_panel_send_command(command);
+	control_panel_send_command(
+		command, 
+		function(command_entry, status){
+			update_all_gcodes();
+		}
+	);
 }
 
 function connect() {

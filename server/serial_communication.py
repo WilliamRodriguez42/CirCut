@@ -3,6 +3,7 @@ import time
 import status
 import glob
 import threading
+import pdb
 
 """import serial.tools.list_ports
 ports = list(serial.tools.list_ports.comports())
@@ -21,34 +22,44 @@ receive_buffer_size = 5
 last_received = [''] * receive_buffer_size # Stores the last few commands
 last_sent = []
 
+last_sent_lock = threading.Lock()
+
+queue_is_empty = threading.Event()
+queue_is_empty.set()
+
+ser_result = ''
 def constant_read():
-	global receive_ready, receiving, last_received, last_sent, ser
-	result = ''
+	global receive_ready, receiving, last_received, last_sent, ser, ser_result
 
 
 	while True:
 		cnc_connected.wait()
 
-		to_read = ser.inWaiting()
-		if to_read:
-			result += ser.read(to_read).decode('UTF-8')
-			while '\r\n' in result:
-				index = result.find('\r\n')
+		ser_result += ser.read(1).decode('UTF-8')
+		print(ser_result)
+		if '\r\n' in ser_result:
+			index = ser_result.find('\r\n')
 
-				last_complete_result = result[:index].strip()
-				print(last_complete_result + '\n')
+			last_complete_result = ser_result[:index].strip()
+			# print(last_complete_result)
 
-				last_received.insert(0, last_complete_result) # Put the new result at the front of the buffer
-				last_received.pop() # Remove the last element of the buffer
+			last_received.insert(0, last_complete_result) # Put the new ser_result at the front of the buffer
+			last_received.pop() # Remove the last element of the buffer
 
-				result = result[index+2:]
+			ser_result = ser_result[index+2:]
 
-				if 'Grbl' in last_received[0]:
-					receive_ready = True
+			# if 'Grbl' in last_received[0]:
+			# 	receive_ready = True
 
-				if last_received[0] == 'ok' or 'error' in last_received[0]:
-					receive_ready = True
-					del last_sent[0]
+			if last_received[0] == 'ok' or 'error' in last_received[0]:
+				# receive_ready = True
+				with last_sent_lock:
+					if len(last_sent) > 0:
+						del last_sent[0]
+					# print("DELETING NEW SIZE", sum(last_sent))
+
+					if len(last_sent) == 0:
+						queue_is_empty.set()
 
 def get_machine_state():
 	global last_received
@@ -63,30 +74,45 @@ def get_machine_state():
 def write(text):
 	global receive_ready, last_sent, ser
 
-	text = text.strip()
+	if ser is None:
+		print("SER IS NONE")
+		pdb.set_trace()
 
-	while sum(last_sent) + len(text) + 1 > RX_BUFFER_SIZE:
-		pass
+	text = text.strip() + '\r'
 
-	receive_ready = False
+	# print("Waiting for buffer", sum(last_sent) + len(text), RX_BUFFER_SIZE)
+	start_time = time.time()
+	while sum(last_sent) + len(text) > RX_BUFFER_SIZE:
+		if time.time() - start_time > 10:
+			print("WAITING FOR BUFFER TIMEOUT")
+			pdb.set_trace()
+	# print("SPACE IN BUFFER", sum(last_sent) + len(text), RX_BUFFER_SIZE)
+
+	print("Writing", text[:-1])
+
+	# receive_ready = False
 	# print(text)
 
-	last_sent.append(len(text) + 1)
+	with last_sent_lock:
+		last_sent.append(len(text))
+		queue_is_empty.clear()
 
-	if ser is None:
-		return
+		if ser is None:
+			print("SER IS NONE 2")
+			pdb.set_trace()
 
-	ser.write((text + '\r').encode())
-	ser.flush()
+		ser.write(text.encode())
+		ser.flush()
 
-def poll_ok():
+def poll_ok(): # Must be called from the same thread that calls write(text)
 	global receive_ready
-	while not receive_ready or len(last_sent) > 0:
-		time.sleep(0.01)
+	# while not receive_ready or len(last_sent) > 0:
+	# 	time.sleep(0.01)
+	queue_is_empty.wait()
 
 def connect(port):
 	global ser, cnc_connected
-	ser = Serial(port, 115200)
+	ser = Serial(port, baudrate=115200, timeout=1, write_timeout=0)
 	cnc_connected.set()
 
 def disconnect():

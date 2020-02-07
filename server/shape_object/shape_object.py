@@ -24,7 +24,7 @@ class ShapeObject:
 		self.paths = None
 		self.layout = None
 		self.id = None
-		self.gcode = None
+		self.gcode_object = None
 		self.name = None
 
 	def calculate_paths(self):
@@ -34,7 +34,8 @@ class ShapeObject:
 				contour_distance=self.layout['Contour Distance']['value'],
 				contour_count=self.layout['Contour Count']['value'],
 				contour_step=self.layout['Contour Step']['value'],
-				buffer_resolution=self.layout['Buffer Resolution']['value'])
+				buffer_resolution=self.layout['Buffer Resolution']['value'],
+				exterior_only=self.layout['Exterior Only']['value'])
 
 	def get_thumbnail_svg(self):
 		if self.geom is not None: # Render the shape we will cut paths around
@@ -67,15 +68,15 @@ class ShapeObject:
 				safe_height=self.layout['Safe Height']['value'],
 				spindle_speed=self.layout['Spindle Speed']['value'])
 
-		self.gcode = GCodeFile()
-		self.gcode.load(gcode_content)
+		self.gcode_object = GCodeFile()
+		self.gcode_object.load(gcode_content)
 
 	def bisect_codes(self):
-		self.gcode.bisect_codes()
+		self.gcode_object.bisect_codes()
 
-	def get_gcodes(self, f):
-		if self.gcode is not None:
-			return self.gcode.get_content(f)
+	def get_gcodes(self):
+		if self.gcode_object is not None:
+			return self.gcode_object.get_content()
 		return ""
 
 	def update_layout(self, layout):
@@ -147,6 +148,9 @@ class ShapeObject:
 			self.svg_geom = po.translate_poly(self.svg_geom, self.layout['X Offset']['value'] - self.layout['Bit Travel X']['value'], self.layout['Y Offset']['value'] - self.layout['Bit Travel Y']['value'])
 			self.coords = po.translate_coords(self.coords, self.layout['X Offset']['value'] - self.layout['Bit Travel X']['value'], self.layout['Y Offset']['value'] - self.layout['Bit Travel Y']['value'])
 
+	def get_gcode_bounding_box(self):
+		return self.gcode_object.bounds
+
 def add_shape_object_to_list(shape_object):
 	global current_shape_object_id, active_shape_objects
 
@@ -182,6 +186,17 @@ def move_shape_object_after_id(shape_object_id, inject_before_id):
 				break
 	else:
 		active_shape_objects.insert(0, shape_object)
+
+def get_shape_objects_gcode_bounding_box():
+	bounds = [float('inf'), float('inf'), 0, 0]
+	for shape_object in active_shape_objects:
+		so_bounds = shape_object.get_gcode_bounding_box()
+		if so_bounds is not None: # This is not a fix
+			bounds[0] = min(bounds[0], so_bounds[0])
+			bounds[1] = min(bounds[1], so_bounds[1])
+			bounds[2] = max(bounds[2], so_bounds[2])
+			bounds[3] = max(bounds[3], so_bounds[3])
+	return bounds
 
 active_shape_objects = []
 current_shape_object_id = 0

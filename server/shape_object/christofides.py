@@ -1,4 +1,7 @@
 def tsp(data):
+    if len(data) == 1:
+        return data, [0]
+
     # build a graph
     G = build_graph(data)
     #print("Graph: ", G)

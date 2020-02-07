@@ -1,10 +1,11 @@
 import threading
 
 class CommandObject():
-	def __init__(self, text):
+	def __init__(self, text, gcode_object):
 		self.text = text
 		self.event = threading.Event()
 		self.status = ""
+		self.gcode_object = gcode_object
 
 	def wait_until_complete(self):
 		self.event.wait()
@@ -19,7 +20,7 @@ class CommandObject():
 
 class TerminateObject(CommandObject):
 	def __init__(self):
-		super().__init__("stop")
+		super().__init__("stop", None)
 		self.event.set()
 
 	def send_terminate_signal(self):

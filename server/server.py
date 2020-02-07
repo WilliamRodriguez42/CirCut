@@ -20,6 +20,7 @@ def execute_commands():
 	while (True):
 		hf.commands.wait_until_populated()
 		text = hf.commands[0].text
+		gcode_object = hf.commands[0].gcode_object
 
 		parts = text.split()
 		if len(parts) == 0: 
@@ -62,40 +63,31 @@ def execute_commands():
 
 		elif parts[0] == 'show_contour':
 			content = ""
-			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
-				if hf.terminator.termination_pending(): break
-				content += str(gcode) + "\n"
-			status.add_info_message(content)
+			status.add_info_message(gcode_object.get_content())
 			print(content)
 
-		elif parts[0] == 'contour':
-			for gcode in hf.gf_contours.enumerate_gcodes(hf.f):
-				if hf.terminator.termination_pending(): break
-				write(gcode)
-
-		elif parts[0] == 'drill':
-			for gcode in hf.gf_drills.enumerate_gcodes(hf.f):
+		elif parts[0] == 'send_gcode':
+			for gcode in gcode_object.enumerate_gcodes():
 				if hf.terminator.termination_pending(): break
 				write(gcode)
 
 		elif parts[0] == 'unlevel':
 			# Make a default hf.f function
-			hf.f = lambda x, y: [0]
-			status.add_info_message('Reset the level plane to zero')
+			hf.unlevel()
 
 		elif parts[0] == 'r' or parts[0] == 'raise':
 			# Raise the safety height
 			if len(parts) == 2:
 				try:
 					amount = float(parts[1])
-					hf.gf_contours.z_offset += amount
-					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+					gcode_object.z_offset += amount
+					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(gcode_object.z_offset))
 				except ValueError:
 					raise_arg_error()
 
 			elif len(parts) == 1:
-				hf.gf_contours.z_offset += 0.02
-				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+				gcode_object.z_offset += 0.02
+				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(gcode_object.z_offset))
 
 			else:
 				raise_arg_error()
@@ -105,14 +97,14 @@ def execute_commands():
 			if len(parts) == 2:
 				try:
 					amount = float(parts[1])
-					hf.gf_contours.z_offset -= amount
-					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+					gcode_object.z_offset -= amount
+					status.add_info_message('Z offset currently set to: {0:0.3f}'.format(gcode_object.z_offset))
 				except ValueError:
 					lower_arg_error()
 
 			elif len(parts) == 1:
-				hf.gf_contours.z_offset -= 0.02
-				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(hf.gf_contours.z_offset))
+				gcode_object.z_offset -= 0.02
+				status.add_info_message('Z offset currently set to: {0:0.3f}'.format(gcode_object.z_offset))
 
 			else:
 				lower_arg_error()
@@ -122,13 +114,22 @@ def execute_commands():
 		elif parts[0] == 'probez':
 			probez()
 		elif parts[0] == 'perim':
-			draw_perimeter()
-		elif parts[0] == 'stop':
+			draw_perimeter(gcode_object)
+		elif parts[0] == 'overload_test':
+			import random
+			for i in range(10000):
+				if hf.terminator.termination_pending():
+					break
+				write('G1 Z0 X{} Y{} F500'.format(random.random()*0.1, random.random()*0.1))
+		else:
+			write(text)
+
+		if hf.commands[0] == hf.terminator:
+			print("STOP COMMAND RECEIVED")
+
 			write('G1 Z3 F500')	# Back up to safe height
 			write('G1 X0 Y0 F500')
 			write('M5')
-		else:
-			write(text)
 
 		hf.commands[0].set_complete()
 		del hf.commands[0]
@@ -161,3 +162,6 @@ if __name__ == '__main__':
 
 	if os.name == 'nt':
 		wi.uninhibit()
+
+	import pdb
+	pdb.set_trace()

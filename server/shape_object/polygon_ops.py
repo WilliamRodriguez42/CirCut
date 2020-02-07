@@ -1,8 +1,10 @@
 from shapely.geometry import Polygon
 from shapely.affinity import translate, scale
-import shape_object.christofides as christofides
+# import shape_object.christofides as christofides
+import shape_object.LKH as LKH
 import numpy as np
 from status import add_warning_message, STATUS
+import math
 
 def poly_to_svg(
 	poly,
@@ -23,7 +25,8 @@ def geom_to_paths(
 	contour_distance=0.25,
 	contour_count=1,
 	contour_step=0.1,
-	buffer_resolution=16
+	buffer_resolution=16,
+	exterior_only=False,
 ):
 	num_geoms = 0
 	if type(poly) != Polygon:
@@ -34,7 +37,8 @@ def geom_to_paths(
 		contour = poly.buffer(contour_step*i + contour_distance, resolution=buffer_resolution)
 
 		if type(contour) == Polygon:
-			paths.extend(contour.interiors)
+			if not exterior_only: 
+				paths.extend(contour.interiors)
 			paths.append(contour.exterior)
 
 			if i == 0 and num_geoms != 0:
@@ -44,7 +48,8 @@ def geom_to_paths(
 				add_warning_message(STATUS.CONTOUR_DISTANCE_TOO_LARGE)
 
 			for geom in contour.geoms:
-				paths.extend(geom.interiors)
+				if not exterior_only:
+					paths.extend(geom.interiors)
 				paths.append(geom.exterior)
 
 	return paths
@@ -79,6 +84,22 @@ def scale_paths(paths, scale_x, scale_y):
 
 	return new_paths
 
+def optimize_coords(coords):
+	coords = np.array(coords)
+
+	closest_index = 0
+	closest_distance = float('inf')
+	for i, coord in enumerate(coords[:-1]): # The last element is a repeat of the first
+		distance = math.sqrt(coord[0]**2 + coord[1]**2)
+		if distance < closest_distance:
+			closest_index = i
+			closest_distance = distance
+
+	coords[:-1] = np.roll(coords[:-1], -closest_index, axis=0)
+	coords[-1] = coords[0]
+
+	return coords
+
 def paths_to_gcode(
 	paths,
 	rapid_feedrate=500,
@@ -92,12 +113,12 @@ def paths_to_gcode(
 	for path in paths:
 		x, y = path.coords.xy
 		coords = list(zip(x, y))
+		coords = optimize_coords(coords)
 		path_coords.append(coords)
 		first_coord_in_paths.append(coords[0])
 
-	# Order the coords here (christofide's algorithm)
-	length, path = christofides.tsp(first_coord_in_paths)
-	path = np.unique(path)
+	# Order the coords here (LKH algorithm)
+	path = LKH.tsp(first_coord_in_paths)
 
 	path_coords = np.array(path_coords)
 	path_coords = path_coords[path]
@@ -156,9 +177,8 @@ def coords_to_gcode(
 	M03
 	""".format(rapid_feedrate, safe_height, spindle_speed)
 
-	# Order the coords here (christofide's algorithm)
-	length, path = christofides.tsp(coords)
-	path = np.unique(path)
+	# Order the coords here (LKH algorithm)
+	path = LKH.tsp(coords)
 
 	path_coords = np.array(coords)
 	path_coords = path_coords[path]

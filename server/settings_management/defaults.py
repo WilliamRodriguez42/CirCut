@@ -32,7 +32,7 @@ default_layout["Spindle Speed"] = {
 	'type': 'number',
 }
 default_layout["Contour Distance"] = {
-	'value': 0.15,
+	'value': 0.12,
 	'units': 'mm',
 	'type': 'number',
 }
@@ -67,7 +67,7 @@ default_layout["Y Offset"] = {
 	'type': 'number',
 }
 default_layout["Bit Travel X"] = {
-	'value': 0.1,
+	'value': 0.05,
 	'units': 'mm',
 	'type': 'number',
 }
@@ -85,6 +85,11 @@ default_layout["Flip X Axis"] = {
 	'value': 'true',
 	'units': '',
 	'type': 'checkbox',
+}
+default_layout["Exterior Only"] = {
+	'value': 'false',
+	'units': '',
+	'type': 'checkbox'
 }
 
 
@@ -208,6 +213,13 @@ default_requirements["Flip X Axis"] = {
 	'max_inclusive': False,
 	'integer': False,
 }
+default_requirements["Exterior Only"] = {
+	'min': None,
+	'min_inclusive': False,
+	'max': None,
+	'max_inclusive': False,
+	'integer': False,
+}
 
 
 
@@ -224,7 +236,8 @@ required_path_vars = [
 	"X Offset",
 	"Y Offset",
 	"Calculate Origin",
-	"Flip X Axis"
+	"Flip X Axis",
+	"Exterior Only"
 ]
 
 required_coord_vars = [

@@ -56,31 +56,45 @@ def send_home():
 def get_gcode_for_id():
 	shape_object_id = int(request.form['shape_object_id'][13:])
 	shape_object = find_shape_object_with_id(shape_object_id)
-	gcode_content = shape_object.get_gcodes(hf.f)
+	gcode_content = shape_object.get_gcodes()
 	return Response(gcode_content)
 
 @app.route('/command', methods=['POST'])
 def receive_command():
 	text = request.form['command'].strip()
+
+	print(text)
+
 	add_input_message(text)
 
 	if not sc.cnc_connected.is_set():
 		add_error_message(STATUS.CNC_MACHINE_NOT_CONNECTED)
 		return Response("NOT CONNECTED")
 
+	shape_object_id = int(request.form['shape_object_id'][13:])
+	shape_object = find_shape_object_with_id(shape_object_id)
+
+	if shape_object is None or shape_object.gcode_object is None:
+		add_error_message("To send commands for G Code modification, first upload, select, and convert a file")
+		return Response("No G Code loaded")
+
+	gcode_object = shape_object.gcode_object
+
 	text = text.lower()
 	if (text == 's' or text == 'stop'):
+		print("TERMINATING")
 		for command in hf.commands:
 			command.set_terminated()
 		hf.commands.clear()
 		hf.commands.append(hf.terminator)
 
 		hf.terminator.send_terminate_signal()
+		print("WAITING FOR TERMINATION")
 		hf.terminator.wait_until_terminated()
 
 		return Response(hf.terminator.status)
 
-	co = CommandObject(text)
+	co = CommandObject(text, gcode_object)
 	hf.commands.append(co)
 	co.wait_until_complete()
 

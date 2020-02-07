@@ -80,12 +80,12 @@ function handleDragEnd(e) {
 
 function select_element(elem) {
 	if (previously_selected_element != elem) {
-		if (previously_selected_element !== null) {
+		if (previously_selected_element != previously_selected_null) {
 			update_layout_from_html_for_id(previously_selected_element.id);
 		}
 
 		elem.classList.add('chosen');
-		if (previously_selected_element != null) {
+		if (previously_selected_element != previously_selected_null) {
 			previously_selected_element.classList.remove('chosen');
 		}
 		
@@ -129,4 +129,5 @@ function delete_shape_object(elem) {
 
 var element = document.querySelector('#draggable_list .draggable_list_element');
 addNonSelectHandlers(element);
-var previously_selected_element = null;
+var previously_selected_null = { id: "shape_object_-2" }
+var previously_selected_element = previously_selected_null;

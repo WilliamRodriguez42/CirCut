@@ -15,8 +15,8 @@ function inject_svg_for_id(id) {
 			</g>';
 			elem.insertAdjacentHTML('beforeend', html);
 
-			svg_controller.center();
-			svg_controller.fit();
+			// svg_controller.center();
+			// svg_controller.fit();
 
 			custom_resize();
 		}
@@ -47,6 +47,12 @@ function update_gcode_for_id(shape_object_id) {
 	});
 }
 
+function update_all_gcodes() {
+	for (var i = 0; i < active_shape_objects.length; i ++) {
+		update_gcode_for_id(active_shape_objects[i].shape_object_id);
+	}
+}
+
 function remove_gcode_for_id(shape_object_id) {
 	var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
 	remove_threejs_gcode_object(shape_object);
@@ -74,8 +80,8 @@ function update_thumbnail_svg_for_id(id) {
 			var elem = document.querySelector('#' + id + '_thumbnail');
 			elem.innerHTML = data;
 
-			svg_controller.center();
-			svg_controller.fit();
+			// svg_controller.center();
+			// svg_controller.fit();
 
 			custom_resize();
 		}
@@ -91,8 +97,8 @@ function update_preview_svg_for_id(id) {
 			var elem = document.querySelector('#' + id + '_preview');
 			elem.innerHTML = data;
 
-			svg_controller.center();
-			svg_controller.fit();
+			// svg_controller.center();
+			// svg_controller.fit();
 
 			custom_resize();
 		}
@@ -109,8 +115,8 @@ function initialize_svg_viewer() {
 		maxZoom: 100,
 	});
 
-	svg_controller.center();
-	svg_controller.fit();
+	// svg_controller.center();
+	// svg_controller.fit();
 
 	custom_resize();
 }

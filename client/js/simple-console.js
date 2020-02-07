@@ -373,7 +373,7 @@ var SimpleConsole = function(options) {
 
 	load_command_history();
 
-	var enter_user_command = function(command) {
+	var enter_user_command = function(command, callback) {
 		if (command === "") {
 			return;
 		}
@@ -392,7 +392,7 @@ var SimpleConsole = function(options) {
 
 		output.scroll_to_bottom();
 
-		handle_command(command_entry, command);
+		handle_command(command_entry, command, callback);
 	}
 
 	input.addEventListener("keydown", function(e) {

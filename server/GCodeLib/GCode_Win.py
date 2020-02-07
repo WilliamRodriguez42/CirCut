@@ -6,6 +6,7 @@ import copy
 # from libc cimport math
 # cimport cython
 import math
+import helper_functions as hf
 
 supported_moves = {GCodeRapidMove, GCodeLinearMove}
 
@@ -68,58 +69,37 @@ def bisect_codes(self):
 
 class GCodeFile:
 	def load(self, content):
-		self.minx = 10000000
-		self.maxx = -1
-		self.miny = 10000000
-		self.maxy = -1
-		self.rangex = 0
-		self.rangey = 0
-
-		self.all_gcodes = None
+		self.bounds = [float('inf'), float('inf'), -float('inf'), -float('inf')]
 		self.z_offset = 0.1
 
 		lines = content.split('\n')
 
-		all_gcodes = [] # Get all of the gcodes in the file
+		self.all_gcodes = [] # Get all of the gcodes in the file
 		for line_text in lines:
 			line = Line(line_text)
 			gcodes = line.block.gcodes
-			all_gcodes.extend(gcodes)
-
-		minx = 10000000
-		maxx = -1
-		miny = 10000000
-		maxy = -1
+			self.all_gcodes.extend(gcodes)
 
 		m = Machine() # Execute the gcodes 1 by 1 using a virtual machine
 
-		for i, gcode in enumerate(all_gcodes):
+		for i, gcode in enumerate(self.all_gcodes):
 			m.process_gcodes(gcode)
 
 			x, y, z = m.pos.vector
 
 			# Update min and max (if we are actually cutting)
 			if z < 0:
-				minx = min(minx, x)
-				maxx = max(maxx, x)
-				miny = min(miny, y)
-				maxy = max(maxy, y)
+				self.bounds[0] = min(self.bounds[0], x)
+				self.bounds[1] = min(self.bounds[1], y)
+				self.bounds[2] = max(self.bounds[2], x)
+				self.bounds[3] = max(self.bounds[3], y)
 
 			if type(gcode) in supported_moves:
 				gcode.params['X'] = make_word('X', x)
 				gcode.params['Y'] = make_word('Y', y)
 				gcode.params['Z'] = make_word('Z', z)
 
-		self.minx = minx
-		self.maxx = maxx
-		self.miny = miny
-		self.maxy = maxy
-		self.rangex = maxx - minx
-		self.rangey = maxy - miny
-
-		self.all_gcodes = all_gcodes # Should never write to all_gcodes
-
-	def enumerate_gcodes(self, f):
+	def enumerate_gcodes(self):
 		for gcode in self.all_gcodes:
 			
 			gcode = copy.copy(gcode)
@@ -130,14 +110,14 @@ class GCodeFile:
 				y = gcode.params['Y'].value
 				z = gcode.params['Z'].value
 
-				z += f(x, y)[0] + self.z_offset
+				z += hf.f(x, y)[0] + self.z_offset
 				gcode.params['Z'] = make_word('Z', z)
 				gcode.params['Y'] = make_word('Y', y)
 			yield str(gcode)
 
-	def get_content(self, f):
+	def get_content(self):
 		content = ""
-		for gcode in self.enumerate_gcodes(f):
+		for gcode in self.enumerate_gcodes():
 			content += gcode + "\n"
 		return content
 

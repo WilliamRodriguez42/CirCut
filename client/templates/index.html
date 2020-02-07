@@ -362,9 +362,7 @@
         <div class="base-accordion-triangle">&#x25B2;</div>
       </button>
       <div id="start-cutting" class="collapse multi-collapse" style="margin: 20px">
-        <button class="base-button" onmousedown="send_contour_gcode()" style="width: 100%">Send Contour GCode</button>
-        <div style="height: 15px;"></div>
-        <button class="base-button" onmousedown="send_drill_gcode()" style="width: 100%">Send Drill GCode</button>
+        <button class="base-button" onmousedown="send_gcode()" style="width: 100%">Send Selected GCode</button>
       </div>
 
       <button class="base-accordion" type="button" data-toggle="collapse" data-target="#z-height-and-cutting-depth" aria-expanded="false" aria-controls="convert_profile_collapse" onclick="toggle_triangle(this)">

@@ -42,15 +42,17 @@ function console_display_message(m) {
 	scroll_to_bottom();
 }
 
-function handle_command(command_entry, command){
+function handle_command(command_entry, command, callback){
 	$.ajax({
 		type: "POST",
 		url:"/command",
 		data: {
-			command: command
+			command: command,
+			shape_object_id: previously_selected_element.id,
 		},
 		success: function(status) {
 			con.edit_status(command_entry, status);
+			callback(command_entry, status);
 		},
 		error: function() {
 			console_display_message({

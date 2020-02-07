@@ -11,6 +11,7 @@ else:
 import re
 import json
 import status
+from shape_object.shape_object import get_shape_objects_gcode_bounding_box
 
 from CommandObject import TerminateObject, CommandObjectList
 
@@ -79,43 +80,68 @@ def make_grid(nx, ny):
 			yield (i, j)
 		ycoords = ycoords[::-1] # Reverse direction so we go up and down the columns
 
+def unlevel():
+	global x_points, y_points, z_points, f
+	x_points = np.arange(2)
+	y_points = np.arange(2)
+	z_points = np.zeros((2, 2))
+	np.savetxt('level/y_points', y_points)
+	np.savetxt('level/x_points', x_points)
+	np.savetxt('level/z_points', z_points)
+
+	f = interp2d(x_points, y_points, z_points)
+	status.add_info_message('Reset the level plane to zero')
 
 def probe_grid(dx, dy, dz):
 	global x_points, y_points, z_points, f, terminate
+	bounds = get_shape_objects_gcode_bounding_box()
+	rangex = bounds[2] - bounds[0]
+	rangey = bounds[3] - bounds[1]
+
 	write('G10 P0 L20 X0 Y0 Z0')	# Set current position as zero
 	poll_ok()
 	machine_z_zero = probe(dz, True)
 	print(machine_z_zero)
 
 	# Find nx and ny
-	nx = int(gf_contours.rangex / dx + 1)
-	ny = int(gf_contours.rangey / dy + 1)
+	nx = int(rangex / dx + 1)
+	ny = int(rangey / dy + 1)
 
 	print("Number of samples in x: ", nx)
 	print("Number of samples in y: ", ny)
 
 	z_points = np.zeros((ny, nx))
-	x_points = np.zeros(nx)
-	y_points = np.zeros(ny)
+	x_points = np.arange(nx)*dx + bounds[0]
+	y_points = np.arange(ny)*dy + bounds[1]
 	current = 0
 
 	for (i, j) in make_grid(nx, ny):
-		if terminate: break
-		xp = i*dx + gf_contours.minx
-		yp = j*dy + gf_contours.miny
+		print("0")
+		if terminator.termination_pending(): 
+			print("BYE")
+			unlevel()
+			return f
 
-		x_points[i] = xp
-		y_points[j] = yp
-
-		write('G1 X{} Y{} F500'.format(xp, yp)) # Move to point p
+		print("1")
+		write('G1 X{} Y{} F500'.format(x_points[i], y_points[j])) # Move to point p
+		print("2")
 		poll_ok()
+		print("3")
+
 		z_pos = probe(dz) # Probe at that point
+		print("4")
 		if z_pos == -10000: # Error code
-			return
+			print("BYE")
+			unlevel()
+			return f
+		print("5")
 
 		z_points[j, i] = z_pos - machine_z_zero # Find depth of this point relative to 0
+		print("6")
 		current += 1
+		print("7")
 		status.add_info_message('Leveling {0:.2f}% complete'.format(current / (nx*ny) * 100))
+		print("8")
 
 	np.savetxt('level/y_points', y_points)
 	np.savetxt('level/x_points', x_points)
@@ -128,15 +154,16 @@ def probe_grid(dx, dy, dz):
 	write('G1 X0 Y0 F500') # Goto 0 0
 	poll_ok()
 
+	print("BYE")
+
 	return f
 
-def draw_perimeter():
-	global gf_contours
-	write('G1 X{} Y{} Z20 F500'.format(gf_contours.minx, gf_contours.miny))
-	write('G1 X{} Y{} Z20 F500'.format(gf_contours.minx, gf_contours.maxy))
-	write('G1 X{} Y{} Z20 F500'.format(gf_contours.maxx, gf_contours.maxy))
-	write('G1 X{} Y{} Z20 F500'.format(gf_contours.maxx, gf_contours.miny))
-	write('G1 X{} Y{} Z20 F500'.format(gf_contours.minx, gf_contours.miny))
+def draw_perimeter(gcode_object):
+	write('G1 X{} Y{} Z20 F500'.format(gcode_object.bounds[0], gcode_object.bounds[1]))
+	write('G1 X{} Y{} Z20 F500'.format(gcode_object.bounds[0], gcode_object.bounds[3]))
+	write('G1 X{} Y{} Z20 F500'.format(gcode_object.bounds[2], gcode_object.bounds[3]))
+	write('G1 X{} Y{} Z20 F500'.format(gcode_object.bounds[2], gcode_object.bounds[1]))
+	write('G1 X{} Y{} Z20 F500'.format(gcode_object.bounds[0], gcode_object.bounds[1]))
 	write('G1 X0 Y0 Z1 F500')
 
 def level_arg_error():
@@ -178,6 +205,7 @@ commands = CommandObjectList()
 y_points = np.loadtxt('level/y_points')
 x_points = np.loadtxt('level/x_points')
 z_points = np.loadtxt('level/z_points')
+
 f = interp2d(x_points, y_points, z_points)
 
 # load_gcodes()
