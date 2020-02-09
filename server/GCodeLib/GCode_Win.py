@@ -94,10 +94,10 @@ class GCodeFile:
 				self.bounds[2] = max(self.bounds[2], x)
 				self.bounds[3] = max(self.bounds[3], y)
 
-			if type(gcode) in supported_moves:
-				gcode.params['X'] = make_word('X', x)
-				gcode.params['Y'] = make_word('Y', y)
-				gcode.params['Z'] = make_word('Z', z)
+			# if type(gcode) in supported_moves:
+			# 	gcode.params['X'] = make_word('X', x)
+			# 	gcode.params['Y'] = make_word('Y', y)
+			# 	gcode.params['Z'] = make_word('Z', z)
 
 	def enumerate_gcodes(self):
 		for gcode in self.all_gcodes:
@@ -112,7 +112,7 @@ class GCodeFile:
 
 				z += hf.f(x, y)[0] + self.z_offset
 				gcode.params['Z'] = make_word('Z', z)
-				gcode.params['Y'] = make_word('Y', y)
+				# gcode.params['Y'] = make_word('Y', y)
 			yield str(gcode)
 
 	def get_content(self):

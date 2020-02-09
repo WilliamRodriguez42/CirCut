@@ -98,6 +98,8 @@ def probe_grid(dx, dy, dz):
 	rangex = bounds[2] - bounds[0]
 	rangey = bounds[3] - bounds[1]
 
+	print(bounds)
+
 	write('G10 P0 L20 X0 Y0 Z0')	# Set current position as zero
 	poll_ok()
 	machine_z_zero = probe(dz, True)
@@ -113,6 +115,9 @@ def probe_grid(dx, dy, dz):
 	z_points = np.zeros((ny, nx))
 	x_points = np.arange(nx)*dx + bounds[0]
 	y_points = np.arange(ny)*dy + bounds[1]
+
+	print(x_points.min(), x_points.max())
+	print(y_points.min(), y_points.max())
 	current = 0
 
 	for (i, j) in make_grid(nx, ny):

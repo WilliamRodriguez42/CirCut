@@ -1,5 +1,7 @@
 
 window.onload = function() {
+	disable_load_settings_button();
+
 	init();
 	animate();
 	start_server_polling();

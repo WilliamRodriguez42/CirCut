@@ -15,7 +15,7 @@
 		"html_id": "contour_count",
 		"type": "number",
 		"units": "",
-		"value": "1"
+		"value": "4"
 	},
 	"Contour Distance": {
 		"html_id": "contour_distance",
@@ -33,7 +33,7 @@
 		"html_id": "exterior_only",
 		"type": "checkbox",
 		"units": "",
-		"value": "true"
+		"value": "false"
 	},
 	"Flip X Axis": {
 		"html_id": "flip_x_axis",
@@ -45,7 +45,7 @@
 		"html_id": "pass_feedrate",
 		"type": "number",
 		"units": "mm/min",
-		"value": "200"
+		"value": "300"
 	},
 	"Rapid Feedrate": {
 		"html_id": "rapid_feedrate",
@@ -63,7 +63,7 @@
 		"html_id": "safe_height",
 		"type": "number",
 		"units": "mm",
-		"value": "4"
+		"value": "1"
 	},
 	"Spindle Speed": {
 		"html_id": "spindle_speed",

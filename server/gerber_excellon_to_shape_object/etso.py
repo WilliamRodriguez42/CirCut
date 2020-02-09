@@ -4,23 +4,24 @@ from gerber_excellon_to_shape_object import gerber
 from shape_object.shape_object import ShapeObject
 from status import add_error_message
 
-def excellon_to_shape_object(data, resolution=16):
-	if type(data) != str:
-		add_error_message("Attempted to interperet file as Excellon, but received a bytes object")
-		return
+class ETSO(ShapeObject):
+	def __init__(self, data, resolution=16):
+		if type(data) != str:
+			add_error_message("Attempted to interperet file as Excellon, but received a bytes object")
+			return
 
-	exc = gerber.excellon.loads(data)
-	poly = Polygon()
+		exc = gerber.excellon.loads(data)
+		poly = Polygon()
 
-	coords = []
-	for prim in exc.primitives:
-		prim.to_metric()
-		pos = prim.position
+		coords = []
+		for prim in exc.primitives:
+			prim.to_metric()
+			pos = prim.position
 
-		coords.append(pos)
+			coords.append(pos)
 
-		radius = prim.radius
+			radius = prim.radius
 
-		poly = poly.union(make_circle(pos, radius, resolution))
+			poly = poly.union(make_circle(pos, radius, resolution))
 
-	return ShapeObject(poly, None, coords)
+		super().__init__(poly, None, coords)

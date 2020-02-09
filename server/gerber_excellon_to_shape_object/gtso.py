@@ -4,25 +4,28 @@ from gerber_excellon_to_shape_object.primitives import primitives_map
 from status import add_error_message
 from shape_object.shape_object import ShapeObject
 
-def gerber_to_shape_object(data, resolution=16):
-	if type(data) != str:
-		add_error_message("Attempted to interperet file as Gerber, but received a bytes object")
-		return
+class GTSO(ShapeObject):
+	def __init__(self, data, resolution=16):
+		if type(data) != str:
+			add_error_message("Attempted to interperet file as Gerber, but received a bytes object")
+			return
 
-	gbr = gerber.rs274x.loads(data)
-	gbr.to_metric()
+		gbr = gerber.rs274x.loads(data)
+		gbr.to_metric()
 
-	poly = Polygon()
+		poly = Polygon()
+		prim_lists = []
 
-	for prim in gbr.primitives:
-		prim_t = type(prim)
-		if prim_t in primitives_map:
-			next_poly = primitives_map[prim_t](prim, resolution)
-			poly = poly.union(next_poly)
-		else:
-			print("Unknown primitive type: ", prim_t)
+		for prim in gbr.primitives:
+			prim_t = type(prim)
+			if prim_t in primitives_map:
+				next_poly = primitives_map[prim_t](prim, resolution)
+				poly = poly.union(next_poly)
+			else:
+				add_error_message("Unknown primitive type: {}".format(prim_t))
 
-	return ShapeObject(poly, poly, None)
+
+		super().__init__(poly, poly, None)
 
 '''
 def gerber_excellon_to_svg(gbr_poly, exc_poly, gbr_paths):

@@ -36,7 +36,6 @@ def constant_read():
 		cnc_connected.wait()
 
 		ser_result += ser.read(1).decode('UTF-8')
-		print(ser_result)
 		if '\r\n' in ser_result:
 			index = ser_result.find('\r\n')
 
@@ -87,8 +86,6 @@ def write(text):
 			print("WAITING FOR BUFFER TIMEOUT")
 			pdb.set_trace()
 	# print("SPACE IN BUFFER", sum(last_sent) + len(text), RX_BUFFER_SIZE)
-
-	print("Writing", text[:-1])
 
 	# receive_ready = False
 	# print(text)
