@@ -1,0 +1,86 @@
+{
+	"Buffer Resolution": {
+		"html_id": "buffer_resolution",
+		"type": "number",
+		"units": "",
+		"value": "5"
+	},
+	"Calculate Origin": {
+		"html_id": "calculate_origin",
+		"type": "checkbox",
+		"units": "",
+		"value": "false"
+	},
+	"Contour Count": {
+		"html_id": "contour_count",
+		"type": "number",
+		"units": "",
+		"value": "2"
+	},
+	"Contour Distance": {
+		"html_id": "contour_distance",
+		"type": "number",
+		"units": "mm",
+		"value": "0"
+	},
+	"Contour Step": {
+		"html_id": "contour_step",
+		"type": "number",
+		"units": "mm",
+		"value": "0.15"
+	},
+	"Exterior Only": {
+		"html_id": "exterior_only",
+		"type": "checkbox",
+		"units": "",
+		"value": "false"
+	},
+	"Flip X Axis": {
+		"html_id": "flip_x_axis",
+		"type": "checkbox",
+		"units": "",
+		"value": "true"
+	},
+	"Pass Feedrate": {
+		"html_id": "pass_feedrate",
+		"type": "number",
+		"units": "mm/min",
+		"value": "300"
+	},
+	"Rapid Feedrate": {
+		"html_id": "rapid_feedrate",
+		"type": "number",
+		"units": "mm/min",
+		"value": "500"
+	},
+	"Resolution": {
+		"html_id": "resolution",
+		"type": "number",
+		"units": "",
+		"value": "32"
+	},
+	"Safe Height": {
+		"html_id": "safe_height",
+		"type": "number",
+		"units": "mm",
+		"value": "1"
+	},
+	"Spindle Speed": {
+		"html_id": "spindle_speed",
+		"type": "number",
+		"units": "",
+		"value": "255"
+	},
+	"X Offset": {
+		"html_id": "x_offset",
+		"type": "number",
+		"units": "mm",
+		"value": "1"
+	},
+	"Y Offset": {
+		"html_id": "y_offset",
+		"type": "number",
+		"units": "mm",
+		"value": "1"
+	}
+}

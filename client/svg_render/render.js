@@ -43,9 +43,23 @@ function update_gcode_for_id(shape_object_id) {
 		success: function(gcode_content) {
 			var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
 			update_threejs_gcode_object(shape_object, gcode_content);
+			download_gcode("current_gcode.gcode", gcode_content);
 		}
 	});
 }
+
+function download_gcode(filename, text) {
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	element.setAttribute('download', filename);
+  
+	element.style.display = 'none';
+	document.body.appendChild(element);
+  
+	element.click();
+  
+	document.body.removeChild(element);
+  }
 
 function update_all_gcodes() {
 	for (var i = 0; i < active_shape_objects.length; i ++) {

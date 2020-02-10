@@ -43,6 +43,7 @@ def make_rect_gbr(rect, resolution=20):
 	upper_right = rect.upper_right
 	upper_left = (lower_left[0], upper_right[1])
 	lower_right = (upper_right[0], lower_left[1])
+
 	return Polygon([
 		lower_left,
 		upper_left,

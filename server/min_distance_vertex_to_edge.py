@@ -1,21 +1,6 @@
 import numpy as np
 import time
 
-# edges = np.array([
-# 	[[0, 0], [0, 1]],
-# 	[[0, 0], [1, 0]],
-# 	[[1, 1], [0, 1]]
-# ], dtype=np.float64)
-
-# vertices = np.array([
-# 	[-0.6, 0.5],
-# 	[0.5, -0.5],
-# 	[0.3, 0.2]
-# ], dtype=np.float64)
-
-edges = np.random.rand(10000, 2, 2)
-vertices = np.random.rand(10000, 2)
-
 def min_distances(vertex, edges):
 	edge_vec = edges[:, 1] - edges[:, 0]
 	edge_len_sq = np.sum(np.square(edge_vec), axis=1)
@@ -42,9 +27,36 @@ def min_distances_all_combinations(vertices, edges):
 		shape=(vertices.shape[0], edges.shape[0], 2, 2), 
 		writeable=False).reshape(-1, 2, 2)
 
-	return min_distances(vertices_strided, edges_strided)
+	md = min_distances(vertices_strided, edges_strided)
 
-start = time.time()
-print(min_distances_all_combinations(vertices, edges))
-end = time.time()
-print(end - start)
+	# Collapse for each vertex
+	# md = md.reshape(-1, edges.shape[0])
+	# md_index = np.argmin(md, axis=1)
+	# return np.sqrt(md[np.arange(vertices.shape[0]), md_index]), md_index
+
+	return np.sqrt(md)
+
+if __name__ == '__main__':
+		
+	edges = np.array([
+		[[0, 0], [0, 1]],
+		[[0, 0], [1, 0]],
+		[[1, 1], [0, 1]],
+	], dtype=np.float64)
+
+	vertices = np.array([
+		[-0.6, 0.5],
+		[0.5, -0.5],
+		[0.3, 0.2],
+		[0.1, -0.3]
+	], dtype=np.float64)
+
+	# edges = np.random.rand(10, 2, 2)
+	# vertices = np.random.rand(10, 2)
+
+	start = time.time()
+	min_distances = min_distances_all_combinations(vertices, edges)
+	end = time.time()
+	print(end - start)
+
+	print(min_distances)

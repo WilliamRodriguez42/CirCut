@@ -21,6 +21,7 @@ from operator import add
 from itertools import combinations
 from .utils import validate_coordinates, inch, metric, convex_hull
 from .utils import rotate_point, nearly_equal
+import gerber_excellon_to_shape_object.gerber as gb
 
 
 
@@ -50,7 +51,12 @@ class Primitive(object):
 
     def __init__(self, level_polarity='dark', rotation=0, units=None, net_name=None):
         self.level_polarity = level_polarity
-        self.net_name = net_name
+        if net_name is None:
+            self.net_name = gb.previous_net_name
+        else:
+            self.net_name = net_name
+        # if self.net_name is None:
+        #     print("PRIMITIVE SAYING:", self.net_name)
         self._to_convert = list()
         self._memoized = list()
         self._units = units

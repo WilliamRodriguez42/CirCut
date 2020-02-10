@@ -22,6 +22,7 @@ Gerber Tools
 gerber-tools provides utilities for working with Gerber (RS-274X) and Excellon
 files in python.
 """
+previous_net_name = None
 
 from .common import read, loads
 from .layers import load_layer, load_layer_data

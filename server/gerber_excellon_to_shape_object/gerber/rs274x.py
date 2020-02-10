@@ -23,6 +23,7 @@ import json
 import os
 import re
 import sys
+import gerber_excellon_to_shape_object.gerber as gb
 
 try:
     from cStringIO import StringIO
@@ -503,7 +504,12 @@ class GerberParser(object):
         elif isinstance(stmt, (RegionModeStmt, QuadrantModeStmt)):
             self._evaluate_mode(stmt)
 
-        elif isinstance(stmt, (CommentStmt, UnknownStmt, DeprecatedStmt, EofStmt)):
+        elif isinstance(stmt, CommentStmt):
+            if stmt.comment[5:9] == 'TO.N': # Netlist information
+                gb.previous_net_name = stmt.comment[10:]
+                # print("PARSE RAW SAYING:", gb.previous_net_name)
+
+        elif isinstance(stmt, (UnknownStmt, DeprecatedStmt, EofStmt)):
             return
 
         else:
@@ -706,6 +712,7 @@ class GerberParser(object):
 
         elif self.op == "D03" or self.op == "D3":
             primitive = copy.deepcopy(self.apertures[self.aperture])
+            primitive.net_name = gb.previous_net_name
 
             if primitive is not None:
 

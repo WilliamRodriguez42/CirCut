@@ -3,3 +3,5 @@ check range on bed levelling
 after deleting a shape object, you cannot add another one
 profile name not updated when switching shape objects
 Cannot guarantee that conversions done after levelling will send the new levelling information (Should make every command wait in queue)
+Infinite termination pending should timeout
+Should not be able to load improper profile settings
