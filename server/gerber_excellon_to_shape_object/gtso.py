@@ -41,7 +41,6 @@ class GTSO(ShapeObject):
 		else:
 			ar = np.arange(poly_position)
 			inter_poly_distance = np.zeros((poly_position, poly_position)) + np.inf
-			poly_visited = np.zeros(poly_position, dtype=np.bool)
 
 			for poly_position1 in range(poly_position):
 				for poly_position2 in range(poly_position1):
@@ -54,51 +53,58 @@ class GTSO(ShapeObject):
 			# import pdb
 			# pdb.set_trace()
 
-			while True:
-				min_index = np.unravel_index(np.argmin(inter_poly_distance.flatten()), inter_poly_distance.shape)
+			position_to_buffer_map = np.zeros(poly_position)
 
-				poly_position1, poly_position2 = min_index
-				min_distance = inter_poly_distance[poly_position1, poly_position2]
+			for i in range(3):
 
-				if min_distance == np.inf:
-					break
+				next_iteration_poly_distance = np.ones_like(inter_poly_distance) * np.inf
+				poly_visited = np.zeros(poly_position, dtype=np.bool)
+				while True:
+					min_index = np.unravel_index(np.argmin(inter_poly_distance.flatten()), inter_poly_distance.shape)
 
+					poly_position1, poly_position2 = min_index
+					min_distance = inter_poly_distance[poly_position1, poly_position2]
 
-				inter_poly_distance[poly_position1, poly_position2] = np.inf
+					if min_distance == np.inf:
+						break
 
-				poly_visited1 = poly_visited[poly_position1]
-				poly_visited2 = poly_visited[poly_position2]
-				poly_visited[poly_position1] = True
-				poly_visited[poly_position2] = True
-				inter_poly_distance[poly_position1, poly_position2] = np.inf
+					inter_poly_distance[poly_position1, poly_position2] = np.inf
 
-				if not poly_visited1 and not poly_visited2:
-					buffer_by = min_distance / 2 - FORCE_CLEARANCE
-					p1 = position_to_poly_map[poly_position1].buffer(buffer_by, resolution=5)
-					p2 = position_to_poly_map[poly_position2].buffer(buffer_by, resolution=5)
-					poly = poly.union(p1)
-					poly = poly.union(p2)
-					inter_poly_distance[:, poly_position1] -= buffer_by
-					inter_poly_distance[poly_position1, :] -= buffer_by
-					inter_poly_distance[:, poly_position2] -= buffer_by
-					inter_poly_distance[poly_position2, :] -= buffer_by
+					poly_visited1 = poly_visited[poly_position1]
+					poly_visited2 = poly_visited[poly_position2]
+					poly_visited[poly_position1] = True
+					poly_visited[poly_position2] = True
+					inter_poly_distance[poly_position1, poly_position2] = np.inf
 
-				elif not poly_visited1:
-					buffer_by = min_distance - FORCE_CLEARANCE
-					p = position_to_poly_map[poly_position1].buffer(buffer_by, resolution=5)
-					poly = poly.union(p)
-					inter_poly_distance[:, poly_position1] -= buffer_by
-					inter_poly_distance[poly_position1, :] -= buffer_by
+					if not poly_visited1 and not poly_visited2:
+						buffer_by = min_distance / 2 * 0.5
+						position_to_buffer_map[poly_position1] += buffer_by
+						position_to_buffer_map[poly_position2] += buffer_by
+						inter_poly_distance[:, poly_position1] -= buffer_by
+						inter_poly_distance[poly_position1, :] -= buffer_by
+						inter_poly_distance[:, poly_position2] -= buffer_by
+						inter_poly_distance[poly_position2, :] -= buffer_by
 
-				elif not poly_visited2:
-					buffer_by = min_distance - FORCE_CLEARANCE
-					p = position_to_poly_map[poly_position2].buffer(buffer_by, resolution=5)
-					poly = poly.union(p)
-					inter_poly_distance[:, poly_position2] -= buffer_by
-					inter_poly_distance[poly_position2, :] -= buffer_by
+					elif not poly_visited1:
+						buffer_by = min_distance * 0.5
+						position_to_buffer_map[poly_position1] += buffer_by
+						inter_poly_distance[:, poly_position1] -= buffer_by
+						inter_poly_distance[poly_position1, :] -= buffer_by
 
-		import pdb
-		pdb.set_trace()
+					elif not poly_visited2:
+						buffer_by = min_distance * 0.5
+						position_to_buffer_map[poly_position2] += buffer_by
+						inter_poly_distance[:, poly_position2] -= buffer_by
+						inter_poly_distance[poly_position2, :] -= buffer_by
+
+					next_iteration_poly_distance[poly_position1, poly_position2] = min_distance * 0.5
+
+				inter_poly_distance = next_iteration_poly_distance
+
+			for i in range(poly_position):
+				p = position_to_poly_map[i]
+				poly = poly.union(p.buffer(position_to_buffer_map[i], resolution=5))
+
 		super().__init__(poly, poly, None)
 
 	def convert_vertices_to_edges(self, vertices):
@@ -108,4 +114,4 @@ class GTSO(ShapeObject):
 
 		return result
 
-FORCE_CLEARANCE = 0.1
+FORCE_CLEARANCE = 0.01

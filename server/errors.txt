@@ -5,3 +5,4 @@ profile name not updated when switching shape objects
 Cannot guarantee that conversions done after levelling will send the new levelling information (Should make every command wait in queue)
 Infinite termination pending should timeout
 Should not be able to load improper profile settings
+Infinite could not convert conversion already in progress

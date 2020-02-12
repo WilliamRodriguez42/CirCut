@@ -125,7 +125,8 @@ class Sender:
 
 		self._onStart    = ""
 		self._onStop     = ""
-
+		self.last_received = [''] * 15
+		self.last_sent = [''] * 15
 
 	#----------------------------------------------------------------------
 	def controllerLoad(self):
@@ -464,11 +465,14 @@ class Sender:
 
 		#if sys.version_info[0] == 2:
 		#	ret = self.serial.write(str(data))
-		if isinstance(data, bytes):
-			ret = self.serial.write(data)
-		else:
-			ret = self.serial.write(data.encode())
+		if not isinstance(data, bytes):
+			data = data.encode()
 
+		ret = self.serial.write(data)
+		self.last_sent.insert(0, data)
+		self.last_sent.pop()
+
+		self.serial.flush()
 		return ret
 
 	#----------------------------------------------------------------------
@@ -647,9 +651,9 @@ class Sender:
 	#----------------------------------------------------------------------
 	def controllerStateChange(self, state):
 		print("Controller state changed to: %s (Running: %s)"%(state, self.running))
-		if state in ("Idle"):
-			self.mcontrol.viewParameters()
-			self.mcontrol.viewState()
+		# if state in ("Idle"):
+		# 	self.mcontrol.viewParameters()
+		# 	self.mcontrol.viewState()
 
 		if self.cleanAfter == True and self.running == False and state in ("Idle"):
 			self.cleanAfter = False
@@ -661,21 +665,21 @@ class Sender:
 	def serialIO(self):
 		self.sio_wait   = False		# wait for commands to complete (status change to Idle)
 		self.sio_status = False		# waiting for status <...> report
-		cline  = []		# length of pipeline commands
-		sline  = []			# pipeline commands
+		self.cline  = []		# length of pipeline commands
+		self.sline  = []			# pipeline commands
 		tosend = None			# next string to send
 		tr = tg = time.time()		# last time a ? or $G was send to grbl
 
 		while self.thread:
 			t = time.time()
 			# refresh machine position?
-			if t-tr > SERIAL_POLL:
-				self.mcontrol.viewStatusReport()
-				tr = t
+			# if t-tr > SERIAL_POLL:
+			# 	self.mcontrol.viewStatusReport()
+			# 	tr = t
 
-				#If Override change, attach feed
-				if CNC.vars["_OvChanged"]:
-					self.mcontrol.overrideSet()
+			# 	#If Override change, attach feed
+			# 	if CNC.vars["_OvChanged"]:
+			# 		self.mcontrol.overrideSet()
 
 			# Fetch new command to send if...
 			if tosend is None and not self.sio_wait and not self._pause and self.queue.qsize()>0:
@@ -709,8 +713,8 @@ class Sender:
 						try:
 							tosend = self.gcode.evaluate(tosend)
 #							if isinstance(tosend, list):
-#								cline.append(len(tosend[0]))
-#								sline.append(tosend[0])
+#								self.cline.append(len(tosend[0]))
+#								self.sline.append(tosend[0])
 							if isinstance(tosend,str):
 								tosend += "\n"
 							else:
@@ -757,13 +761,17 @@ class Sender:
 									pass
 
 					# Bookkeeping of the buffers
-					sline.append(tosend)
-					cline.append(len(tosend))
+					self.sline.append(tosend)
+					self.cline.append(len(tosend))
 
 			# Anything to receive?
 			if self.serial.inWaiting() or tosend is None:
 				try:
 					line = str(self.serial.readline().decode()).strip()
+					if line != "":
+						print(line)
+						self.last_received.insert(0, line)
+						self.last_received.pop()
 				except:
 					self.log.put((Sender.MSG_RECEIVE, str(sys.exc_info()[1])))
 					self.emptyQueue()
@@ -771,10 +779,10 @@ class Sender:
 					return
 
 				#print "<R<",repr(line)
-				#print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
+				#print "*-* stack=",self.sline,"sum=",sum(self.cline),"wait=",wait,"pause=",self._pause
 				if not line:
 					pass
-				elif self.mcontrol.parseLine(line, cline, sline):
+				elif self.mcontrol.parseLine(line, self.cline, self.sline):
 					pass
 				else:
 					self.log.put((Sender.MSG_RECEIVE, line))
@@ -790,15 +798,15 @@ class Sender:
 				if self._runLines != sys.maxsize:
 					self._stop = False
 
-			#print "tosend='%s'"%(repr(tosend)),"stack=",sline,
-			#	"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-			if tosend is not None and sum(cline) < RX_BUFFER_SIZE:
-				self._sumcline = sum(cline)
+			#print "tosend='%s'"%(repr(tosend)),"stack=",self.sline,
+			#	"sum=",sum(self.cline),"wait=",wait,"pause=",self._pause
+			if tosend is not None and sum(self.cline) < RX_BUFFER_SIZE:
+				self._sumcline = sum(self.cline)
 #				if isinstance(tosend, list):
 #					self.serial_write(str(tosend.pop(0)))
 #					if not tosend: tosend = None
 
-				#print ">S>",repr(tosend),"stack=",sline,"sum=",sum(cline)
+				#print ">S>",repr(tosend),"stack=",self.sline,"sum=",sum(cline)
 				if self.mcontrol.gcode_case > 0: tosend = tosend.upper()
 				if self.mcontrol.gcode_case < 0: tosend = tosend.lower()
 
@@ -809,11 +817,8 @@ class Sender:
 				self.log.put((Sender.MSG_BUFFER,tosend))
 
 				tosend = None
-				if not self.running and t-tg > G_POLL:
-					tosend = b"$G\n" #FIXME: move to controller specific class
-					sline.append(tosend)
-					cline.append(len(tosend))
-					tg = t
-
-import pdb
-pdb.set_trace()
+				# if not self.running and t-tg > G_POLL:
+				# 	tosend = b"$G\n" #FIXME: move to controller specific class
+				# 	self.sline.append(tosend)
+				# 	self.cline.append(len(tosend))
+				# 	tg = t

@@ -43,7 +43,7 @@ function update_gcode_for_id(shape_object_id) {
 		success: function(gcode_content) {
 			var shape_object = get_shape_object_from_shape_object_id(shape_object_id);
 			update_threejs_gcode_object(shape_object, gcode_content);
-			download_gcode("current_gcode.gcode", gcode_content);
+			// download_gcode("current_gcode.gcode", gcode_content);
 		}
 	});
 }

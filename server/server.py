@@ -1,9 +1,9 @@
-from serial import Serial, SerialException
 import time
 import sys
 import os
 import threading
 from serial_communication import *
+import serial_communication as sc
 import helper_functions as hf
 from helper_functions import *
 import routes
@@ -13,6 +13,54 @@ import math
 
 if os.name == 'nt':
 	from windows_inhibitor import WindowsInhibitor
+
+import getopt
+import socket
+import traceback
+from datetime import datetime
+import serial
+
+PRGPATH=os.path.abspath(os.path.dirname(__file__))
+sys.path.append(PRGPATH)
+sys.path.append(os.path.join(PRGPATH, 'lib'))
+sys.path.append(os.path.join(PRGPATH, 'plugins'))
+sys.path.append(os.path.join(PRGPATH, 'controllers'))
+
+# Load configuration before anything else
+# and if needed replace the  translate function _()
+# before any string is initialized
+import Utils
+Utils.loadConfiguration()
+
+import rexx
+import tkExtra
+import Updates
+import bFileDialog
+import tkDialogs
+
+from CNC import WAIT, CNC, GCode
+import Ribbon
+import Pendant
+from Sender import Sender, NOT_CONNECTED, STATECOLOR, STATECOLORDEF
+
+import CNCCanvas
+import webbrowser
+
+from CNCRibbon    import Page
+from ToolsPage    import Tools, ToolsPage
+from FilePage     import FilePage
+from ControlPage  import ControlPage
+from TerminalPage import TerminalPage
+from ProbePage    import ProbePage
+from EditorPage   import EditorPage
+
+PRGPATH=os.path.abspath(os.path.dirname(__file__))
+sys.path.append(PRGPATH)
+bCNC_path = os.path.join(PRGPATH, 'bCNC')
+sys.path.append(bCNC_path)
+sys.path.append(os.path.join(bCNC_path, 'lib'))
+sys.path.append(os.path.join(bCNC_path, 'plugins'))
+sys.path.append(os.path.join(bCNC_path, 'controllers'))
 
 #os.startfile("http://localhost:5000")
 
@@ -121,12 +169,15 @@ def execute_commands():
 				if hf.terminator.termination_pending():
 					break
 				write('G1 Z0 X{} Y{} F500'.format(random.random()*0.1, random.random()*0.1))
+		elif parts[0] == 'debug':
+			import pdb
+			pdb.set_trace()
 		else:
 			write(text)
 
 		if hf.commands[0] == hf.terminator:
 			print("STOP COMMAND RECEIVED")
-
+			sc.terminate()
 			write('G1 Z3 F500')	# Back up to safe height
 			write('G1 X0 Y0 F500')
 			write('M5')

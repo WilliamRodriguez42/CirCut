@@ -317,8 +317,6 @@ def connect():
 	port = request.form['port']
 
 	try:
-		if sc.ser is not None:
-			sc.disconnect()
 		sc.connect(port)
 		status.add_info_message("CNC successfully connected")
 	except Exception as e:
@@ -328,11 +326,8 @@ def connect():
 
 @app.route('/disconnect', methods=['POST'])
 def disconnect():
-	if sc.ser is not None:
-		sc.disconnect()
-		status.add_info_message("CNC successfully disconnected")
-	else:
-		status.add_error_message("No CNC machine connected to disconnect")
+	sc.disconnect()
+	status.add_info_message("CNC successfully disconnected")
 
 	return Response("Ok")
 

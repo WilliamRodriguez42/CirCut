@@ -1,4 +1,5 @@
 from serial_communication import *
+import serial_communication as sc
 import numpy as np
 from scipy.interpolate import interp2d
 
@@ -35,7 +36,7 @@ def json_dumps(form):
 
 def probez():
 	poll_ok()
-	write('G38.3 Z-100 F50')	 # Probe for contact
+	write('G38.2 Z-100 F50')	 # Probe for contact
 	poll_ok()
 
 	write('G10 P0 L20 X0 Y0 Z0')	# Set current position as zero
@@ -45,13 +46,16 @@ def probez():
 
 def probe(dz, initial=False):
 	poll_ok()
-	write('G38.3 Z-100 F50')	 # Probe for contact
+	write('G38.2 Z-100 F50')	 # Probe for contact
 	poll_ok()
 
 	write('G4 P0.01') # Wait for task to complete
 	poll_ok()
 
-	z_pos_match = re.match(r'.*,([^,]*?):.*', last_received[2]) # Get the result of the serial
+	print(sc.sender.last_received)
+	print(sc.sender.last_sent)
+
+	z_pos_match = re.match(r'.*,([^,]*?):.*', sc.sender.last_received[2]) # Get the result of the serial
 	z_pos = 0
 
 	if z_pos_match:
