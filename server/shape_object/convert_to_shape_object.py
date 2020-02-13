@@ -1,5 +1,5 @@
-from gerber_excellon_to_shape_object.gtso import GTSO
-from gerber_excellon_to_shape_object.etso import ETSO
+from ShapeObjectConversions.gtso import GTSO
+from ShapeObjectConversions.etso import ETSO
 
 conversion_map = {
 	'gbr': GTSO,

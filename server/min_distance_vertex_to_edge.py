@@ -38,25 +38,45 @@ def min_distances_all_combinations(vertices, edges):
 
 if __name__ == '__main__':
 		
-	edges = np.array([
-		[[0, 0], [0, 1]],
-		[[0, 0], [1, 0]],
-		[[1, 1], [0, 1]],
-	], dtype=np.float64)
+	# edges = np.array([
+	# 	[[0, 0], [0, 1]],
+	# 	[[0, 0], [1, 0]],
+	# 	[[1, 1], [0, 1]],
+	# ], dtype=np.float64)
 
-	vertices = np.array([
-		[-0.6, 0.5],
-		[0.5, -0.5],
-		[0.3, 0.2],
-		[0.1, -0.3]
-	], dtype=np.float64)
+	# vertices = np.array([
+	# 	[-0.6, 0.5],
+	# 	[0.5, -0.5],
+	# 	[0.3, 0.2],
+	# 	[0.1, -0.3]
+	# ], dtype=np.float64)
 
-	# edges = np.random.rand(10, 2, 2)
-	# vertices = np.random.rand(10, 2)
+	# # edges = np.random.rand(10, 2, 2)
+	# # vertices = np.random.rand(10, 2)
 
-	start = time.time()
-	min_distances = min_distances_all_combinations(vertices, edges)
-	end = time.time()
-	print(end - start)
+	# start = time.time()
+	# min_distances = min_distances_all_combinations(vertices, edges)
+	# end = time.time()
+	# print(end - start)
 
-	print(min_distances)
+	# print(min_distances)
+
+	poly_visited = np.arange(5)
+
+	visited_repeated = np.lib.stride_tricks.as_strided(
+		poly_visited, 
+		strides=(poly_visited.strides[0], 0), 
+		shape=(poly_visited.shape[0], poly_visited.shape[0]), 
+		writeable=False)
+
+
+	visited_tiled = np.lib.stride_tricks.as_strided(
+		poly_visited, 
+		strides=(0, poly_visited.strides[0]), 
+		shape=(poly_visited.shape[0], poly_visited.shape[0]), 
+		writeable=False)
+
+
+	print(visited_repeated * np.arange(25))
+
+	print(visited_tiled)

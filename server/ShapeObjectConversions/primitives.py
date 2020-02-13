@@ -1,5 +1,5 @@
 from shapely.geometry import Polygon
-import gerber_excellon_to_shape_object.gerber as gerber
+import ShapeObjectConversions.gerber as gerber
 import shape_object.polygon_ops as po
 import numpy as np
 import math

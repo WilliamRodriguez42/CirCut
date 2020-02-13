@@ -1,2 +1,3 @@
 all:
-	cythonize -ai GCodeLib/GCode.pyx
+	+$(MAKE) -C GCodeLib
+	+$(MAKE) -C ShapeObjectConversions

@@ -5,6 +5,8 @@ from GCodeLib.pygcode.words import Word
 import copy
 from libc cimport math
 cimport cython
+import helper_functions as hf
+
 
 supported_moves = {GCodeRapidMove, GCodeLinearMove}
 
@@ -25,17 +27,17 @@ cdef bisect_line(self, T, float x1, float y1, float z1, float x2, float y2, floa
 	else:
 		new_move = T()
 
-		dx = x2 - x1
-		dy = y2 - y1
-		hyp = math.sqrt(dx ** 2 + dy ** 2)
+		# dx = x2 - x1
+		# dy = y2 - y1
+		# hyp = math.sqrt(dx ** 2 + dy ** 2)
 
-		if hyp > 0:
-			dy /= hyp
+		# if hyp > 0:
+		# 	dy /= hyp
 
-			# If the tip is moving in -y direction, lift the tip up a little, otherwise, dig it in a little
-			z_off = dy * 0.02
+		# 	# If the tip is moving in -y direction, lift the tip up a little, otherwise, dig it in a little
+		# 	z_off = dy * 0.02
 
-			z2 -= z_off
+		# 	z2 -= z_off
 
 		new_move.params['X'] = make_word('X', x2)
 		new_move.params['Y'] = make_word('Y', y2)
@@ -69,67 +71,38 @@ cdef bisect_codes(self):
 	print("Bisected GCode file")
 
 class GCodeFile:
-	def load(self, content, f):
-		self.minx = 10000000
-		self.maxx = -1
-		self.miny = 10000000
-		self.maxy = -1
-		self.rangex = 0
-		self.rangey = 0
-
-		self.all_gcodes = None
+	def load(self, content):
+		self.bounds = [float('inf'), float('inf'), -float('inf'), -float('inf')]
 		self.z_offset = 0.1
-		self.y_offset = 0
 
 		lines = content.split('\n')
 
-		all_gcodes = [] # Get all of the gcodes in the file
+		self.all_gcodes = [] # Get all of the gcodes in the file
 		for line_text in lines:
 			line = Line(line_text)
 			gcodes = line.block.gcodes
-			all_gcodes.extend(gcodes)
-
-		minx = 10000000
-		maxx = -1
-		miny = 10000000
-		maxy = -1
+			self.all_gcodes.extend(gcodes)
 
 		m = Machine() # Execute the gcodes 1 by 1 using a virtual machine
 
-		for i, gcode in enumerate(all_gcodes):
+		for i, gcode in enumerate(self.all_gcodes):
 			m.process_gcodes(gcode)
 
 			x, y, z = m.pos.vector
 
 			# Update min and max (if we are actually cutting)
 			if z < 0:
-				minx = min(minx, x)
-				maxx = max(maxx, x)
-				miny = min(miny, y)
-				maxy = max(maxy, y)
+				self.bounds[0] = min(self.bounds[0], x)
+				self.bounds[1] = min(self.bounds[1], y)
+				self.bounds[2] = max(self.bounds[2], x)
+				self.bounds[3] = max(self.bounds[3], y)
 
-			if type(gcode) in supported_moves:
-				gcode.params['X'] = make_word('X', x)
-				gcode.params['Y'] = make_word('Y', y)
-				gcode.params['Z'] = make_word('Z', z)
+			# if type(gcode) in supported_moves:
+			# 	gcode.params['X'] = make_word('X', x)
+			# 	gcode.params['Y'] = make_word('Y', y)
+			# 	gcode.params['Z'] = make_word('Z', z)
 
-		self.minx = minx
-		self.maxx = maxx
-		self.miny = miny
-		self.maxy = maxy
-		self.rangex = maxx - minx
-		self.rangey = maxy - miny
-
-		self.all_gcodes = all_gcodes # Should never write to all_gcodes
-		self.content = ''
-		self.update_content(f)
-
-	def update_content(self, f):
-		self.content = ''
-		for gcode in self.enumerate_gcodes(f):
-			self.content += gcode + '\n'
-
-	def enumerate_gcodes(self, f):
+	def enumerate_gcodes(self):
 		for gcode in self.all_gcodes:
 			
 			gcode = copy.copy(gcode)
@@ -137,13 +110,19 @@ class GCodeFile:
 
 			if type(gcode) in supported_moves:
 				x = gcode.params['X'].value
-				y = gcode.params['Y'].value + self.y_offset
+				y = gcode.params['Y'].value
 				z = gcode.params['Z'].value
 
-				z += f(x, y)[0] + self.z_offset
+				z += hf.f(x, y)[0] + self.z_offset
 				gcode.params['Z'] = make_word('Z', z)
-				gcode.params['Y'] = make_word('Y', y)
+				# gcode.params['Y'] = make_word('Y', y)
 			yield str(gcode)
+
+	def get_content(self):
+		content = ""
+		for gcode in self.enumerate_gcodes():
+			content += gcode + "\n"
+		return content
 
 	def bisect_codes(self):
 		bisect_codes(self)

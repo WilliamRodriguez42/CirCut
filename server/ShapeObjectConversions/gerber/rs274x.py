@@ -23,7 +23,7 @@ import json
 import os
 import re
 import sys
-import gerber_excellon_to_shape_object.gerber as gb
+import ShapeObjectConversions.gerber as gb
 
 try:
     from cStringIO import StringIO
@@ -266,6 +266,7 @@ class GerberParser(object):
         return self.parse_raw(data, filename)
 
     def parse_raw(self, data, filename=None):
+        gb.previous_net_name = None
         self.filename = filename
         for stmt in self._parse(self._split_commands(data)):
             self.evaluate(stmt)

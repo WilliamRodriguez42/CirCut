@@ -109,14 +109,13 @@ def execute_commands():
 			except ValueError:
 				predict_arg_error()
 
-		elif parts[0] == 'show_contour':
+		elif parts[0] == 'show_gcode':
 			content = ""
 			status.add_info_message(gcode_object.get_content())
 			print(content)
 
 		elif parts[0] == 'send_gcode':
 			for gcode in gcode_object.enumerate_gcodes():
-				if hf.terminator.termination_pending(): break
 				write(gcode)
 
 		elif parts[0] == 'unlevel':
@@ -166,21 +165,18 @@ def execute_commands():
 		elif parts[0] == 'overload_test':
 			import random
 			for i in range(10000):
-				if hf.terminator.termination_pending():
-					break
 				write('G1 Z0 X{} Y{} F500'.format(random.random()*0.1, random.random()*0.1))
 		elif parts[0] == 'debug':
 			import pdb
 			pdb.set_trace()
-		else:
-			write(text)
-
-		if hf.commands[0] == hf.terminator:
+		elif parts[0] == 'stop':
 			print("STOP COMMAND RECEIVED")
 			sc.terminate()
 			write('G1 Z3 F500')	# Back up to safe height
 			write('G1 X0 Y0 F500')
 			write('M5')
+		else:
+			write(text)
 
 		hf.commands[0].set_complete()
 		del hf.commands[0]

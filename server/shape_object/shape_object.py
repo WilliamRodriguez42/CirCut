@@ -2,10 +2,7 @@ import shape_object.polygon_ops as po
 from shapely.geometry import Polygon
 from settings_management.defaults import default_requirements
 import os
-if os.name == 'nt':
-	from GCodeLib.GCode_Win import GCodeFile
-else:
-	from GCodeLib.GCodeLib import GCodeFile
+from GCodeLib.GCode import GCodeFile
 from status import add_error_message
 
 class ShapeObject:

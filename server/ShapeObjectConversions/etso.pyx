@@ -1,6 +1,6 @@
 from shapely.geometry import Polygon
-from gerber_excellon_to_shape_object.primitives import make_circle 
-from gerber_excellon_to_shape_object import gerber
+from ShapeObjectConversions.primitives import make_circle 
+from ShapeObjectConversions import gerber
 from shape_object.shape_object import ShapeObject
 from status import add_error_message
 

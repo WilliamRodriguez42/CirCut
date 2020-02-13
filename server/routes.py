@@ -86,13 +86,6 @@ def receive_command():
 		for command in hf.commands:
 			command.set_terminated()
 		hf.commands.clear()
-		hf.commands.append(hf.terminator)
-
-		hf.terminator.send_terminate_signal()
-		print("WAITING FOR TERMINATION")
-		hf.terminator.wait_until_terminated()
-
-		return Response(hf.terminator.status)
 
 	co = CommandObject(text, gcode_object)
 	hf.commands.append(co)

@@ -21,7 +21,7 @@ from operator import add
 from itertools import combinations
 from .utils import validate_coordinates, inch, metric, convex_hull
 from .utils import rotate_point, nearly_equal
-import gerber_excellon_to_shape_object.gerber as gb
+import ShapeObjectConversions.gerber as gb
 
 
 

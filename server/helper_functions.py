@@ -4,10 +4,7 @@ import numpy as np
 from scipy.interpolate import interp2d
 
 import os
-if os.name == 'nt':
-	from GCodeLib.GCode_Win import GCodeFile
-else:
-	from GCodeLib.GCodeLib import GCodeFile
+from GCodeLib.GCode import GCodeFile
 
 import re
 import json
