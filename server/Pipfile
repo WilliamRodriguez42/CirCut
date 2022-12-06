@@ -12,11 +12,8 @@ numpy = "*"
 scipy = "*"
 six = "*"
 euclid3 = "*"
-pyudev = "*"
 elkai = "*"
 shapely = "*"
-geopandas = "*"
-fiona = "*"
 
 [requires]
 python_version = "3.8"

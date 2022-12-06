@@ -3,6 +3,9 @@
 /* BEGIN: Cython Metadata
 {
     "distutils": {
+        "include_dirs": [
+            "C:\\Users\\William\\.virtualenvs\\server-RlVYtHjR\\lib\\site-packages\\numpy\\core\\include"
+        ],
         "name": "etso",
         "sources": [
             "etso.pyx"
@@ -21,7 +24,7 @@ END: Cython Metadata */
 #else
 #define CYTHON_ABI "0_29_15"
 #define CYTHON_HEX_VERSION 0x001D0FF0
-#define CYTHON_FUTURE_DIVISION 0
+#define CYTHON_FUTURE_DIVISION 1
 #include <stddef.h>
 #ifndef offsetof
   #define offsetof(type, member) ( (size_t) & ((type*)0) -> member )
@@ -1249,7 +1252,7 @@ static const char __pyx_k_ShapeObjectConversions[] = "ShapeObjectConversions";
 static const char __pyx_k_shape_object_shape_object[] = "shape_object.shape_object";
 static const char __pyx_k_Attempted_to_interperet_file_as[] = "Attempted to interperet file as Excellon, but received a bytes object";
 static const char __pyx_k_ShapeObjectConversions_primitive[] = "ShapeObjectConversions.primitives";
-static PyObject *__pyx_kp_s_Attempted_to_interperet_file_as;
+static PyObject *__pyx_kp_u_Attempted_to_interperet_file_as;
 static PyObject *__pyx_n_s_ETSO;
 static PyObject *__pyx_n_s_ETSO___init;
 static PyObject *__pyx_n_s_Polygon;
@@ -1413,7 +1416,7 @@ static PyObject *__pyx_pf_4etso_4ETSO___init__(CYTHON_UNUSED PyObject *__pyx_sel
  * 			add_error_message("Attempted to interperet file as Excellon, but received a bytes object")
  * 			return
  */
-  __pyx_t_1 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v_data)), ((PyObject *)(&PyString_Type)), Py_NE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
+  __pyx_t_1 = PyObject_RichCompare(((PyObject *)Py_TYPE(__pyx_v_data)), ((PyObject *)(&PyUnicode_Type)), Py_NE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 9, __pyx_L1_error)
   __pyx_t_2 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 9, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_2) {
@@ -1437,7 +1440,7 @@ static PyObject *__pyx_pf_4etso_4ETSO___init__(CYTHON_UNUSED PyObject *__pyx_sel
         __Pyx_DECREF_SET(__pyx_t_3, function);
       }
     }
-    __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_kp_s_Attempted_to_interperet_file_as) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_s_Attempted_to_interperet_file_as);
+    __pyx_t_1 = (__pyx_t_4) ? __Pyx_PyObject_Call2Args(__pyx_t_3, __pyx_t_4, __pyx_kp_u_Attempted_to_interperet_file_as) : __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_kp_u_Attempted_to_interperet_file_as);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 10, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
@@ -1886,7 +1889,7 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
-  {&__pyx_kp_s_Attempted_to_interperet_file_as, __pyx_k_Attempted_to_interperet_file_as, sizeof(__pyx_k_Attempted_to_interperet_file_as), 0, 0, 1, 0},
+  {&__pyx_kp_u_Attempted_to_interperet_file_as, __pyx_k_Attempted_to_interperet_file_as, sizeof(__pyx_k_Attempted_to_interperet_file_as), 0, 1, 0, 0},
   {&__pyx_n_s_ETSO, __pyx_k_ETSO, sizeof(__pyx_k_ETSO), 0, 0, 1, 1},
   {&__pyx_n_s_ETSO___init, __pyx_k_ETSO___init, sizeof(__pyx_k_ETSO___init), 0, 0, 1, 1},
   {&__pyx_n_s_Polygon, __pyx_k_Polygon, sizeof(__pyx_k_Polygon), 0, 0, 1, 1},
@@ -2245,7 +2248,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_Polygon);
   __Pyx_GIVEREF(__pyx_n_s_Polygon);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_Polygon);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_shapely_geometry, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_shapely_geometry, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_Polygon); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1, __pyx_L1_error)
@@ -2265,7 +2268,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_make_circle);
   __Pyx_GIVEREF(__pyx_n_s_make_circle);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_make_circle);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_ShapeObjectConversions_primitive, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_ShapeObjectConversions_primitive, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_make_circle); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
@@ -2286,7 +2289,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_gerber);
   __Pyx_GIVEREF(__pyx_n_s_gerber);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_gerber);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_ShapeObjectConversions, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_ShapeObjectConversions, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_gerber); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
@@ -2307,7 +2310,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_ShapeObject);
   __Pyx_GIVEREF(__pyx_n_s_ShapeObject);
   PyList_SET_ITEM(__pyx_t_2, 0, __pyx_n_s_ShapeObject);
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_shape_object_shape_object, __pyx_t_2, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_shape_object_shape_object, __pyx_t_2, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_1, __pyx_n_s_ShapeObject); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
@@ -2328,7 +2331,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_add_error_message);
   __Pyx_GIVEREF(__pyx_n_s_add_error_message);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_n_s_add_error_message);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_status, __pyx_t_1, -1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_status, __pyx_t_1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_1 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_add_error_message); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 5, __pyx_L1_error)
@@ -2381,7 +2384,7 @@ if (!__Pyx_RefNanny) {
  * 	def __init__(self, data, resolution=16):
  * 		if type(data) != str:
  */
-  __pyx_t_5 = __Pyx_Py3ClassCreate(__pyx_t_2, __pyx_n_s_ETSO, __pyx_t_1, __pyx_t_3, NULL, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_Py3ClassCreate(__pyx_t_2, __pyx_n_s_ETSO, __pyx_t_1, __pyx_t_3, NULL, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   if (__Pyx_CyFunction_InitClassCell(__pyx_t_4, __pyx_t_5) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
