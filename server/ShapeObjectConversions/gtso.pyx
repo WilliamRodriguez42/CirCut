@@ -5,7 +5,6 @@
 # Optimal result with cython optimization 111.47 seconds
 
 from shapely.ops import cascaded_union
-import geopandas
 from ShapeObjectConversions import gerber
 from ShapeObjectConversions.primitives import primitives_map 
 from status import add_error_message
@@ -44,7 +43,7 @@ class GTSO(ShapeObject):
 				poly_position += 1
 			else:
 				add_error_message("Unknown primitive type: {}".format(prim_t))
-		geo_series = geopandas.GeoSeries(position_to_poly_map)
+		# geo_series = geopandas.GeoSeries(position_to_poly_map)
 
 		cdef np.ndarray position_to_buffer_map
 
@@ -53,8 +52,7 @@ class GTSO(ShapeObject):
 		cdef double percent_step, min_distance, buffer_by
 
 		if gerber.previous_net_name is None:
-			# poly = cascaded_union(position_to_poly_map)
-			poly = geo_series.unary_union()
+			poly = cascaded_union(position_to_poly_map)
 		else:
 			ipd_sparse = SparseMatrix(poly_position)
 
@@ -98,13 +96,9 @@ class GTSO(ShapeObject):
 					position_to_buffer_map[poly_position2] += buffer_by
 					ipd_sparse.subtract_from_position(poly_position2, buffer_by)
 
-			# for i in range(poly_position):
-			# 	position_to_poly_map[i] = position_to_poly_map[i].buffer(position_to_buffer_map[i], resolution=5)
-			# 	print(position_to_poly_map[])
-			# poly = cascaded_union(position_to_poly_map)
-
-			geo_series = geo_series.buffer(position_to_buffer_map)
-			poly = geo_series.unary_union()
+			for i in range(poly_position):
+				position_to_poly_map[i] = position_to_poly_map[i].buffer(position_to_buffer_map[i], resolution=5)
+			poly = cascaded_union(position_to_poly_map)
 
 		stop_time = time.time()
 		print("Gerber conversion time:", stop_time - start_time)
